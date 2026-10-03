@@ -86,7 +86,7 @@ h2{font-size:clamp(40px,6.2vw,88px)}
 .step p{color:var(--foreground-dark-soft);font-size:16px;max-width:30ch}
 .rank{display:inline-block;margin-top:20px;font-size:14px;padding:6px 12px;border-radius:999px;border:1px solid var(--ink-line);color:var(--foreground-dark-soft);transition:none}
 .step.on .rank{border-color:var(--red);color:var(--foreground-dark)}
-@media (max-width:900px){.track{grid-template-columns:1fr;gap:48px}.track-line,.track-fill{display:none}}
+@media (max-width:900px){.track{grid-template-columns:1fr;gap:48px;padding-left:38px}.track-line{left:11px;right:auto;top:11px;bottom:0;width:2px;height:auto}.track-fill{display:none}.step{padding-top:0}.step .node{left:-38px}}
 
 /* PARTNERS & PRIZES */
 .partners{padding:160px 0}
@@ -241,7 +241,7 @@ form{display:grid;gap:14px;margin-top:40px}
   .stakes,.journey,.partners,.curriculum,.board,.mentors,.register,.audiences,.faq{padding:80px 0}
   h2{font-size:clamp(38px,11vw,54px)}.stakes h2{margin-bottom:40px}
   .stake-grid{grid-template-columns:1fr 1fr}.stake{padding:22px 8px 20px 0}.stake b{font-size:42px}.stake p{font-size:13px;margin-top:8px}
-  .ratio{margin-top:42px}.journey-head{margin-bottom:48px}.track{gap:32px}.step{padding-top:0;padding-left:38px;border-left:1px solid var(--ink-line)}.step .node{top:1px;left:-12px}.step h3{font-size:25px}
+  .ratio{margin-top:42px}.journey-head{margin-bottom:48px}.track{gap:32px}.step{padding-top:0}.step .node{top:1px}.step h3{font-size:25px}
   .tier{padding:20px 0}.logos{gap:12px}.wordmark{font-size:19px}.prize-row{margin-top:42px}.prize{padding:24px}.prize .amt{font-size:48px}
   .cur-grid{gap:32px}.mod button{padding:22px 0}.mod-title{font-size:20px}.mod-meta{font-size:10px}.plus{width:23px;height:23px}
   .board-head{margin-bottom:30px}.states{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.st{padding:6px;font-size:10px;min-width:0}.st b{font-size:11px}.board-grid{gap:42px}
@@ -253,7 +253,7 @@ form{display:grid;gap:14px;margin-top:40px}
 
 /* Static phase: controls and data markers */
 .nav{background:var(--ink)}
-.nav.solid{backdrop-filter:none;-webkit-backdrop-filter:none}
+.nav.solid{background:var(--ink);backdrop-filter:none;-webkit-backdrop-filter:none}
 .counter-disclaimer{font-size:12px;color:var(--grey-ink);margin-top:8px;text-align:right}
 .mod-tail{display:flex;gap:18px;align-items:center}
 .form-msg{max-width:48ch}
