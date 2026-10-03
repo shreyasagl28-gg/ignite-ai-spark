@@ -1,5 +1,7 @@
-- [ ] Present the approved IAIB homepage reconstruction plan before any further implementation.
-- [ ] After approval, recreate the supplied HTML as a React + Tailwind homepage with identical copy, order, visual details, and static mock data.
-- [ ] After approval, verify 375px, 768px, and 1440px layouts.
-- [ ] Later phase only: add hero sparks, journey scroll motion, and Spark card motion section by section.
-- [ ] Production phase only: connect registration and verified live figures after parent-consent and programme details are confirmed.
+- [x] Present the approved IAIB homepage reconstruction plan before any further implementation.
+- [x] After approval, recreate the supplied HTML as a React + Tailwind homepage with its copy, order, and static mock data.
+- [ ] Verify 375px, 768px, and 1440px layouts and demo interactions.
+
+Deferred, not part of this static phase:
+- Add hero spark animation, journey scroll motion, and Spark card motion section by section.
+- Connect registration and verified live figures after parent-consent and programme details are confirmed.
