@@ -1,3 +1,5 @@
-- [x] Recreate the supplied IAIB homepage and preserve its copy.
-- [x] Make the page mobile-first and honor motion preferences.
-- [ ] Connect registration and live statistics to verified production services (requires confirmed programme details and parent-confirmation email setup).
+- [ ] Present the approved IAIB homepage reconstruction plan before any further implementation.
+- [ ] After approval, recreate the supplied HTML as a React + Tailwind homepage with identical copy, order, visual details, and static mock data.
+- [ ] After approval, verify 375px, 768px, and 1440px layouts.
+- [ ] Later phase only: add hero sparks, journey scroll motion, and Spark card motion section by section.
+- [ ] Production phase only: connect registration and verified live figures after parent-consent and programme details are confirmed.
