@@ -1,0 +1,3 @@
+- [x] Recreate the supplied IAIB homepage and preserve its copy.
+- [x] Make the page mobile-first and honor motion preferences.
+- [ ] Connect registration and live statistics to verified production services (requires confirmed programme details and parent-confirmation email setup).
