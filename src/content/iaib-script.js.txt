@@ -1,0 +1,156 @@
+
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- content ---------- */
+  const modules = [
+    ['AI Foundations','5 live sessions','Start from zero. What AI actually is, how models learn, and where it already shapes your day.',['How machines learn from data','Models, training and inference','Your first prompts','Bias, safety and ethics','AI in the real world']],
+    ['Python for AI','5 live sessions','Just enough code to be dangerous: the Python you need to build, not a full CS degree.',['Variables, logic and loops','Lists, dicts and data shapes','Functions and reusable code','Reading and cleaning data','Working in notebooks']],
+    ['Large Language Models','6 live sessions','Open the hood on the models behind ChatGPT and friends, then learn to steer them.',['Tokens, embeddings and context','Prompt engineering that works','Retrieval and grounding (RAG)','Evaluating what a model returns','Hallucination and its limits','Building your first LLM app']],
+    ['Agentic AI','6 live sessions','Move from answering questions to getting things done: models that plan, use tools and act.',['Tools and function calling','Planning and reasoning loops','Giving an agent memory','Multi-agent systems','Guardrails and failure modes','Ship a working agent']],
+    ['Vibe Coding','5 live sessions','Build real products with AI as your pair programmer. This is what the screening round tests.',['Prototyping with AI tools','Designing a usable interface','Debugging alongside a model','Shipping and deploying','Demoing what you built']],
+    ['Finale Prep','3 live sessions','The last stretch before the finale: sharpen the idea, the build plan and the pitch.',['Framing a problem worth solving','Planning a 36-hour build','Pitching to a room of VCs']]
+  ];
+  const faqs = [
+    ['Who can participate?','Any student in Classes 9 to 12, studying at a school in India.'],
+    ['Is there a registration fee?','No. Registration and participation are completely free.'],
+    ['Do I need prior coding or AI experience?','No. The learning sessions start from the basics. All you need is curiosity about AI.'],
+    ['How are the learning sessions conducted?','Sessions are held live online, on weekend mornings. They won\'t clash with school, and you\'ll still have the rest of your weekend free.'],
+    ['What does the screening round involve?','Two steps. First, a 40-minute test on what you learned in the sessions. Second, a small project you build from one of 50 prompts we share. Screening is done individually.'],
+    ['How is the project evaluated?','Five criteria: originality, ethical use of AI, clarity, scalability and potential for real-world impact.']
+  ];
+  const mentors = [
+    ['Vishwa Mohan','CEO, upGrad School of Technology'],
+    ['Rishi Saraf','Co-founder and CEO, DevDynamics'],
+    ['Gaurav Kaushik','Senior Staff Software Engineer'],
+    ['Gladden Rumao','Staff Software AI Engineer'],
+    ['Jyoti Nigam','Data Scientist, upGrad SOT'],
+    ['Rishabh Bafna','Senior AI Engineer and Lead Instructor'],
+    ['Mithun S','SDE II, Cisco'],
+    ['Piyush Jain','Senior Mathematician and Lead Instructor']
+  ];
+  const states = ['Karnataka','Maharashtra','Tamil Nadu','Delhi','Telangana','Uttar Pradesh','Kerala','Gujarat','West Bengal','Rajasthan','Andhra Pradesh','Madhya Pradesh','Haryana','Punjab','Bihar','Odisha','Assam','Jharkhand','Chhattisgarh','Uttarakhand','Himachal Pradesh','Goa','J&K','Tripura','Meghalaya','Manipur','Nagaland','Mizoram','Arunachal','Sikkim','Chandigarh','Puducherry','Ladakh','A&N Islands','Lakshadweep','DNH & DD'];
+  const schools = [['Delhi Public School','Bengaluru',642],['Kendriya Vidyalaya No. 1','Hyderabad',517],['National Public School','Chennai',489],['St. Xavier\'s High School','Mumbai',433],['Sri Siddhartha School','Tumkur',401]];
+
+  /* ---------- render modules ---------- */
+  const mEl = document.getElementById('modules');
+  modules.forEach((m,i)=>{
+    const d=document.createElement('div'); d.className='mod'+(i===0?' open':'');
+    d.innerHTML=`<button aria-expanded="${i===0}" aria-controls="mb${i}"><span class="mod-title">${m[0]}</span><span style="display:flex;gap:18px;align-items:center"><span class="mod-meta">${m[1]}</span><span class="plus" aria-hidden="true">+</span></span></button>
+    <div class="mod-body" id="mb${i}"><div class="mod-inner"><p>${m[2]}</p><ol>${m[3].map(x=>`<li>${x}</li>`).join('')}</ol></div></div>`;
+    d.querySelector('button').addEventListener('click',e=>{const o=d.classList.toggle('open');e.currentTarget.setAttribute('aria-expanded',o)});
+    mEl.appendChild(d);
+  });
+  /* faqs reuse accordion */
+  const fEl=document.getElementById('faqlist');
+  faqs.forEach((f,i)=>{
+    const d=document.createElement('div'); d.className='mod';
+    d.innerHTML=`<button aria-expanded="false" aria-controls="fb${i}"><span class="mod-title" style="font-size:22px">${f[0]}</span><span class="plus" aria-hidden="true">+</span></button><div class="mod-body" id="fb${i}"><div class="mod-inner"><p style="padding-bottom:24px">${f[1]}</p></div></div>`;
+    d.querySelector('button').addEventListener('click',e=>{const o=d.classList.toggle('open');e.currentTarget.setAttribute('aria-expanded',o)});
+    fEl.appendChild(d);
+  });
+  /* mentors */
+  const mg=document.getElementById('mgrid');
+  mentors.forEach(m=>{const ini=m[0].split(' ').map(w=>w[0]).join('').slice(0,2);
+    mg.insertAdjacentHTML('beforeend',`<div class="rv"><div class="portrait" aria-hidden="true">${ini}</div><h3>${m[0]}</h3><p>${m[1]}</p></div>`)});
+  /* schools */
+  const sEl=document.getElementById('schools');
+  schools.forEach((s,i)=>sEl.insertAdjacentHTML('beforeend',`<li><span class="pos">${i+1}</span><span class="nm">${s[0]}<small>${s[1]}</small></span><span class="ct">${s[2]}</span></li>`));
+  /* states with demo heat */
+  const stEl=document.getElementById('states');
+  const stData=states.map((n,i)=>({n,v:Math.max(0,Math.round(2400*Math.pow(.82,i)+(i<19?40:0)-(i>=19?0:0)))}));
+  stData.forEach((s,i)=>{if(i>=19)s.v=0});
+  const max=stData[0].v;
+  stData.forEach((s,i)=>{
+    const t=document.createElement('div'); t.className='st'; t.dataset.i=i;
+    t.style.setProperty('--heat',s.v?(.18+.82*s.v/max).toFixed(2):0);
+    t.innerHTML=`<b>${s.v?s.v.toLocaleString('en-IN'):'0'}</b><span>${s.n}</span>`;
+    stEl.appendChild(t);
+  });
+
+  /* ---------- nav solid on scroll ---------- */
+  const nav=document.getElementById('nav');
+  addEventListener('scroll',()=>nav.classList.toggle('solid',scrollY>40),{passive:true});
+
+  /* ---------- countdown (placeholder close date) ---------- */
+  const close=new Date('2026-11-15T23:59:00+05:30'); // TODO: real registration close
+  const cd=document.getElementById('countdown');
+  const tick=()=>{const ms=close-new Date(); if(ms<0){cd.textContent='Registrations closed';return}
+    const d=Math.floor(ms/864e5),h=Math.floor(ms/36e5)%24; cd.textContent=`Closes in ${d}d ${h}h`;};
+  tick(); setInterval(tick,60000);
+
+  /* ---------- reveal ---------- */
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+  /* ---------- journey line drawn by scroll ---------- */
+  const track=document.getElementById('track'), fill=document.getElementById('track-fill'), steps=[...track.querySelectorAll('.step')];
+  const onScroll=()=>{
+    const r=track.getBoundingClientRect(), vh=innerHeight;
+    let p=(vh*0.75-r.top)/(r.height+vh*0.25); p=Math.min(1,Math.max(0,p));
+    fill.style.width=(p*100)+'%';
+    steps.forEach((s,i)=>s.classList.toggle('on',p>=i/(steps.length-1)-0.02));
+  };
+  addEventListener('scroll',onScroll,{passive:true}); onScroll();
+
+  /* ---------- live counter (DEMO) ---------- */
+  let students=12480, schoolsN=214, statesN=19;
+  const cS=document.getElementById('c-students'), cSc=document.getElementById('c-schools'), cSt=document.getElementById('c-states'), scNum=document.getElementById('sc-num');
+  const fmt=n=>n.toLocaleString('en-IN');
+  let flare=0;
+  if(!reduce) setInterval(()=>{
+    const add=1+Math.floor(Math.random()*3); students+=add;
+    if(Math.random()<.15) schoolsN++;
+    cS.textContent=fmt(students); cSc.textContent=fmt(schoolsN); cSt.textContent=statesN;
+    scNum.textContent='#'+fmt(students+1);
+    flare=1;
+    const t=stEl.children[Math.floor(Math.random()*19)];
+    if(t){const b=t.querySelector('b'); b.textContent=fmt(parseInt(b.textContent.replace(/,/g,''))+add); t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash');}
+  },2600);
+
+  /* ---------- spark card live preview ---------- */
+  const nm=document.getElementById('f-name'), sc=document.getElementById('f-school'), ct=document.getElementById('f-city'), cl=document.getElementById('f-class');
+  const upd=()=>{
+    document.getElementById('sc-name').textContent=nm.value.trim()||'Your name';
+    const s=sc.value.trim(), c=ct.value.trim();
+    document.getElementById('sc-school').textContent=(s||c)?[s,c].filter(Boolean).join(', '):'Your school, your city';
+    document.getElementById('sc-class').textContent=cl.value?('Class '+cl.value):'Class';
+  };
+  [nm,sc,ct,cl].forEach(el=>el.addEventListener('input',upd));
+  document.getElementById('regform').addEventListener('submit',e=>{
+    e.preventDefault(); const msg=document.getElementById('form-msg');
+    const f=e.target; const missing=[...f.querySelectorAll('[required]')].find(x=>x.type==='checkbox'?!x.checked:!x.value.trim());
+    if(missing){msg.style.color='#FF8A80'; msg.textContent=missing.type==='checkbox'?'Ask a parent or guardian to agree before you register.':'Fill in every field to get your Spark card.'; missing.focus(); return;}
+    students++; cS.textContent=fmt(students);
+    msg.style.color='#fff'; msg.textContent=`You're Spark #${fmt(students)}. We've emailed your parent to confirm. (Demo only, nothing was sent.)`;
+  });
+
+  /* ---------- hero spark field ---------- */
+  const cv=document.getElementById('sparks'), ctx=cv.getContext('2d');
+  let W,H,dpr,parts=[];
+  const ramp=['229,9,19','255,77,46','255,138,61','255,196,140'];
+  const resize=()=>{dpr=Math.min(devicePixelRatio||1,2); W=cv.clientWidth; H=cv.clientHeight; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);};
+  const spawn=(burst)=>({x:W*(.15+Math.random()*.7),y:H+10,vx:(Math.random()-.5)*.35,vy:-(.35+Math.random()*1.1)*(burst?1.8:1),r:.6+Math.random()*1.9,life:0,max:220+Math.random()*320,c:ramp[Math.floor(Math.random()*ramp.length)]});
+  resize(); addEventListener('resize',resize);
+  const N=Math.min(260,Math.floor(W/5));
+  for(let i=0;i<N;i++){const p=spawn(); p.y=Math.random()*H; p.life=Math.random()*p.max; parts.push(p);}
+  const draw=()=>{
+    ctx.clearRect(0,0,W,H);
+    // core glow
+    const g=ctx.createRadialGradient(W*.5,H*1.05,0,W*.5,H*1.05,H*.9);
+    g.addColorStop(0,`rgba(229,9,19,${.22+flare*.18})`); g.addColorStop(1,'rgba(229,9,19,0)');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    ctx.globalCompositeOperation='lighter';
+    for(const p of parts){
+      p.life++; p.x+=p.vx+Math.sin((p.life+p.r*50)/40)*.25; p.y+=p.vy*(1+flare*.6);
+      const a=Math.max(0,1-p.life/p.max);
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.283); ctx.fillStyle=`rgba(${p.c},${a*.9})`; ctx.fill();
+      if(p.r>1.6){ctx.beginPath(); ctx.arc(p.x,p.y,p.r*3.2,0,6.283); ctx.fillStyle=`rgba(${p.c},${a*.08})`; ctx.fill();}
+      if(p.life>p.max||p.y<-10) Object.assign(p,spawn(flare>.5));
+    }
+    ctx.globalCompositeOperation='source-over';
+    flare*=.96;
+    if(!reduce) requestAnimationFrame(draw);
+  };
+  draw();
+})();
