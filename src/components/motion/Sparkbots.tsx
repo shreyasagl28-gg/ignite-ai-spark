@@ -70,7 +70,6 @@ function drawBot(c: CanvasRenderingContext2D, bot: Bot, frame: number, walking: 
   if (bot.gear === "goggles") px(c, X(8), Y(9), 16, 4, INK);
   px(c, X(11), Y(9), 10, 3, RED); // visor
   px(c, X(12), Y(9), 2, 1, BODY); // glint
-  if (bot.gear === "antenna" || bot.gear === "none" && false) { px(c, X(15), Y(2), 2, 4, INK); px(c, X(15), Y(1), 2, 2, RED); }
   if (bot.gear === "antenna") { px(c, X(15), Y(2), 2, 4, INK); px(c, X(15), Y(1), 2, 2, RED); }
   if (bot.gear === "headphones") { px(c, X(9), Y(3), 14, 2, INK); px(c, X(7), Y(8), 2, 5, INK); px(c, X(23), Y(8), 2, 5, INK); }
   if (bot.gear === "cap") { px(c, X(9), Y(3), 14, 3, INK); px(c, X(22), Y(5), 5, 1, INK); }
