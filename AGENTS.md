@@ -14,4 +14,5 @@
 - Keep site-wide Lenis and Journey ScrollTrigger as client-only, motion-preference-aware effects; this preserves SSR and lets mobile and reduced-motion users read the unpinned timeline.
 - Generate and export Spark card previews entirely in the browser without persisting student or parent details, because registration has no verified parental-consent service yet.
 - Serve the supplied IAIB logo through a static asset pointer and derive its favicon locally, because brand imagery must stay consistent without embedding screenshots or hotlinking references.
+- Serve supplied mentor portraits and partner marks through asset pointers, because media belongs on the CDN while the approved copy stays in its canonical HTML fragment.
 - Keep the leaderboard's simplified Survey of India-derived GeoJSON local and attributed, with demo-only browser-side updates; this avoids hotlinked geography and misleading real-registration claims.
