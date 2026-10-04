@@ -267,3 +267,25 @@ form{display:grid;gap:14px;margin-top:40px}
 @media(min-width:901px){.journey{min-height:100svh;display:flex;align-items:center;padding:96px 0}.journey>.wrap{width:100%}.journey .track-fill{transform-origin:left center}.journey .step .node,.journey .rank{transition:background-color .45s ease,border-color .45s ease,color .45s ease}}
 @media(max-width:900px){.journey .track-line{background:var(--red)}}
 @media(prefers-reduced-motion:reduce){.journey .track-line{background:var(--red)}.journey .track-fill{display:none}.journey .step .node,.journey .rank{transition:none}}
+
+/* Register: live, locally generated collectible ticket and downloadable preview. */
+.register .spark-card{aspect-ratio:4/5;background:var(--surface-dark);border:1px solid var(--border-dark);border-radius:6px;padding:clamp(22px,4vw,36px);position:relative;overflow:hidden;max-width:420px}
+.register .spark-card::before{content:"";position:absolute;top:-1px;right:21%;width:1px;height:42%;background:var(--border-dark);transform:rotate(24deg);transform-origin:top}
+.register .spark-card::after{content:"";position:absolute;right:-48px;top:35%;width:140px;height:140px;border:1px solid var(--border-dark);border-radius:50%;pointer-events:none}
+.register .sc-top,.register .sc-foot{font-family:var(--mono);font-size:clamp(10px,1.15vw,13px);text-transform:uppercase;position:relative;z-index:1;gap:12px}
+.register .sc-top span:last-child,.register .sc-foot span:last-child{text-align:right}
+.register .sc-ticket{position:relative;z-index:1}
+.register .sc-rank{font-size:clamp(58px,7vw,84px);letter-spacing:-.035em}
+.register .sc-num{font-size:clamp(20px,3vw,28px);margin-top:14px}
+.register .sc-demo{display:block;font-family:var(--mono);font-size:clamp(9px,1vw,11px);color:var(--grey-ink);margin-top:8px}
+.register .sc-holder{position:relative;z-index:1;padding:0 0 18px;border-bottom:1px dashed var(--border-dark)}
+.register .sc-name{font-size:clamp(27px,3.4vw,38px);line-height:1.1}
+.register .sc-school,.register .sc-city{font-size:clamp(13px,1.5vw,16px);line-height:1.35;overflow-wrap:anywhere}
+.register .sc-city{color:var(--grey-ink);margin-top:4px}
+.register .sc-foot{border:0;padding:0}
+.register .field input[aria-invalid="true"],.register .field select[aria-invalid="true"]{border-color:var(--red)}
+.register .field small,.register .consent-error{font-size:12px;color:var(--spark-orange);line-height:1.35}
+.register .reg-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.register .reg-actions .btn{justify-self:start}
+.register .reg-actions .btn:disabled{opacity:.6;cursor:wait}
+@media(max-width:700px){.register .spark-card{width:min(340px,100%)}.register .sc-rank{font-size:60px}}
