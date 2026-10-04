@@ -167,7 +167,7 @@ export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: numb
   return <section className="hero night" aria-labelledby="hero-h"><StaticSparks studentCount={studentsRegistered} /><div className="wrap">
     <div className="hero-identity"><img src={iaibLogo.url} alt="IAIB · Ignite AI Buildathon" width="160" height="77" /><span className="hero-identity-line" aria-hidden="true" /></div>
     <p className="season"><span className="live-dot" aria-hidden="true" />Season 01 is live. Registrations open 8 Oct 2026.</p>
-    <h1 id="hero-h">India's next AI builders start here.</h1>
+    <Reveal><h1 id="hero-h">India's next AI builders start here.</h1></Reveal>
     <div className="hero-row"><div className="hero-copy"><p>Ignite AI Buildathon is free for students in Classes 9 to 12. Learn AI from zero, test what you know, then build a working product and pitch it to VCs.</p><div className="hero-actions"><MagneticButton href="#register">Register free</MagneticButton><Action href="#journey" ghost>See how it works</Action></div></div>
     <div className="counter" aria-label="Registrations, demo data"><div><b className="hot">{studentsRegistered.toLocaleString("en-IN")}</b><span>students registered</span></div><div><b>214</b><span>schools</span></div><div><b>19</b><span>states and UTs</span></div></div></div>
     <p className="counter-disclaimer">Demo data</p>
@@ -209,7 +209,7 @@ export function Journey() {
     <section className="journey night" id="journey" aria-labelledby="journey-h">
       <div className="wrap">
         <div className="journey-head">
-          <h2 id="journey-h">Four steps. One spark to a fire.</h2>
+          <Reveal><h2 id="journey-h">Four steps. One spark to a fire.</h2></Reveal>
           <p>Every step earns you a rank. Start as a Spark. Finish as one of the Ignited 100.</p>
         </div>
         <StackedJourney steps={journeySteps} />
@@ -219,19 +219,38 @@ export function Journey() {
 }
 export function PartnersAndPrizes() {
   const html = approvedSection("PARTNERS & PRIZES", "CURRICULUM");
-  const splitAt = html.indexOf('<div class="tier');
-  const head = splitAt > -1 ? html.slice(0, splitAt) : html;
-  const tiers = splitAt > -1 ? html.slice(splitAt) : "";
+  const tierStart = html.indexOf('<div class="tier');
+  const prizeStart = html.indexOf('<div class="prize-row">');
+  const clean = (part: string) => part.replace(/^<section[^>]*>|<\/section>$/g, "").replace(/<div class="wrap">/, "").trim();
+  const headHtml = clean(tierStart > -1 ? html.slice(0, tierStart) : html);
+  const tiersHtml = tierStart > -1 ? clean(html.slice(tierStart, prizeStart > -1 ? prizeStart : undefined)) : "";
+  const hEnd = headHtml.indexOf("</h2>");
+  const h2Html = hEnd > -1 ? headHtml.slice(0, hEnd + 5) : "";
+  const headRest = hEnd > -1 ? headHtml.slice(hEnd + 5).trim() : "";
+  const prizeParts = prizeStart > -1
+    ? html.slice(prizeStart).split("</article>")
+      .map((part) => part.trim())
+      .filter((part) => part.startsWith("<article") || part.startsWith('<div class="prize-row"'))
+      .map((part) => part.replace(/^<div class="prize-row">/, "").trim())
+    : [];
   return (
     <section className="partners day" id="prizes" aria-labelledby="partners-h">
       <div className="wrap">
-        <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: head.replace(/^<section[^>]*>|<\/section>$/g, "").replace(/<div class="wrap">/, "").trim() }} />
+        <Reveal><div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: h2Html }} /></Reveal>
+        {headRest && <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: headRest }} />}
         <Marquee label="Partners">
           <img className="marquee-logo" src="/government-of-karnataka.png" alt="Government of Karnataka" loading="lazy" />
           <img className="marquee-logo" src="/upgrad-school-of-technology.png" alt="upGrad School of Technology" loading="lazy" />
           <img className="marquee-logo" src="/ssahe.png" alt="Sri Siddhartha Academy of Higher Education" loading="lazy" />
         </Marquee>
-        <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: tiers.replace(/<\/section>\s*$/, "").trim() }} />
+        <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: tiersHtml }} />
+        {prizeParts.length > 0 && (
+          <RevealGroup className="prize-row">
+            {prizeParts.map((part, i) => (
+              <RevealItem key={i}><div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `${part}</article>` }} /></RevealItem>
+            ))}
+          </RevealGroup>
+        )}
       </div>
     </section>
   );
@@ -243,28 +262,32 @@ function Accordion({ title, detail, children, initial = false, id }: { title: st
 export function Curriculum() {
   const titleBlock = (
     <div className="cur-head">
-      <h2 id="cur-h">Starts from zero. Ends with you shipping an agent.</h2>
+      <h2 id="cur-h"><Reveal>Starts from zero. Ends with you shipping an agent.</Reveal></h2>
       <p className="lead">Six modules, 30 live sessions on weekend mornings. No prior coding needed.</p>
     </div>
   );
   return (
     <section className="curriculum day" id="curriculum" aria-labelledby="cur-h">
       <HorizontalScroll title={titleBlock}>
-        {modules.map((m) => (
-          <SpotlightCard key={m[0]} tone="light" className="mod-card">
-            <span className="mod-num">{m[1]}</span>
-            <h3>{m[0]}</h3>
-            <p className="mod-desc">{m[2]}</p>
-            <ol>{m[3].map((item: string) => <li key={item}>{item}</li>)}</ol>
-          </SpotlightCard>
-        ))}
+        <RevealGroup bare>
+          {modules.map((m) => (
+            <RevealItem key={m[0]}>
+              <SpotlightCard tone="light" className="mod-card">
+                <span className="mod-num">{m[1]}</span>
+                <h3>{m[0]}</h3>
+                <p className="mod-desc">{m[2]}</p>
+                <ol>{m[3].map((item: string) => <li key={item}>{item}</li>)}</ol>
+              </SpotlightCard>
+            </RevealItem>
+          ))}
+        </RevealGroup>
       </HorizontalScroll>
     </section>
   );
 }
-export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><h2 id="board-h">Which state is lighting up first?</h2><span className="demo-tag">Demo data, updates live in production</span></div><div className="board-grid"><IndiaStateMap /><div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol></div></div></div></section>; }
+export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><Reveal><h2 id="board-h">Which state is lighting up first?</h2></Reveal><span className="demo-tag">Demo data, updates live in production</span></div><div className="board-grid"><IndiaStateMap /><div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol></div></div></div></section>; }
 const mentorPhoto: Record<string, string> = { "Vishwa Mohan": "/vishwa-mohan.webp", "Rishi Saraf": "/rishi-saraf.webp", "Gaurav Kaushik": "/gaurav-kaushik.png", "Gladden Rumao": "/gladden-rumao.webp", "Jyoti Nigam": "/jyoti-nigam.webp", "Rishabh Bafna": "/rishabh-bafna.png", "Mithun S": "/mithun-s.webp", "Piyush Jain": "/piyush-jain.png" };
-export function Mentors() { return <section className="mentors day" id="mentors" aria-labelledby="m-h"><div className="wrap"><h2 id="m-h">Learn from people shipping AI today.</h2><div className="m-grid">{mentors.map(([name, role]) => <div key={name}>{mentorPhoto[name] ? <img className="portrait" src={mentorPhoto[name]} alt={name} loading="lazy" width={400} height={500} /> : <div className="portrait" aria-hidden="true">{name.split(" ").map((word: string) => word[0]).join("").slice(0, 2)}</div>}<h3>{name}</h3><p>{role}</p></div>)}</div></div></section>; }
+export function Mentors() { return <section className="mentors day" id="mentors" aria-labelledby="m-h"><div className="wrap"><Reveal><h2 id="m-h">Learn from people shipping AI today.</h2></Reveal><RevealGroup className="m-grid">{mentors.map(([name, role]) => <RevealItem key={name}>{mentorPhoto[name] ? <img className="portrait" src={mentorPhoto[name]} alt={name} loading="lazy" width={400} height={500} /> : <div className="portrait" aria-hidden="true">{name.split(" ").map((word: string) => word[0]).join("").slice(0, 2)}</div>}<h3>{name}</h3><p>{role}</p></RevealItem>)}</RevealGroup></div></section>; }
 const registrationSchema = z.object({
   first: z.string().trim().min(1, "Enter your first name.").max(40, "Use 40 characters or fewer.").regex(/^[\p{L}\p{M}][\p{L}\p{M}'’-]*$/u, "Enter a first name only, without a surname."),
   classroom: z.enum(["9", "10", "11", "12"], { errorMap: () => ({ message: "Select your class." }) }),
