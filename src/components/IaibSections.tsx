@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
+import { z } from "zod";
 import approvedHtml from "@/content/iaib-body.html?raw";
 import { modules, faqs, mentors, states, schools } from "@/content/iaib-data";
 
@@ -227,11 +228,63 @@ function Accordion({ title, detail, children, initial = false, id }: { title: st
 export function Curriculum() { return <section className="curriculum day" id="curriculum" aria-labelledby="cur-h"><div className="wrap cur-grid"><div><h2 id="cur-h">Starts from zero. Ends with you shipping an agent.</h2><p className="lead">Six modules, 30 live sessions on weekend mornings. No prior coding needed.</p></div><div id="modules">{modules.map((m, i) => <Accordion key={m[0]} id={`mb${i}`} title={m[0]} detail={m[1]} initial={i === 0}><p>{m[2]}</p><ol>{m[3].map((item: string) => <li key={item}>{item}</li>)}</ol></Accordion>)}</div></div></section>; }
 export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><h2 id="board-h">Which state is lighting up first?</h2><span className="demo-tag">Demo data, updates live in production</span></div><div className="board-grid"><div className="states" aria-label="Registrations by state, demo data">{states.map((name, i) => { const count = i < 19 ? Math.max(0, Math.round(2400 * Math.pow(.82, i) + 40)) : 0; return <div className={`st heat-${Math.min(9, Math.round(count / 2440 * 9))}`} key={name}><b>{count.toLocaleString("en-IN")}</b><span>{name}</span></div>; })}</div><div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol></div></div></div></section>; }
 export function Mentors() { return <section className="mentors day" id="mentors" aria-labelledby="m-h"><div className="wrap"><h2 id="m-h">Learn from people shipping AI today.</h2><div className="m-grid">{mentors.map(([name, role]) => <div key={name}><div className="portrait" aria-hidden="true">{name.split(" ").map((word: string) => word[0]).join("").slice(0, 2)}</div><h3>{name}</h3><p>{role}</p></div>)}</div></div></section>; }
+const registrationSchema = z.object({
+  first: z.string().trim().min(1, "Enter your first name.").max(40, "Use 40 characters or fewer.").regex(/^[\p{L}\p{M}][\p{L}\p{M}'’-]*$/u, "Enter a first name only, without a surname."),
+  classroom: z.enum(["9", "10", "11", "12"], { errorMap: () => ({ message: "Select your class." }) }),
+  school: z.string().trim().min(1, "Enter your school.").max(100, "Use 100 characters or fewer."),
+  city: z.string().trim().min(1, "Enter your city.").max(80, "Use 80 characters or fewer."),
+  email: z.string().trim().email("Enter a valid parent email.").max(255, "Use 255 characters or fewer."),
+  consent: z.literal(true, { errorMap: () => ({ message: "Parent or guardian consent is required." }) }),
+});
+type RegistrationField = keyof z.infer<typeof registrationSchema>;
 export function RegistrationAndSparkCard() {
-  const [first, setFirst] = useState(""); const [school, setSchool] = useState(""); const [city, setCity] = useState(""); const [classroom, setClassroom] = useState(""); const [message, setMessage] = useState("");
-  const submit = (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); setMessage("Preview only — registration and parent confirmation are not available yet. Nothing was sent."); };
-  return <section className="register night" id="register" aria-labelledby="reg-h"><div className="wrap reg-grid"><div><h2 id="reg-h">Claim your spark.</h2><p className="lead">Registration takes under a minute and it's free. You'll get your Spark card to share.</p><form onSubmit={submit}><div className="two"><div className="field"><label htmlFor="f-name">First name</label><input id="f-name" autoComplete="given-name" required value={first} onChange={e => setFirst(e.target.value)} /></div><div className="field"><label htmlFor="f-class">Class</label><select id="f-class" required value={classroom} onChange={e => setClassroom(e.target.value)}><option value="">Select</option><option>9</option><option>10</option><option>11</option><option>12</option></select></div></div><div className="field"><label htmlFor="f-school">School</label><input id="f-school" required value={school} onChange={e => setSchool(e.target.value)} /></div><div className="two"><div className="field"><label htmlFor="f-city">City</label><input id="f-city" required value={city} onChange={e => setCity(e.target.value)} /></div><div className="field"><label htmlFor="f-email">Parent's email</label><input id="f-email" type="email" autoComplete="email" required /></div></div><label className="consent"><input type="checkbox" required />My parent or guardian has read the terms and agrees to my participation. We'll email them to confirm.</label><Button variant="iaib" type="submit">Register free</Button><p className="form-msg" role="status">{message || "Preview only — no registration is submitted."}</p></form></div>
-  <div className="card-stage"><div className="spark-card" aria-label="Your Spark card preview, demo data"><div className="sc-top"><span>Ignite AI Buildathon</span><span>Season 01</span></div><div><div className="sc-rank">Spark</div><div className="sc-num">#12,481</div></div><div><div className="sc-name">{first.trim().split(/\s+/)[0] || "Your name"}</div><div className="sc-school">{school.trim() || "Your school"}</div></div><div className="sc-foot"><span>{classroom ? `Class ${classroom}` : "Class"}</span><span>Demo preview</span></div></div></div></div></section>;
+  const [first, setFirst] = useState(""); const [school, setSchool] = useState(""); const [city, setCity] = useState(""); const [classroom, setClassroom] = useState(""); const [email, setEmail] = useState(""); const [consent, setConsent] = useState(false);
+  const [errors, setErrors] = useState<Partial<Record<RegistrationField, string>>>({});
+  const [confirmed, setConfirmed] = useState(false); const [message, setMessage] = useState(""); const [downloading, setDownloading] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const changed = () => { setConfirmed(false); setMessage(""); setErrors({}); };
+  // A local, deterministic preview number: never a real registration or allocated identifier.
+  const seed = `${first.trim().toLocaleLowerCase()}|${school.trim().toLocaleLowerCase()}|${city.trim().toLocaleLowerCase()}|${classroom}`;
+  const number = Array.from(seed).reduce((hash, char) => (Math.imul(hash, 31) + char.charCodeAt(0)) >>> 0, 0);
+  const sparkNumber = `#${(12481 + number % 80000).toLocaleString("en-IN")}`;
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const result = registrationSchema.safeParse({ first, school, city, classroom, email, consent });
+    if (!result.success) {
+      const next: Partial<Record<RegistrationField, string>> = {};
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as RegistrationField;
+        if (!next[field]) next[field] = issue.message;
+      }
+      setErrors(next); setConfirmed(false); setMessage("Please check the highlighted fields. Nothing was sent.");
+      return;
+    }
+    setErrors({}); setConfirmed(true); setMessage("Spark card ready. This is a demo preview — no registration or parent email was sent.");
+  };
+  const download = async () => {
+    if (!confirmed || !cardRef.current || downloading) return;
+    setDownloading(true);
+    try {
+      await document.fonts.ready;
+      const { toPng } = await import("html-to-image");
+      const png = await toPng(cardRef.current, { canvasWidth: 1080, canvasHeight: 1350, pixelRatio: 1, cacheBust: true });
+      const link = document.createElement("a");
+      link.download = `iaib-spark-${first.trim().toLocaleLowerCase()}.png`;
+      link.href = png;
+      link.click();
+      setMessage("Demo Spark card downloaded. No registration or parent email was sent.");
+    } catch {
+      setMessage("The image couldn't be saved. Please try again.");
+    } finally { setDownloading(false); }
+  };
+  return <section className="register night" id="register" aria-labelledby="reg-h"><div className="wrap reg-grid"><div><h2 id="reg-h">Claim your spark.</h2><p className="lead">Registration takes under a minute and it's free. You'll get your Spark card to share.</p><form onSubmit={submit} noValidate>
+    <div className="two"><div className="field"><label htmlFor="f-name">First name</label><input id="f-name" autoComplete="given-name" maxLength={40} value={first} aria-invalid={!!errors.first} aria-describedby={errors.first ? "f-name-error" : undefined} onChange={e => { setFirst(e.target.value.split(/\s/)[0]); changed(); }} />{errors.first && <small id="f-name-error" role="alert">{errors.first}</small>}</div><div className="field"><label htmlFor="f-class">Class</label><select id="f-class" value={classroom} aria-invalid={!!errors.classroom} aria-describedby={errors.classroom ? "f-class-error" : undefined} onChange={e => { setClassroom(e.target.value); changed(); }}><option value="">Select</option><option>9</option><option>10</option><option>11</option><option>12</option></select>{errors.classroom && <small id="f-class-error" role="alert">{errors.classroom}</small>}</div></div>
+    <div className="field"><label htmlFor="f-school">School</label><input id="f-school" maxLength={100} value={school} aria-invalid={!!errors.school} aria-describedby={errors.school ? "f-school-error" : undefined} onChange={e => { setSchool(e.target.value); changed(); }} />{errors.school && <small id="f-school-error" role="alert">{errors.school}</small>}</div>
+    <div className="two"><div className="field"><label htmlFor="f-city">City</label><input id="f-city" maxLength={80} value={city} aria-invalid={!!errors.city} aria-describedby={errors.city ? "f-city-error" : undefined} onChange={e => { setCity(e.target.value); changed(); }} />{errors.city && <small id="f-city-error" role="alert">{errors.city}</small>}</div><div className="field"><label htmlFor="f-email">Parent's email</label><input id="f-email" type="email" autoComplete="email" maxLength={255} value={email} aria-invalid={!!errors.email} aria-describedby={errors.email ? "f-email-error" : undefined} onChange={e => { setEmail(e.target.value); changed(); }} />{errors.email && <small id="f-email-error" role="alert">{errors.email}</small>}</div></div>
+    <label className="consent"><input type="checkbox" checked={consent} aria-invalid={!!errors.consent} aria-describedby={errors.consent ? "f-consent-error" : undefined} onChange={e => { setConsent(e.target.checked); changed(); }} />My parent or guardian has read the terms and agrees to my participation. We'll email them to confirm.</label>{errors.consent && <small className="consent-error" id="f-consent-error" role="alert">{errors.consent}</small>}
+    <div className="reg-actions"><Button variant="iaib" type="submit">Register free</Button>{confirmed && <Button variant="iaibOutline" type="button" onClick={download} disabled={downloading} aria-label="Download demo Spark card as PNG">{downloading ? "Preparing PNG…" : "Download Spark card ↓"}</Button>}</div><p className="form-msg" role="status">{message || "Preview only — no registration is submitted."}</p>
+  </form></div>
+  <div className="card-stage"><div ref={cardRef} className="spark-card" aria-label="Your Spark card preview, demo data"><div className="sc-top"><span>Ignite AI Buildathon</span><span>Season 01</span></div><div className="sc-ticket"><div className="sc-rank">Spark</div><div className="sc-num">{sparkNumber}</div><span className="sc-demo">DEMO · NOT AN ISSUED REGISTRATION</span></div><div className="sc-holder"><div className="sc-name">{first.trim() || "Your name"}</div><div className="sc-school">{school.trim() || "Your school"}</div><div className="sc-city">{city.trim() || "Your city"}</div></div><div className="sc-foot"><span>{classroom ? `Class ${classroom}` : "Class"}</span><span>Demo preview</span></div></div></div></div></section>;
 }
 export function SchoolsAndParents() { return <section className="audiences day" aria-label="For schools and parents"><div className="wrap aud-grid">
   <article className="aud dark"><h3>Bring it to your school.</h3><p>Your students are ready to build the future. Give them free AI learning, real projects and a national stage.</p><ul><li>Free AI learning for every student</li><li>A national competition</li><li>₹25L in prizes and ₹2 Cr in scholarships</li></ul><Action href="#register">Register your school</Action></article>
