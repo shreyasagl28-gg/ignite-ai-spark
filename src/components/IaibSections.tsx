@@ -172,7 +172,7 @@ export function Journey() {
       gsap.registerPlugin(ScrollTrigger);
       const media = gsap.matchMedia();
       media.add("(min-width: 901px) and (prefers-reduced-motion: no-preference)", () => {
-        const positions = () => steps.map(step => step.offsetLeft + step.querySelector<HTMLElement>(".node")!.offsetWidth / 2);
+        const positions = () => steps.map(step => step.offsetLeft + (step.querySelector<HTMLElement>(".node")?.offsetWidth ?? 24) / 2);
         const setGeometry = () => {
           const nodes = positions();
           gsap.set([line, fill], { left: nodes[0], width: nodes[3] - nodes[0], right: "auto" });
