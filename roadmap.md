@@ -8,5 +8,4 @@ Deferred, not part of this static phase:
 - [x] Add a live Register Spark card preview, validated demo submission and 1080×1350 PNG download.
 - [x] Apply the approved visual refinement: supplied IAIB logo in navigation and hero, original hero spark assembly, calm Journey timing, and restrained Spark card motion.
 - [x] Replace leaderboard tiles with an interactive India state map, demo-count sparks, mobile tap targets, legend and accessible count table.
-- [x] Restore supplied mentor portraits and partner logos to the preview and verify they load on mobile and desktop.
 - Connect registration and verified live figures after parent-consent and programme details are confirmed.

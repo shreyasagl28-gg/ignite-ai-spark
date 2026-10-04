@@ -5,17 +5,6 @@ import approvedHtml from "@/content/iaib-body.html?raw";
 import { modules, faqs, mentors, schools } from "@/content/iaib-data";
 import { IndiaStateMap } from "@/components/IndiaStateMap";
 import iaibLogo from "@/assets/iaib-logo-dark.png.asset.json";
-import vishwaPhoto from "@/assets/mentors/vishwa-mohan.webp.asset.json";
-import rishiPhoto from "@/assets/mentors/rishi-saraf.webp.asset.json";
-import gauravPhoto from "@/assets/mentors/gaurav-kaushik.png.asset.json";
-import gladdenPhoto from "@/assets/mentors/gladden-rumao.webp.asset.json";
-import jyotiPhoto from "@/assets/mentors/jyoti-nigam.webp.asset.json";
-import rishabhPhoto from "@/assets/mentors/rishabh-bafna.png.asset.json";
-import mithunPhoto from "@/assets/mentors/mithun-s.webp.asset.json";
-import piyushPhoto from "@/assets/mentors/piyush-jain.png.asset.json";
-import governmentLogo from "@/assets/partners/government-of-karnataka.png.asset.json";
-import upgradLogo from "@/assets/partners/upgrad-school-of-technology.png.asset.json";
-import universityLogo from "@/assets/partners/ssahe.png.asset.json";
 
 function approvedSection(start: string, end: string) {
   return approvedHtml.split(`<!-- ${start} -->`)[1]?.split(`<!-- ${end} -->`)[0]?.trim() ?? "";
@@ -241,29 +230,14 @@ export function Journey() {
   }, []);
   return <div ref={wrapper} className="contents"><Approved start="JOURNEY" end="PARTNERS & PRIZES" /></div>;
 }
-export function PartnersAndPrizes() {
-  return <section className="partners day" id="prizes" aria-labelledby="partners-h"><div className="wrap">
-    <h2 id="partners-h" className="rv">Backed by people who build.</h2>
-    <p className="lead rv" style={{ color: "var(--grey)", opacity: 1, marginBottom: 56 }}>Every build partner runs its own prize track, so there's more than one way to win.</p>
-    <div className="tier rv"><span className="tier-name">Supported by</span><div className="logos"><img className="partner-logo" src={governmentLogo.url} alt="Government of Karnataka" loading="lazy" /></div></div>
-    <div className="tier rv"><span className="tier-name">Organised by</span><div className="logos"><img className="partner-logo" src={upgradLogo.url} alt="upGrad School of Technology" loading="lazy" /></div></div>
-    <div className="tier rv"><span className="tier-name">University partner</span><div className="logos"><img className="partner-logo" src={universityLogo.url} alt="Sri Siddhartha Academy of Higher Education" loading="lazy" /></div></div>
-    <div className="tier rv"><span className="tier-name">Build partners</span><div className="logos"><span className="slot">Announcing soon</span><span className="slot">Announcing soon</span><span className="slot">Announcing soon</span></div></div>
-    <div className="prize-row">
-      <article className="prize grand rv"><h3>Grand prize</h3><div className="amt">₹25L</div><p>Total prize pool for the finale winners. Breakdown by rank to be announced.</p></article>
-      <article className="prize rv"><h3>Partner prize tracks</h3><p>Best use of each build partner's tool, judged on that partner's own criteria. Tracks open as partners are announced.</p></article>
-      <article className="prize rv"><h3>Scholarships</h3><div className="amt" style={{ fontSize: 44 }}>₹2 Cr</div><p>Eligibility and amounts per student to be announced.</p></article>
-    </div>
-  </div></section>;
-}
+export function PartnersAndPrizes() { return <Approved start="PARTNERS & PRIZES" end="CURRICULUM" />; }
 function Accordion({ title, detail, children, initial = false, id }: { title: string; detail?: string; children: React.ReactNode; initial?: boolean; id: string }) {
   const [open, setOpen] = useState(initial);
   return <div className={`mod${open ? " open" : ""}`}><Button variant="ghost" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}><span className="mod-title">{title}</span><span className="mod-tail">{detail && <span className="mod-meta">{detail}</span>}<span className="plus" aria-hidden="true">+</span></span></Button><div className="mod-body" id={id} aria-hidden={!open}><div className="mod-inner">{children}</div></div></div>;
 }
 export function Curriculum() { return <section className="curriculum day" id="curriculum" aria-labelledby="cur-h"><div className="wrap cur-grid"><div><h2 id="cur-h">Starts from zero. Ends with you shipping an agent.</h2><p className="lead">Six modules, 30 live sessions on weekend mornings. No prior coding needed.</p></div><div id="modules">{modules.map((m, i) => <Accordion key={m[0]} id={`mb${i}`} title={m[0]} detail={m[1]} initial={i === 0}><p>{m[2]}</p><ol>{m[3].map((item: string) => <li key={item}>{item}</li>)}</ol></Accordion>)}</div></div></section>; }
 export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><h2 id="board-h">Which state is lighting up first?</h2><span className="demo-tag">Demo data, updates live in production</span></div><div className="board-grid"><IndiaStateMap /><div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol></div></div></div></section>; }
-const mentorPhotos = [vishwaPhoto, rishiPhoto, gauravPhoto, gladdenPhoto, jyotiPhoto, rishabhPhoto, mithunPhoto, piyushPhoto];
-export function Mentors() { return <section className="mentors day" id="mentors" aria-labelledby="m-h"><div className="wrap"><h2 id="m-h">Learn from people shipping AI today.</h2><div className="m-grid">{mentors.map(([name, role], index) => <div key={name}><img className="portrait" src={mentorPhotos[index]?.url ?? ""} alt={name} loading="lazy" decoding="async" width="400" height="500" /><h3>{name}</h3><p>{role}</p></div>)}</div></div></section>; }
+export function Mentors() { return <section className="mentors day" id="mentors" aria-labelledby="m-h"><div className="wrap"><h2 id="m-h">Learn from people shipping AI today.</h2><div className="m-grid">{mentors.map(([name, role]) => <div key={name}><div className="portrait" aria-hidden="true">{name.split(" ").map((word: string) => word[0]).join("").slice(0, 2)}</div><h3>{name}</h3><p>{role}</p></div>)}</div></div></section>; }
 const registrationSchema = z.object({
   first: z.string().trim().min(1, "Enter your first name.").max(40, "Use 40 characters or fewer.").regex(/^[\p{L}\p{M}][\p{L}\p{M}'’-]*$/u, "Enter a first name only, without a surname."),
   classroom: z.enum(["9", "10", "11", "12"], { errorMap: () => ({ message: "Select your class." }) }),
