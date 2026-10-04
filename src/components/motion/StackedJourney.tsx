@@ -50,9 +50,10 @@ export function StackedJourney({ steps }: { steps: JourneyStep[] }) {
         card.classList.toggle("past", index < reached);
       });
       if (!line) return;
-      if (reached < 0) { fill.style.height = "0px"; return; }
-      const node = cards[reached].querySelector<HTMLElement>(".node");
-      const rect = (node ?? cards[reached]).getBoundingClientRect();
+      const target = cards[reached];
+      if (!target) { fill.style.height = "0px"; return; }
+      const node = target.querySelector<HTMLElement>(".node");
+      const rect = (node ?? target).getBoundingClientRect();
       const lineRect = line.getBoundingClientRect();
       fill.style.height = `${Math.max(0, rect.top + rect.height / 2 - lineRect.top)}px`;
     };
