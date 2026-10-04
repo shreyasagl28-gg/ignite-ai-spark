@@ -4,6 +4,8 @@ import { z } from "zod";
 import approvedHtml from "@/content/iaib-body.html?raw";
 import { modules, faqs, mentors, schools } from "@/content/iaib-data";
 import { IndiaStateMap } from "@/components/IndiaStateMap";
+import { BentoStakes } from "@/components/motion/BentoStakes";
+import { Reveal } from "@/components/motion/Reveal";
 import iaibLogo from "@/assets/iaib-logo-dark.png.asset.json";
 
 function approvedSection(start: string, end: string) {
@@ -165,7 +167,19 @@ export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: numb
     <div className="support"><span>Supported by <strong>Government of Karnataka</strong></span><span>University partner <strong>Sri Siddhartha Academy of Higher Education</strong></span><span>Organised by <strong>upGrad School of Technology</strong></span></div>
   </div></section>;
 }
-export function Stakes() { return <Approved start="STAKES" end="JOURNEY" />; }
+export function Stakes() {
+  return (
+    <section className="stakes night" id="prizes-top" aria-labelledby="stakes-h">
+      <div className="wrap">
+        <Reveal>
+          <h2 id="stakes-h">What's on the table this season.</h2>
+        </Reveal>
+        <BentoStakes />
+        <p className="ratio">Thousands will learn. <em>Only 100 make the finale.</em></p>
+      </div>
+    </section>
+  );
+}
 export function Journey() {
   const wrapper = useRef<HTMLDivElement>(null);
   useEffect(() => {
