@@ -78,9 +78,7 @@ export function IndiaStateMap() {
         {shapes.map(({ name, path }) => <path key={name} d={path} className={`map-state${flash === name ? " map-flash" : ""}`} style={{ "--map-heat": `${Math.round((counts[name] ?? 0) / highest * 100)}%` } as React.CSSProperties}
           onAnimationEnd={() => { if (flash === name) setFlash(null); }}
           onPointerEnter={() => setActive(name)} onClick={() => setActive(name)} onFocus={() => setActive(name)}
-          tabIndex={0} role="button" aria-label={`${name}, ${(counts[name] ?? 0).toLocaleString("en-IN")} students, demo data`}>
-          <title>{name} · {(counts[name] ?? 0).toLocaleString("en-IN")} students</title>
-        </path>)}
+          tabIndex={0} role="button" aria-label={`${name}, ${(counts[name] ?? 0).toLocaleString("en-IN")} students, demo data`} />)}
         {shapes.filter(({ name }) => compactStates.has(name)).map(({ name, center }) => <circle key={`hit-${name}`} className="map-hit" cx={center[0]} cy={center[1]} r="13"
           onPointerEnter={() => setActive(name)} onClick={() => setActive(name)} aria-hidden="true" />)}
         {spark && !reduced && <circle key={spark.id} className="map-spark" cx={spark.x} cy={spark.y} r="2" onAnimationEnd={() => setSpark(null)} aria-hidden="true" />}
