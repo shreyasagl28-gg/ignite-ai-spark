@@ -95,9 +95,10 @@ h2{font-size:clamp(40px,6.2vw,88px)}
 .journey-head{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;margin-bottom:96px}
 .journey-head h2{max-width:11ch}
 .journey-head p{max-width:40ch;color:var(--grey-ink)}
-.track{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
-.track-line{position:absolute;left:0;right:0;top:11px;height:2px;background:var(--ink-line)}
-.track-fill{position:absolute;left:0;top:11px;height:2px;width:0;background:var(--red);transition:none}
+/* Stacked journey: cards stack as you scroll on desktop; plain column otherwise. */
+.sj{position:relative;padding-left:44px}
+.sj-line{position:absolute;left:11px;top:44px;bottom:44px;width:2px;background:var(--ink-line)}
+.sj-fill{position:absolute;left:0;top:0;width:2px;height:0;background:var(--red)}
 .step{position:relative;padding-top:56px}
 .step .node{position:absolute;top:0;left:0;width:24px;height:24px;border-radius:50%;background:var(--ink);border:2px solid var(--ink-line);transition:none}
 .step.on .node{border-color:var(--red);background:var(--red)}

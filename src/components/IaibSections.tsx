@@ -6,6 +6,7 @@ import { modules, faqs, mentors, schools } from "@/content/iaib-data";
 import { IndiaStateMap } from "@/components/IndiaStateMap";
 import { BentoStakes } from "@/components/motion/BentoStakes";
 import { Reveal } from "@/components/motion/Reveal";
+import { StackedJourney } from "@/components/motion/StackedJourney";
 import iaibLogo from "@/assets/iaib-logo-dark.png.asset.json";
 
 function approvedSection(start: string, end: string) {
