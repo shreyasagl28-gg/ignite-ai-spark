@@ -1,4 +1,3 @@
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
@@ -354,6 +353,7 @@ export function SchoolsAndParents() { return <section className="audiences day" 
   </RevealGroup></section>; }
 export function FAQ() { return <section className="faq day" id="faqs" aria-labelledby="faq-h"><div className="wrap faq-grid"><Reveal><h2 id="faq-h">Questions, answered.</h2></Reveal><div id="faqlist">{faqs.map(([question, answer], i) => <Accordion key={question} id={`fb${i}`} title={question}><p className="faq-answer">{answer}</p></Accordion>)}</div></div></section>; }
 function FooterDialog({ label }: { label: string }) {
-  return <Dialog><DialogTrigger asChild><button type="button" className="foot-link">{label}</button></DialogTrigger><DialogContent><DialogHeader><DialogTitle>{label}</DialogTitle><DialogDescription>This page is being finalised and will be published before registrations open.</DialogDescription></DialogHeader></DialogContent></Dialog>;
+  const ref = useRef<HTMLDialogElement>(null);
+  return <><button type="button" className="foot-link" onClick={() => ref.current?.showModal()}>{label}</button><dialog ref={ref} className="foot-dialog" aria-label={label} onClick={(e) => { if (e.target === ref.current) ref.current?.close(); }}><h3>{label}</h3><p>This page is being finalised and will be published before registrations open.</p><button type="button" className="btn btn-red" onClick={() => ref.current?.close()}>Close</button></dialog></>;
 }
 export function ClosingAndFooter() { return <section className="closing night" aria-labelledby="close-h"><div className="wrap"><Reveal><h2 id="close-h">Season 01 is filling up. Don't watch it happen.</h2></Reveal><MagneticButton href="#register">Register free</MagneticButton><footer className="foot"><span>Ignite AI Buildathon, by upGrad School of Technology</span><nav aria-label="Footer">{["Privacy policy","Terms","Code of conduct","Instagram","LinkedIn","YouTube"].map((label) => <FooterDialog key={label} label={label} />)}</nav></footer></div></section>; }

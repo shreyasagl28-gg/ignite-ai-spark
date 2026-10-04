@@ -398,3 +398,6 @@ img.portrait{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:co
 .foot-link{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;min-height:44px}
 .foot-link:hover{text-decoration:underline}
 @media (max-width:700px){.btn,.btn-red,.btn-ghost,.nav .btn{min-height:44px}.counter span{font-size:13px;color:var(--grey-ink)}.closing h2{font-size:clamp(40px,11vw,64px)}}
+.foot-dialog{max-width:420px;width:calc(100% - 32px);border:1px solid var(--border-dark);border-radius:12px;background:var(--surface-dark);color:var(--foreground-dark);padding:28px}
+.foot-dialog::backdrop{background:color-mix(in oklch,var(--background-dark) 80%,transparent)}
+.foot-dialog h3{font-family:var(--font-display);font-size:24px;margin:0 0 10px}.foot-dialog p{margin:0 0 20px;color:var(--foreground-dark-soft)}
