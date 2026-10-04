@@ -9,6 +9,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { StackedJourney } from "@/components/motion/StackedJourney";
 import { HorizontalScroll } from "@/components/motion/HorizontalScroll";
 import { SpotlightCard } from "@/components/motion/SpotlightCard";
+import { Marquee } from "@/components/motion/Marquee";
 import iaibLogo from "@/assets/iaib-logo-dark.png.asset.json";
 
 function approvedSection(start: string, end: string) {
@@ -203,7 +204,25 @@ export function Journey() {
     </section>
   );
 }
-export function PartnersAndPrizes() { return <Approved start="PARTNERS & PRIZES" end="CURRICULUM" />; }
+export function PartnersAndPrizes() {
+  const html = approvedSection("PARTNERS & PRIZES", "CURRICULUM");
+  const splitAt = html.indexOf('<div class="tier');
+  const head = splitAt > -1 ? html.slice(0, splitAt) : html;
+  const tiers = splitAt > -1 ? html.slice(splitAt) : "";
+  return (
+    <section className="partners day" id="prizes" aria-labelledby="partners-h">
+      <div className="wrap">
+        <div dangerouslySetInnerHTML={{ __html: head.replace(/^<section[^>]*>|<\/section>$/g, "").replace(/<div class="wrap">/, "") }} />
+        <Marquee label="Partners">
+          <img className="marquee-logo" src="/government-of-karnataka.png" alt="Government of Karnataka" loading="lazy" />
+          <img className="marquee-logo" src="/upgrad-school-of-technology.png" alt="upGrad School of Technology" loading="lazy" />
+          <img className="marquee-logo" src="/ssahe.png" alt="Sri Siddhartha Academy of Higher Education" loading="lazy" />
+        </Marquee>
+        <div dangerouslySetInnerHTML={{ __html: tiers.replace(/<\/section>\s*$/, "") }} />
+      </div>
+    </section>
+  );
+}
 function Accordion({ title, detail, children, initial = false, id }: { title: string; detail?: string; children: React.ReactNode; initial?: boolean; id: string }) {
   const [open, setOpen] = useState(initial);
   return <div className={`mod${open ? " open" : ""}`}><Button variant="ghost" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}><span className="mod-title">{title}</span><span className="mod-tail">{detail && <span className="mod-meta">{detail}</span>}<span className="plus" aria-hidden="true">+</span></span></Button><div className="mod-body" id={id} aria-hidden={!open}><div className="mod-inner">{children}</div></div></div>;
