@@ -8,5 +8,5 @@ Deferred, not part of this static phase:
 - [x] Add a live Register Spark card preview, validated demo submission and 1080×1350 PNG download.
 - [x] Apply the approved visual refinement: supplied IAIB logo in navigation and hero, original hero spark assembly, calm Journey timing, and restrained Spark card motion.
 - [x] Replace leaderboard tiles with an interactive India state map, demo-count sparks, mobile tap targets, legend and accessible count table.
-- [ ] Replace mentor initials and partner wordmarks with matching supplied imagery; confirm the favicon is brand-appropriate.
+- [x] Replace mentor initials and partner wordmarks with matching supplied imagery; confirmed the supplied favicon was a generic mark, so kept the existing IAIB favicon.
 - Connect registration and verified live figures after parent-consent and programme details are confirmed.
