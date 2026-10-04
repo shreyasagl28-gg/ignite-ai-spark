@@ -155,7 +155,67 @@ export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: numb
   </div></section>;
 }
 export function Stakes() { return <Approved start="STAKES" end="JOURNEY" />; }
-export function Journey() { return <Approved start="JOURNEY" end="PARTNERS & PRIZES" />; }
+export function Journey() {
+  const wrapper = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const section = wrapper.current?.querySelector<HTMLElement>(".journey");
+    const track = section?.querySelector<HTMLElement>(".track");
+    const line = track?.querySelector<HTMLElement>(".track-line");
+    const fill = track?.querySelector<HTMLElement>(".track-fill");
+    const steps = Array.from(track?.querySelectorAll<HTMLElement>(".step") ?? []);
+    if (!section || !track || !line || !fill || steps.length !== 4) return;
+
+    let disposed = false;
+    let cleanup = () => {};
+    void Promise.all([import("gsap"), import("gsap/ScrollTrigger")]).then(([{ gsap }, { ScrollTrigger }]) => {
+      if (disposed) return;
+      gsap.registerPlugin(ScrollTrigger);
+      const media = gsap.matchMedia();
+      media.add("(min-width: 901px) and (prefers-reduced-motion: no-preference)", () => {
+        const positions = () => steps.map(step => step.offsetLeft + step.querySelector<HTMLElement>(".node")!.offsetWidth / 2);
+        const setGeometry = () => {
+          const nodes = positions();
+          gsap.set([line, fill], { left: nodes[0], width: nodes[3] - nodes[0], right: "auto" });
+        };
+        const updateSteps = (progress: number) => {
+          const nodes = positions();
+          const traveled = progress * (nodes[3] - nodes[0]);
+          steps.forEach((step, index) => step.classList.toggle("on", traveled >= nodes[index] - nodes[0] - 1));
+        };
+        setGeometry();
+        gsap.set(fill, { scaleX: 0, transformOrigin: "left center" });
+        updateSteps(0);
+        const animation = gsap.to(fill, {
+          scaleX: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            pin: true,
+            start: "top top",
+            end: () => `+=${Math.max(1000, window.innerHeight * 1.6)}`,
+            scrub: true,
+            invalidateOnRefresh: true,
+            onRefresh: setGeometry,
+            onUpdate: self => updateSteps(self.progress),
+          },
+        });
+        return () => {
+          animation.scrollTrigger?.kill();
+          animation.kill();
+          gsap.set([line, fill], { clearProps: "left,width,right,scaleX,transformOrigin" });
+          steps.forEach(step => step.classList.remove("on"));
+        };
+      });
+      media.add("(max-width: 900px), (prefers-reduced-motion: reduce)", () => {
+        steps.forEach(step => step.classList.add("on"));
+        return () => steps.forEach(step => step.classList.remove("on"));
+      });
+      cleanup = () => media.revert();
+    });
+    return () => { disposed = true; cleanup(); };
+  }, []);
+  return <div ref={wrapper} className="contents"><Approved start="JOURNEY" end="PARTNERS & PRIZES" /></div>;
+}
 export function PartnersAndPrizes() { return <Approved start="PARTNERS & PRIZES" end="CURRICULUM" />; }
 function Accordion({ title, detail, children, initial = false, id }: { title: string; detail?: string; children: React.ReactNode; initial?: boolean; id: string }) {
   const [open, setOpen] = useState(initial);
