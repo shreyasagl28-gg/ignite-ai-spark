@@ -175,12 +175,15 @@ export function Journey() {
         const positions = () => steps.map(step => step.offsetLeft + (step.querySelector<HTMLElement>(".node")?.offsetWidth ?? 24) / 2);
         const setGeometry = () => {
           const nodes = positions();
-          gsap.set([line, fill], { left: nodes[0], width: nodes[3] - nodes[0], right: "auto" });
+          const first = nodes[0] ?? 0;
+          const last = nodes[3] ?? first;
+          gsap.set([line, fill], { left: first, width: last - first, right: "auto" });
         };
         const updateSteps = (progress: number) => {
           const nodes = positions();
-          const traveled = progress * (nodes[3] - nodes[0]);
-          steps.forEach((step, index) => step.classList.toggle("on", traveled >= nodes[index] - nodes[0] - 1));
+          const first = nodes[0] ?? 0;
+          const traveled = progress * ((nodes[3] ?? first) - first);
+          steps.forEach((step, index) => step.classList.toggle("on", traveled >= (nodes[index] ?? first) - first - 1));
         };
         setGeometry();
         gsap.set(fill, { scaleX: 0, transformOrigin: "left center" });
