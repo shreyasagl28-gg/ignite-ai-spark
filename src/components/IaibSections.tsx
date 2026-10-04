@@ -6,6 +6,7 @@ import { modules, faqs, mentors, schools } from "@/content/iaib-data";
 import { IndiaStateMap } from "@/components/IndiaStateMap";
 import { BentoStakes } from "@/components/motion/BentoStakes";
 import { Reveal } from "@/components/motion/Reveal";
+import { StackedJourney } from "@/components/motion/StackedJourney";
 import iaibLogo from "@/assets/iaib-logo-dark.png.asset.json";
 
 function approvedSection(start: string, end: string) {
@@ -180,69 +181,25 @@ export function Stakes() {
     </section>
   );
 }
-export function Journey() {
-  const wrapper = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const section = wrapper.current?.querySelector<HTMLElement>(".journey");
-    const track = section?.querySelector<HTMLElement>(".track");
-    const line = track?.querySelector<HTMLElement>(".track-line");
-    const fill = track?.querySelector<HTMLElement>(".track-fill");
-    const steps = Array.from(track?.querySelectorAll<HTMLElement>(".step") ?? []);
-    if (!section || !track || !line || !fill || steps.length !== 4) return;
+const journeySteps = [
+  { when: "From 8 Oct", title: "Register", body: "Sign up on your own or through your school. Open to Classes 9 to 12.", rank: "You become a Spark" },
+  { when: "Dates to be announced", title: "Learn live", body: "30 live sessions with industry mentors, from AI fundamentals and LLMs to agentic AI.", rank: "You become an Ember" },
+  { when: "Dates to be announced", title: "Screen and build", body: "Clear a 40-minute online test, then vibe code a working prototype with AI tools.", rank: "You become a Flame" },
+  { when: "Finale, Bengaluru", title: "Grand finale", body: "36 hours, offline. Build, pitch to VCs and compete for ₹25L in prizes.", rank: "You join the Ignited 100" },
+];
 
-    let disposed = false;
-    let cleanup = () => {};
-    void Promise.all([import("gsap"), import("gsap/ScrollTrigger")]).then(([{ gsap }, { ScrollTrigger }]) => {
-      if (disposed) return;
-      gsap.registerPlugin(ScrollTrigger);
-      const media = gsap.matchMedia();
-      media.add("(min-width: 901px) and (prefers-reduced-motion: no-preference)", () => {
-        const positions = () => steps.map(step => step.offsetLeft + (step.querySelector<HTMLElement>(".node")?.offsetWidth ?? 24) / 2);
-        const setGeometry = () => {
-          const nodes = positions();
-          const first = nodes[0] ?? 0;
-          const last = nodes[3] ?? first;
-          gsap.set([line, fill], { left: first, width: last - first, right: "auto" });
-        };
-        const updateSteps = (progress: number) => {
-          const nodes = positions();
-          const first = nodes[0] ?? 0;
-          const traveled = progress * ((nodes[3] ?? first) - first);
-          steps.forEach((step, index) => step.classList.toggle("on", traveled >= (nodes[index] ?? first) - first - 1));
-        };
-        setGeometry();
-        gsap.set(fill, { scaleX: 0, transformOrigin: "left center" });
-        updateSteps(0);
-        const animation = gsap.to(fill, {
-          scaleX: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: section,
-            pin: true,
-            start: "top top",
-             end: () => `+=${Math.max(1200, window.innerHeight * 1.9)}`,
-            scrub: true,
-            invalidateOnRefresh: true,
-            onRefresh: setGeometry,
-            onUpdate: self => updateSteps(self.progress),
-          },
-        });
-        return () => {
-          animation.scrollTrigger?.kill();
-          animation.kill();
-          gsap.set([line, fill], { clearProps: "left,width,right,scaleX,transformOrigin" });
-          steps.forEach(step => step.classList.remove("on"));
-        };
-      });
-      media.add("(max-width: 900px), (prefers-reduced-motion: reduce)", () => {
-        steps.forEach(step => step.classList.add("on"));
-        return () => steps.forEach(step => step.classList.remove("on"));
-      });
-      cleanup = () => media.revert();
-    });
-    return () => { disposed = true; cleanup(); };
-  }, []);
-  return <div ref={wrapper} className="contents"><Approved start="JOURNEY" end="PARTNERS & PRIZES" /></div>;
+export function Journey() {
+  return (
+    <section className="journey night" id="journey" aria-labelledby="journey-h">
+      <div className="wrap">
+        <div className="journey-head">
+          <h2 id="journey-h">Four steps. One spark to a fire.</h2>
+          <p>Every step earns you a rank. Start as a Spark. Finish as one of the Ignited 100.</p>
+        </div>
+        <StackedJourney steps={journeySteps} />
+      </div>
+    </section>
+  );
 }
 export function PartnersAndPrizes() { return <Approved start="PARTNERS & PRIZES" end="CURRICULUM" />; }
 function Accordion({ title, detail, children, initial = false, id }: { title: string; detail?: string; children: React.ReactNode; initial?: boolean; id: string }) {

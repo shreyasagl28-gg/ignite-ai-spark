@@ -95,9 +95,10 @@ h2{font-size:clamp(40px,6.2vw,88px)}
 .journey-head{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;margin-bottom:96px}
 .journey-head h2{max-width:11ch}
 .journey-head p{max-width:40ch;color:var(--grey-ink)}
-.track{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
-.track-line{position:absolute;left:0;right:0;top:11px;height:2px;background:var(--ink-line)}
-.track-fill{position:absolute;left:0;top:11px;height:2px;width:0;background:var(--red);transition:none}
+/* Stacked journey: cards stack as you scroll on desktop; plain column otherwise. */
+.sj{position:relative;padding-left:44px}
+.sj-line{position:absolute;left:11px;top:44px;bottom:44px;width:2px;background:var(--ink-line)}
+.sj-fill{position:absolute;left:0;top:0;width:2px;height:0;background:var(--red)}
 .step{position:relative;padding-top:56px}
 .step .node{position:absolute;top:0;left:0;width:24px;height:24px;border-radius:50%;background:var(--ink);border:2px solid var(--ink-line);transition:none}
 .step.on .node{border-color:var(--red);background:var(--red)}
@@ -261,7 +262,7 @@ form{display:grid;gap:14px;margin-top:40px}
   .stakes,.journey,.partners,.curriculum,.board,.mentors,.register,.audiences,.faq{padding:80px 0}
   h2{font-size:clamp(38px,11vw,54px)}.stakes h2{margin-bottom:40px}
   .stake-grid{grid-template-columns:1fr 1fr}.stake{padding:22px 8px 20px 0}.stake b{font-size:42px}.stake p{font-size:13px;margin-top:8px}
-  .ratio{margin-top:42px}.journey-head{margin-bottom:48px}.track{gap:32px}.step{padding-top:0}.step .node{top:1px}.step h3{font-size:25px}
+  .ratio{margin-top:42px}.journey-head{margin-bottom:48px}.step h3{font-size:25px}
   .tier{padding:20px 0}.logos{gap:12px}.wordmark{font-size:19px}.prize-row{margin-top:42px}.prize{padding:24px}.prize .amt{font-size:48px}
   .cur-grid{gap:32px}.mod button{padding:22px 0}.mod-title{font-size:20px}.mod-meta{font-size:10px}.plus{width:23px;height:23px}
   .board-head{margin-bottom:30px}.states{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.st{padding:6px;font-size:10px;min-width:0}.st b{font-size:11px}.board-grid{gap:42px}
@@ -283,10 +284,23 @@ form{display:grid;gap:14px;margin-top:40px}
 .mod button{height:auto;border-radius:0;white-space:normal}
 @media(max-width:700px){.counter-disclaimer{text-align:left}.mod-tail{gap:8px}.mod button{gap:8px}}
 
-/* Journey: the desktop fill is scrubbed across node centres; mobile remains unpinned. */
-@media(min-width:901px){.journey{min-height:100svh;display:flex;align-items:center;padding:96px 0}.journey>.wrap{width:100%}.journey .track-fill{transform-origin:left center}.journey .step .node,.journey .rank{transition:background-color .65s ease,border-color .65s ease,color .65s ease}}
-@media(max-width:900px){.journey .track-line{background:var(--red)}}
-@media(prefers-reduced-motion:reduce){.journey .track-line{background:var(--red)}.journey .track-fill{display:none}.journey .step .node,.journey .rank{transition:none}}
+/* Stacked journey: cards stick and stack on desktop; mobile and reduced motion stay a plain column. */
+@media(min-width:901px) and (prefers-reduced-motion:no-preference){
+  .journey .step{position:sticky;z-index:calc(1 + var(--sj-i,0));top:calc(96px + var(--sj-i,0)*14px);margin-bottom:min(38vh,380px);background:var(--ink-2);border:1px solid var(--ink-line);border-radius:16px;padding:30px 32px 28px;transition:opacity .5s ease,transform .5s ease}
+  .journey .step:last-child{margin-bottom:0}
+  .journey .step.past{transform:scale(.985)}
+  .journey .step .node{left:-44px;top:38px}
+  .journey .step .node,.journey .step .rank{transition:background-color .65s ease,border-color .65s ease,color .65s ease}
+  .journey .step p{max-width:none}
+  .journey .sj-fill{transition:height .65s cubic-bezier(.22,1,.36,1)}
+}
+@media(max-width:900px),(prefers-reduced-motion:reduce){
+  .journey .step{background:var(--ink-2);border:1px solid var(--ink-line);border-radius:16px;padding:30px 32px 28px}
+  .journey .step .node{left:-44px;top:38px}
+  .journey .step p{max-width:none}
+  .journey .sj-line{background:var(--red)}
+  .journey .sj-fill{height:100%!important}
+}
 
 /* Register: live, locally generated collectible ticket and downloadable preview. */
 .register .spark-card{aspect-ratio:4/5;background:var(--surface-dark);border:1px solid var(--border-dark);border-radius:6px;padding:clamp(22px,4vw,36px);position:relative;overflow:hidden;max-width:420px}
