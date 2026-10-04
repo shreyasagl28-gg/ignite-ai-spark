@@ -6,6 +6,7 @@ import { modules, faqs, mentors, schools, recentRegistrations } from "@/content/
 import { IndiaStateMap } from "@/components/IndiaStateMap";
 import { BentoStakes } from "@/components/motion/BentoStakes";
 import { Reveal } from "@/components/motion/Reveal";
+import { RevealGroup, RevealItem } from "@/components/motion/RevealGroup";
 import { StackedJourney } from "@/components/motion/StackedJourney";
 import { HorizontalScroll } from "@/components/motion/HorizontalScroll";
 import { SpotlightCard } from "@/components/motion/SpotlightCard";
