@@ -7,7 +7,6 @@ import { IndiaStateMap } from "@/components/IndiaStateMap";
 import { BentoStakes } from "@/components/motion/BentoStakes";
 import { Reveal } from "@/components/motion/Reveal";
 import { RevealGroup, RevealItem } from "@/components/motion/RevealGroup";
-import { StackedJourney } from "@/components/motion/StackedJourney";
 import { HorizontalScroll } from "@/components/motion/HorizontalScroll";
 import { SpotlightCard } from "@/components/motion/SpotlightCard";
 import { Marquee } from "@/components/motion/Marquee";
@@ -212,7 +211,7 @@ export function Journey() {
           <Reveal><h2 id="journey-h">Four steps. One spark to a fire.</h2></Reveal>
           <p>Every step earns you a rank. Start as a Spark. Finish as one of the Ignited 100.</p>
         </div>
-        <StackedJourney steps={journeySteps} />
+        <RevealGroup className="sched">{journeySteps.map((s) => <RevealItem key={s.title}><div className="sched-row"><p className="sched-when">{s.when}</p><h3 className="sched-title">{s.title}</h3><div className="sched-body"><p>{s.body}</p><span className="rank">{s.rank}</span></div></div></RevealItem>)}</RevealGroup>
       </div>
     </section>
   );
@@ -288,7 +287,8 @@ export function Curriculum() {
 export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><Reveal><h2 id="board-h">Which state is lighting up first?</h2></Reveal><span className="demo-tag">Demo data, updates live in production</span></div><div className="board-grid"><IndiaStateMap /><div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol><a className="board-cta" href="#register">Register your school →</a></div></div></div></section>; }
 const mentorPhoto: Record<string, string> = { "Vishwa Mohan": "/vishwa-mohan.webp", "Rishi Saraf": "/rishi-saraf.webp", "Gaurav Kaushik": "/gaurav-kaushik.png", "Gladden Rumao": "/gladden-rumao.webp", "Jyoti Nigam": "/jyoti-nigam.webp", "Rishabh Bafna": "/rishabh-bafna.png", "Mithun S": "/mithun-s.webp", "Piyush Jain": "/piyush-jain.png" };
 const mentorBadge: Record<string, [string, string]> = { "Vishwa Mohan": ["/upgrad.webp", "upGrad"], "Jyoti Nigam": ["/upgrad.webp", "upGrad"], "Mithun S": ["/cisco.webp", "Cisco"] };
-export function Mentors() { return <section className="mentors day" id="mentors" aria-labelledby="m-h"><div className="wrap"><Reveal><h2 id="m-h">Learn from people shipping AI today.</h2></Reveal><RevealGroup className="m-grid">{mentors.map(([name, role]) => <RevealItem key={name}>{mentorPhoto[name] ? <img className="portrait" src={mentorPhoto[name]} alt={name} loading="lazy" width={400} height={500} /> : <div className="portrait" aria-hidden="true">{name.split(" ").map((word: string) => word[0]).join("").slice(0, 2)}</div>}<h3>{name}</h3><p>{role}</p>{mentorBadge[name] && <img className="mentor-badge" src={mentorBadge[name][0]} alt={mentorBadge[name][1]} loading="lazy" height={20} />}</RevealItem>)}</RevealGroup></div></section>; }
+const mentorCompanyText: Record<string, string> = { "Rishi Saraf": "DevDynamics" };
+export function Mentors() { return <section className="mentors day" id="mentors" aria-labelledby="m-h"><div className="wrap"><Reveal><h2 id="m-h">Learn from people shipping AI today.</h2></Reveal><RevealGroup className="m-grid">{mentors.map(([name, role]) => <RevealItem key={name}>{mentorPhoto[name] ? <img className="portrait" src={mentorPhoto[name]} alt={name} loading="lazy" width={400} height={500} /> : <div className="portrait" aria-hidden="true">{name.split(" ").map((word: string) => word[0]).join("").slice(0, 2)}</div>}<h3>{name}</h3><p>{role}</p>{!mentorBadge[name] && mentorCompanyText[name] && <span className="mentor-company">{mentorCompanyText[name]}</span>}{mentorBadge[name] && <img className="mentor-badge" src={mentorBadge[name][0]} alt={mentorBadge[name][1]} loading="lazy" height={20} />}</RevealItem>)}</RevealGroup></div></section>; }
 const registrationSchema = z.object({
   first: z.string().trim().min(1, "Enter your first name.").max(40, "Use 40 characters or fewer.").regex(/^[\p{L}\p{M}][\p{L}\p{M}'’-]*$/u, "Enter a first name only, without a surname."),
   classroom: z.enum(["9", "10", "11", "12"], { errorMap: () => ({ message: "Select your class." }) }),
@@ -356,4 +356,4 @@ function FooterDialog({ label }: { label: string }) {
   const ref = useRef<HTMLDialogElement>(null);
   return <><button type="button" className="foot-link" onClick={() => ref.current?.showModal()}>{label}</button><dialog ref={ref} className="foot-dialog" aria-label={label} onClick={(e) => { if (e.target === ref.current) ref.current?.close(); }}><h3>{label}</h3><p>This page is being finalised and will be published before registrations open.</p><button type="button" className="btn btn-red" onClick={() => ref.current?.close()}>Close</button></dialog></>;
 }
-export function ClosingAndFooter() { return <section className="closing night" aria-labelledby="close-h"><div className="wrap"><Reveal><h2 id="close-h">Season 01 is filling up. Don't watch it happen.</h2></Reveal><MagneticButton href="#register">Register free</MagneticButton><footer className="foot"><span>Ignite AI Buildathon, by upGrad School of Technology</span><nav aria-label="Footer">{["Privacy policy","Terms","Code of conduct","Instagram","LinkedIn","YouTube"].map((label) => <FooterDialog key={label} label={label} />)}</nav></footer></div></section>; }
+export function ClosingAndFooter() { return <section className="closing night" aria-labelledby="close-h"><div className="wrap"><Reveal><h2 id="close-h">Season 01 is filling up. Don't watch it happen.</h2></Reveal><MagneticButton href="#register">Register free</MagneticButton><footer className="foot"><span>Ignite AI Buildathon, by upGrad School of Technology</span><nav aria-label="Footer">{["Privacy policy","Terms","Code of conduct"].map((label) => <FooterDialog key={label} label={label} />)}</nav></footer></div></section>; }

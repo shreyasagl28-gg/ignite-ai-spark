@@ -13,7 +13,8 @@ export const faqs: Array<[string, string]> = [
     ['Do I need prior coding or AI experience?','No. The learning sessions start from the basics. All you need is curiosity about AI.'],
     ['How are the learning sessions conducted?','Sessions are held live online, on weekend mornings. They won\'t clash with school, and you\'ll still have the rest of your weekend free.'],
     ['What does the screening round involve?','Two steps. First, a 40-minute test on what you learned in the sessions. Second, a small project you build from one of 50 prompts we share. Screening is done individually.'],
-    ['How is the project evaluated?','Five criteria: originality, ethical use of AI, clarity, scalability and potential for real-world impact.']
+    ['How is the project evaluated?','Five criteria: originality, ethical use of AI, clarity, scalability and potential for real-world impact.'],
+    ['Can I take part if my school hasn\'t registered?','Yes. Any student in Classes 9 to 12 can register on their own. Schools can also register to bring their students in together.']
   ];
 export const mentors: Array<[string, string]> = [
     ['Vishwa Mohan','CEO, upGrad School of Technology'],
