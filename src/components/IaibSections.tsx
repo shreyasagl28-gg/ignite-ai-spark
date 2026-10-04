@@ -212,13 +212,13 @@ export function PartnersAndPrizes() {
   return (
     <section className="partners day" id="prizes" aria-labelledby="partners-h">
       <div className="wrap">
-        <div dangerouslySetInnerHTML={{ __html: head.replace(/^<section[^>]*>|<\/section>$/g, "").replace(/<div class="wrap">/, "") }} />
+        <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: head.replace(/^<section[^>]*>|<\/section>$/g, "").replace(/<div class="wrap">/, "").trim() }} />
         <Marquee label="Partners">
           <img className="marquee-logo" src="/government-of-karnataka.png" alt="Government of Karnataka" loading="lazy" />
           <img className="marquee-logo" src="/upgrad-school-of-technology.png" alt="upGrad School of Technology" loading="lazy" />
           <img className="marquee-logo" src="/ssahe.png" alt="Sri Siddhartha Academy of Higher Education" loading="lazy" />
         </Marquee>
-        <div dangerouslySetInnerHTML={{ __html: tiers.replace(/<\/section>\s*$/, "") }} />
+        <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: tiers.replace(/<\/section>\s*$/, "").trim() }} />
       </div>
     </section>
   );
