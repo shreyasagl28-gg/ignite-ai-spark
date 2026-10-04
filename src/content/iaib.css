@@ -401,3 +401,15 @@ img.portrait{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:co
 .foot-dialog{max-width:420px;width:calc(100% - 32px);border:1px solid var(--border-dark);border-radius:12px;background:var(--surface-dark);color:var(--foreground-dark);padding:28px}
 .foot-dialog::backdrop{background:color-mix(in oklch,var(--background-dark) 80%,transparent)}
 .foot-dialog h3{font-family:var(--font-display);font-size:24px;margin:0 0 10px}.foot-dialog p{margin:0 0 20px;color:var(--foreground-dark-soft)}
+/* final round */
+.mentor-company{display:block;margin-top:10px;font-family:var(--body);font-size:13px;color:var(--grey)}
+.sched{border-bottom:1px solid #2A2A2D}
+.sched-row{position:relative;display:grid;grid-template-columns:200px minmax(0,1fr) minmax(0,1.2fr);gap:32px;padding:40px 0;border-top:1px solid #2A2A2D}
+.sched-row::before{content:"";position:absolute;left:0;top:-1px;height:1px;width:100%;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .4s ease}
+.sched-row:hover::before{transform:scaleX(1)}
+.sched-when{font-family:var(--mono);font-size:14px;color:#9A9A9F;margin:6px 0 0}
+.sched-title{font-family:var(--display);font-weight:600;font-size:40px;letter-spacing:-.03em;line-height:1.05;margin:0;transition:color .4s ease}
+.sched-row:hover .sched-title{color:var(--red)}
+.sched-body p{color:#BDBBB6;margin:0 0 16px;max-width:46ch}
+@media (max-width:900px){.sched-row{grid-template-columns:minmax(0,1fr);gap:10px;padding:28px 0}.sched-title{font-size:28px}}
+@media (prefers-reduced-motion:reduce){.sched-row::before,.sched-title{transition:none}}
