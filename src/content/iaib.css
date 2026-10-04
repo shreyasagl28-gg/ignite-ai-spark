@@ -300,3 +300,25 @@ form{display:grid;gap:14px;margin-top:40px}
 .register .reg-actions .btn{transition:background-color .22s ease,border-color .22s ease,transform .22s ease}
 .register .reg-actions .btn:active{transform:translateY(2px)}
 @media(prefers-reduced-motion:reduce){.hero-identity-line::after,.register .card-ready{animation:none}.register .reg-actions .btn{transition:none}}
+
+/* Leaderboard: attributed geographic data, kept inside this section only. */
+.board-grid{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}
+.india-board{min-width:0}
+.india-map-wrap{position:relative;height:560px;width:100%;}
+.india-map{display:block;width:100%;height:100%;overflow:visible}
+.map-state{fill:var(--surface-dark);stroke:var(--border-dark);stroke-width:.75;vector-effect:non-scaling-stroke;cursor:pointer;transition:fill .45s ease;outline:none}
+.map-state[style*="--map-heat: 0%"]{fill:var(--surface-dark)}
+.map-state:not([style*="--map-heat: 0%"]){fill:color-mix(in srgb,var(--primary) var(--map-heat),var(--map-deep-red))}
+.map-state:hover,.map-state:focus-visible{stroke:var(--foreground-dark);stroke-width:1.5}
+.map-state.map-flash{animation:map-brighten 1.2s ease-out}
+@keyframes map-brighten{25%{fill:var(--primary)}100%{fill:color-mix(in srgb,var(--primary) var(--map-heat),var(--map-deep-red))}}
+.map-hit{fill:transparent;cursor:pointer}
+.map-spark{fill:var(--spark-mid);filter:drop-shadow(0 0 4px var(--spark-mid));pointer-events:none;animation:map-rise 1.2s ease-out forwards}
+@keyframes map-rise{to{transform:translateY(-12px);opacity:0}}
+.map-tooltip{position:absolute;z-index:2;transform:translate(-50%,-115%);pointer-events:none;white-space:nowrap;padding:6px 10px;background:var(--background-dark);border:1px solid var(--border-dark);border-radius:4px;color:var(--foreground-dark);font-size:12px;box-shadow:none}
+.map-scale{display:flex;align-items:center;gap:14px;margin-top:8px;font-family:var(--mono);font-size:12px;color:var(--muted-dark)}
+.map-ramp{height:7px;flex:1;background:linear-gradient(90deg,var(--surface-dark),var(--map-deep-red),var(--primary));border:1px solid var(--border-dark)}
+.map-lit{margin-top:13px;color:var(--foreground-dark-soft);font-size:14px}
+.map-accessible-table{overflow:hidden;white-space:nowrap}
+@media(max-width:767px){.board-grid{grid-template-columns:1fr}.india-map-wrap{height:420px}.map-tooltip{max-width:95%;white-space:normal}.board-grid{gap:42px}}
+@media(prefers-reduced-motion:reduce){.map-state{transition:none}.map-state.map-flash,.map-spark{animation:none}}
