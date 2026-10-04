@@ -6,10 +6,13 @@ import { modules, faqs, mentors, schools, recentRegistrations } from "@/content/
 import { IndiaStateMap } from "@/components/IndiaStateMap";
 import { BentoStakes } from "@/components/motion/BentoStakes";
 import { Reveal } from "@/components/motion/Reveal";
+import { RevealGroup, RevealItem } from "@/components/motion/RevealGroup";
 import { StackedJourney } from "@/components/motion/StackedJourney";
 import { HorizontalScroll } from "@/components/motion/HorizontalScroll";
 import { SpotlightCard } from "@/components/motion/SpotlightCard";
 import { Marquee } from "@/components/motion/Marquee";
+import { TiltCard } from "@/components/motion/TiltCard";
+import { MagneticButton } from "@/components/motion/MagneticButton";
 import iaibLogo from "@/assets/iaib-logo-dark.png.asset.json";
 
 function approvedSection(start: string, end: string) {
@@ -164,8 +167,8 @@ export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: numb
   return <section className="hero night" aria-labelledby="hero-h"><StaticSparks studentCount={studentsRegistered} /><div className="wrap">
     <div className="hero-identity"><img src={iaibLogo.url} alt="IAIB · Ignite AI Buildathon" width="160" height="77" /><span className="hero-identity-line" aria-hidden="true" /></div>
     <p className="season"><span className="live-dot" aria-hidden="true" />Season 01 is live. Registrations open 8 Oct 2026.</p>
-    <h1 id="hero-h">India's next AI builders start here.</h1>
-    <div className="hero-row"><div className="hero-copy"><p>Ignite AI Buildathon is free for students in Classes 9 to 12. Learn AI from zero, test what you know, then build a working product and pitch it to VCs.</p><div className="hero-actions"><Action href="#register">Register free</Action><Action href="#journey" ghost>See how it works</Action></div></div>
+    <Reveal><h1 id="hero-h">India's next AI builders start here.</h1></Reveal>
+    <div className="hero-row"><div className="hero-copy"><p>Ignite AI Buildathon is free for students in Classes 9 to 12. Learn AI from zero, test what you know, then build a working product and pitch it to VCs.</p><div className="hero-actions"><MagneticButton href="#register">Register free</MagneticButton><Action href="#journey" ghost>See how it works</Action></div></div>
     <div className="counter" aria-label="Registrations, demo data"><div><b className="hot">{studentsRegistered.toLocaleString("en-IN")}</b><span>students registered</span></div><div><b>214</b><span>schools</span></div><div><b>19</b><span>states and UTs</span></div></div></div>
     <p className="counter-disclaimer">Demo data</p>
     <div className="support"><span>Supported by <strong>Government of Karnataka</strong></span><span>University partner <strong>Sri Siddhartha Academy of Higher Education</strong></span><span>Organised by <strong>upGrad School of Technology</strong></span></div>
@@ -206,7 +209,7 @@ export function Journey() {
     <section className="journey night" id="journey" aria-labelledby="journey-h">
       <div className="wrap">
         <div className="journey-head">
-          <h2 id="journey-h">Four steps. One spark to a fire.</h2>
+          <Reveal><h2 id="journey-h">Four steps. One spark to a fire.</h2></Reveal>
           <p>Every step earns you a rank. Start as a Spark. Finish as one of the Ignited 100.</p>
         </div>
         <StackedJourney steps={journeySteps} />
@@ -216,19 +219,38 @@ export function Journey() {
 }
 export function PartnersAndPrizes() {
   const html = approvedSection("PARTNERS & PRIZES", "CURRICULUM");
-  const splitAt = html.indexOf('<div class="tier');
-  const head = splitAt > -1 ? html.slice(0, splitAt) : html;
-  const tiers = splitAt > -1 ? html.slice(splitAt) : "";
+  const tierStart = html.indexOf('<div class="tier');
+  const prizeStart = html.indexOf('<div class="prize-row">');
+  const clean = (part: string) => part.replace(/^<section[^>]*>|<\/section>$/g, "").replace(/<div class="wrap">/, "").trim();
+  const headHtml = clean(tierStart > -1 ? html.slice(0, tierStart) : html);
+  const tiersHtml = tierStart > -1 ? clean(html.slice(tierStart, prizeStart > -1 ? prizeStart : undefined)) : "";
+  const hEnd = headHtml.indexOf("</h2>");
+  const h2Html = hEnd > -1 ? headHtml.slice(0, hEnd + 5) : "";
+  const headRest = hEnd > -1 ? headHtml.slice(hEnd + 5).trim() : "";
+  const prizeParts = prizeStart > -1
+    ? html.slice(prizeStart).split("</article>")
+      .map((part) => part.trim())
+      .filter((part) => part.startsWith("<article") || part.startsWith('<div class="prize-row"'))
+      .map((part) => part.replace(/^<div class="prize-row">/, "").trim())
+    : [];
   return (
     <section className="partners day" id="prizes" aria-labelledby="partners-h">
       <div className="wrap">
-        <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: head.replace(/^<section[^>]*>|<\/section>$/g, "").replace(/<div class="wrap">/, "").trim() }} />
+        <Reveal><div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: h2Html }} /></Reveal>
+        {headRest && <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: headRest }} />}
         <Marquee label="Partners">
           <img className="marquee-logo" src="/government-of-karnataka.png" alt="Government of Karnataka" loading="lazy" />
           <img className="marquee-logo" src="/upgrad-school-of-technology.png" alt="upGrad School of Technology" loading="lazy" />
           <img className="marquee-logo" src="/ssahe.png" alt="Sri Siddhartha Academy of Higher Education" loading="lazy" />
         </Marquee>
-        <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: tiers.replace(/<\/section>\s*$/, "").trim() }} />
+        <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: tiersHtml }} />
+        {prizeParts.length > 0 && (
+          <RevealGroup className="prize-row">
+            {prizeParts.map((part, i) => (
+              <RevealItem key={i}><div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `${part}</article>` }} /></RevealItem>
+            ))}
+          </RevealGroup>
+        )}
       </div>
     </section>
   );
@@ -240,28 +262,32 @@ function Accordion({ title, detail, children, initial = false, id }: { title: st
 export function Curriculum() {
   const titleBlock = (
     <div className="cur-head">
-      <h2 id="cur-h">Starts from zero. Ends with you shipping an agent.</h2>
+      <h2 id="cur-h"><Reveal>Starts from zero. Ends with you shipping an agent.</Reveal></h2>
       <p className="lead">Six modules, 30 live sessions on weekend mornings. No prior coding needed.</p>
     </div>
   );
   return (
     <section className="curriculum day" id="curriculum" aria-labelledby="cur-h">
       <HorizontalScroll title={titleBlock}>
-        {modules.map((m) => (
-          <SpotlightCard key={m[0]} tone="light" className="mod-card">
-            <span className="mod-num">{m[1]}</span>
-            <h3>{m[0]}</h3>
-            <p className="mod-desc">{m[2]}</p>
-            <ol>{m[3].map((item: string) => <li key={item}>{item}</li>)}</ol>
-          </SpotlightCard>
-        ))}
+        <RevealGroup bare>
+          {modules.map((m) => (
+            <RevealItem key={m[0]}>
+              <SpotlightCard tone="light" className="mod-card">
+                <span className="mod-num">{m[1]}</span>
+                <h3>{m[0]}</h3>
+                <p className="mod-desc">{m[2]}</p>
+                <ol>{m[3].map((item: string) => <li key={item}>{item}</li>)}</ol>
+              </SpotlightCard>
+            </RevealItem>
+          ))}
+        </RevealGroup>
       </HorizontalScroll>
     </section>
   );
 }
-export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><h2 id="board-h">Which state is lighting up first?</h2><span className="demo-tag">Demo data, updates live in production</span></div><div className="board-grid"><IndiaStateMap /><div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol></div></div></div></section>; }
+export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><Reveal><h2 id="board-h">Which state is lighting up first?</h2></Reveal><span className="demo-tag">Demo data, updates live in production</span></div><div className="board-grid"><IndiaStateMap /><div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol></div></div></div></section>; }
 const mentorPhoto: Record<string, string> = { "Vishwa Mohan": "/vishwa-mohan.webp", "Rishi Saraf": "/rishi-saraf.webp", "Gaurav Kaushik": "/gaurav-kaushik.png", "Gladden Rumao": "/gladden-rumao.webp", "Jyoti Nigam": "/jyoti-nigam.webp", "Rishabh Bafna": "/rishabh-bafna.png", "Mithun S": "/mithun-s.webp", "Piyush Jain": "/piyush-jain.png" };
-export function Mentors() { return <section className="mentors day" id="mentors" aria-labelledby="m-h"><div className="wrap"><h2 id="m-h">Learn from people shipping AI today.</h2><div className="m-grid">{mentors.map(([name, role]) => <div key={name}>{mentorPhoto[name] ? <img className="portrait" src={mentorPhoto[name]} alt={name} loading="lazy" width={400} height={500} /> : <div className="portrait" aria-hidden="true">{name.split(" ").map((word: string) => word[0]).join("").slice(0, 2)}</div>}<h3>{name}</h3><p>{role}</p></div>)}</div></div></section>; }
+export function Mentors() { return <section className="mentors day" id="mentors" aria-labelledby="m-h"><div className="wrap"><Reveal><h2 id="m-h">Learn from people shipping AI today.</h2></Reveal><RevealGroup className="m-grid">{mentors.map(([name, role]) => <RevealItem key={name}>{mentorPhoto[name] ? <img className="portrait" src={mentorPhoto[name]} alt={name} loading="lazy" width={400} height={500} /> : <div className="portrait" aria-hidden="true">{name.split(" ").map((word: string) => word[0]).join("").slice(0, 2)}</div>}<h3>{name}</h3><p>{role}</p></RevealItem>)}</RevealGroup></div></section>; }
 const registrationSchema = z.object({
   first: z.string().trim().min(1, "Enter your first name.").max(40, "Use 40 characters or fewer.").regex(/^[\p{L}\p{M}][\p{L}\p{M}'’-]*$/u, "Enter a first name only, without a surname."),
   classroom: z.enum(["9", "10", "11", "12"], { errorMap: () => ({ message: "Select your class." }) }),
@@ -311,18 +337,18 @@ export function RegistrationAndSparkCard() {
       setMessage("The image couldn't be saved. Please try again.");
     } finally { setDownloading(false); }
   };
-  return <section className="register night" id="register" aria-labelledby="reg-h"><div className="wrap reg-grid"><div><h2 id="reg-h">Claim your spark.</h2><p className="lead">Registration takes under a minute and it's free. You'll get your Spark card to share.</p><form onSubmit={submit} noValidate>
+  return <section className="register night" id="register" aria-labelledby="reg-h"><div className="wrap reg-grid"><div><Reveal><h2 id="reg-h">Claim your spark.</h2></Reveal><p className="lead">Registration takes under a minute and it's free. You'll get your Spark card to share.</p><form onSubmit={submit} noValidate>
     <div className="two"><div className="field"><label htmlFor="f-name">First name</label><input id="f-name" autoComplete="given-name" maxLength={40} value={first} aria-invalid={!!errors.first} aria-describedby={errors.first ? "f-name-error" : undefined} onChange={e => { setFirst(e.target.value.split(/\s/)[0] ?? ""); changed(); }} />{errors.first && <small id="f-name-error" role="alert">{errors.first}</small>}</div><div className="field"><label htmlFor="f-class">Class</label><select id="f-class" value={classroom} aria-invalid={!!errors.classroom} aria-describedby={errors.classroom ? "f-class-error" : undefined} onChange={e => { setClassroom(e.target.value); changed(); }}><option value="">Select</option><option>9</option><option>10</option><option>11</option><option>12</option></select>{errors.classroom && <small id="f-class-error" role="alert">{errors.classroom}</small>}</div></div>
     <div className="field"><label htmlFor="f-school">School</label><input id="f-school" maxLength={100} value={school} aria-invalid={!!errors.school} aria-describedby={errors.school ? "f-school-error" : undefined} onChange={e => { setSchool(e.target.value); changed(); }} />{errors.school && <small id="f-school-error" role="alert">{errors.school}</small>}</div>
     <div className="two"><div className="field"><label htmlFor="f-city">City</label><input id="f-city" maxLength={80} value={city} aria-invalid={!!errors.city} aria-describedby={errors.city ? "f-city-error" : undefined} onChange={e => { setCity(e.target.value); changed(); }} />{errors.city && <small id="f-city-error" role="alert">{errors.city}</small>}</div><div className="field"><label htmlFor="f-email">Parent's email</label><input id="f-email" type="email" autoComplete="email" maxLength={255} value={email} aria-invalid={!!errors.email} aria-describedby={errors.email ? "f-email-error" : undefined} onChange={e => { setEmail(e.target.value); changed(); }} />{errors.email && <small id="f-email-error" role="alert">{errors.email}</small>}</div></div>
     <label className="consent"><input type="checkbox" checked={consent} aria-invalid={!!errors.consent} aria-describedby={errors.consent ? "f-consent-error" : undefined} onChange={e => { setConsent(e.target.checked); changed(); }} />My parent or guardian has read the terms and agrees to my participation. We'll email them to confirm.</label>{errors.consent && <small className="consent-error" id="f-consent-error" role="alert">{errors.consent}</small>}
     <div className="reg-actions"><Button variant="iaib" type="submit">Register free</Button>{confirmed && <Button variant="iaibOutline" type="button" onClick={download} disabled={downloading} aria-label="Download demo Spark card as PNG">{downloading ? "Preparing PNG…" : "Download Spark card ↓"}</Button>}</div><p className="form-msg" role="status">{message || "Preview only — no registration is submitted."}</p>
   </form></div>
-   <div className={`card-stage${confirmed ? " card-ready" : ""}`}><div ref={cardRef} className="spark-card" aria-label="Your Spark card preview, demo data"><div className="sc-top"><span>Ignite AI Buildathon</span><span>Season 01</span></div><div className="sc-ticket"><div className="sc-rank">Spark</div><div className="sc-num">{sparkNumber}</div><span className="sc-demo">DEMO · NOT AN ISSUED REGISTRATION</span></div><div className="sc-holder"><div className="sc-name">{first.trim() || "Your name"}</div><div className="sc-school">{school.trim() || "Your school"}</div><div className="sc-city">{city.trim() || "Your city"}</div></div><div className="sc-foot"><span>{classroom ? `Class ${classroom}` : "Class"}</span><span>Demo preview</span></div></div></div></div></section>;
+   <div className={`card-stage${confirmed ? " card-ready" : ""}`}><TiltCard><div ref={cardRef} className="spark-card" aria-label="Your Spark card preview, demo data"><div className="sc-top"><span>Ignite AI Buildathon</span><span>Season 01</span></div><div className="sc-ticket"><div className="sc-rank">Spark</div><div className="sc-num">{sparkNumber}</div><span className="sc-demo">DEMO · NOT AN ISSUED REGISTRATION</span></div><div className="sc-holder"><div className="sc-name">{first.trim() || "Your name"}</div><div className="sc-school">{school.trim() || "Your school"}</div><div className="sc-city">{city.trim() || "Your city"}</div></div><div className="sc-foot"><span>{classroom ? `Class ${classroom}` : "Class"}</span><span>Demo preview</span></div></div></TiltCard></div></div></section>;
 }
-export function SchoolsAndParents() { return <section className="audiences day" aria-label="For schools and parents"><div className="wrap aud-grid">
-  <article className="aud dark"><h3>Bring it to your school.</h3><p>Your students are ready to build the future. Give them free AI learning, real projects and a national stage.</p><ul><li>Free AI learning for every student</li><li>A national competition</li><li>₹25L in prizes and ₹2 Cr in scholarships</li></ul><Action href="#register">Register your school</Action></article>
-  <article className="aud"><h3>For parents.</h3><p>Your child learns online on weekend mornings, so it never clashes with school. Finalists travel to the finale with full supervision.</p><ul><li>Free to join, no hidden costs</li><li>Parental consent before any participation</li><li>Supervised travel and stay for finalists</li></ul><Action href="#faqs" ghost>Read parent FAQs</Action></article>
-  </div></section>; }
-export function FAQ() { return <section className="faq day" id="faqs" aria-labelledby="faq-h"><div className="wrap faq-grid"><h2 id="faq-h">Questions, answered.</h2><div id="faqlist">{faqs.map(([question, answer], i) => <Accordion key={question} id={`fb${i}`} title={question}><p className="faq-answer">{answer}</p></Accordion>)}</div></div></section>; }
-export function ClosingAndFooter() { return <section className="closing night" aria-labelledby="close-h"><div className="wrap"><h2 id="close-h">Season 01 is filling up. Don't watch it happen.</h2><Action href="#register">Register free</Action><footer className="foot"><span>Ignite AI Buildathon, by upGrad School of Technology</span><nav aria-label="Footer"><a href="#">Privacy policy</a><a href="#">Terms</a><a href="#">Code of conduct</a><a href="#">Instagram</a><a href="#">LinkedIn</a><a href="#">YouTube</a></nav></footer></div></section>; }
+export function SchoolsAndParents() { return <section className="audiences day" aria-label="For schools and parents"><RevealGroup className="wrap aud-grid">
+  <RevealItem><article className="aud dark"><h3>Bring it to your school.</h3><p>Your students are ready to build the future. Give them free AI learning, real projects and a national stage.</p><ul><li>Free AI learning for every student</li><li>A national competition</li><li>₹25L in prizes and ₹2 Cr in scholarships</li></ul><Action href="#register">Register your school</Action></article></RevealItem>
+  <RevealItem><article className="aud"><h3>For parents.</h3><p>Your child learns online on weekend mornings, so it never clashes with school. Finalists travel to the finale with full supervision.</p><ul><li>Free to join, no hidden costs</li><li>Parental consent before any participation</li><li>Supervised travel and stay for finalists</li></ul><Action href="#faqs" ghost>Read parent FAQs</Action></article></RevealItem>
+  </RevealGroup></section>; }
+export function FAQ() { return <section className="faq day" id="faqs" aria-labelledby="faq-h"><div className="wrap faq-grid"><Reveal><h2 id="faq-h">Questions, answered.</h2></Reveal><div id="faqlist">{faqs.map(([question, answer], i) => <Accordion key={question} id={`fb${i}`} title={question}><p className="faq-answer">{answer}</p></Accordion>)}</div></div></section>; }
+export function ClosingAndFooter() { return <section className="closing night" aria-labelledby="close-h"><div className="wrap"><Reveal><h2 id="close-h">Season 01 is filling up. Don't watch it happen.</h2></Reveal><MagneticButton href="#register">Register free</MagneticButton><footer className="foot"><span>Ignite AI Buildathon, by upGrad School of Technology</span><nav aria-label="Footer"><a href="#">Privacy policy</a><a href="#">Terms</a><a href="#">Code of conduct</a><a href="#">Instagram</a><a href="#">LinkedIn</a><a href="#">YouTube</a></nav></footer></div></section>; }
