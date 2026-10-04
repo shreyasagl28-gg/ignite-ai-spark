@@ -163,6 +163,14 @@ h2{font-size:clamp(40px,6.2vw,88px)}
 .mod.open .plus{transform:rotate(45deg);background:var(--red);border-color:var(--red);color:var(--foreground-dark)}
 @media (max-width:900px){.cur-grid{grid-template-columns:1fr;gap:40px}.cur-grid h2{position:static}}
 
+/* MARQUEE */
+.marquee{overflow:hidden;margin:0 0 56px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:22px 0}
+.marquee-track{display:flex;width:max-content;animation:marquee 28s linear infinite}
+.marquee-set{display:flex;align-items:center;gap:72px;padding-right:72px}
+.marquee-logo{height:32px;width:auto;object-fit:contain;filter:grayscale(1);opacity:.75}
+@keyframes marquee{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.marquee-track{animation:none;flex-wrap:wrap;width:auto}}
+
 /* LEADERBOARD */
 .board{padding:160px 0}
 .board-head{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;margin-bottom:64px}
