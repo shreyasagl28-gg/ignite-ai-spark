@@ -6,5 +6,5 @@ Deferred, not part of this static phase:
 - [x] Add Hero spark animation with counter-change flare and reduced-motion static frame.
 - [x] Add Journey line motion and desktop pinning, with unpinned mobile and reduced-motion fallback.
 - [x] Add a live Register Spark card preview, validated demo submission and 1080×1350 PNG download.
-- [ ] Apply the approved visual refinement: supplied IAIB logo in navigation and hero, original hero spark assembly, calm Journey timing, and restrained Spark card motion.
+- [x] Apply the approved visual refinement: supplied IAIB logo in navigation and hero, original hero spark assembly, calm Journey timing, and restrained Spark card motion.
 - Connect registration and verified live figures after parent-consent and programme details are confirmed.

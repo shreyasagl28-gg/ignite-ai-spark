@@ -13,3 +13,4 @@
 - Treat registration and statistics in this initial page as demonstrations until a verified parent-consent and registration service is configured, because minors' data must not be silently collected or represented as confirmed.
 - Keep site-wide Lenis and Journey ScrollTrigger as client-only, motion-preference-aware effects; this preserves SSR and lets mobile and reduced-motion users read the unpinned timeline.
 - Generate and export Spark card previews entirely in the browser without persisting student or parent details, because registration has no verified parental-consent service yet.
+- Serve the supplied IAIB logo through a static asset pointer and derive its favicon locally, because brand imagery must stay consistent without embedding screenshots or hotlinking references.
