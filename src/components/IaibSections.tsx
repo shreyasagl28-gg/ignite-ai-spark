@@ -246,7 +246,7 @@ export function RegistrationAndSparkCard() {
   // A local, deterministic preview number: never a real registration or allocated identifier.
   const seed = `${first.trim().toLocaleLowerCase()}|${school.trim().toLocaleLowerCase()}|${city.trim().toLocaleLowerCase()}|${classroom}`;
   const number = Array.from(seed).reduce((hash, char) => (Math.imul(hash, 31) + char.charCodeAt(0)) >>> 0, 0);
-  const sparkNumber = `#${(12481 + number % 80000).toLocaleString("en-IN")}`;
+  const sparkNumber = `#${(seed === "|||" ? 12481 : 12481 + number % 80000).toLocaleString("en-IN")}`;
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const result = registrationSchema.safeParse({ first, school, city, classroom, email, consent });

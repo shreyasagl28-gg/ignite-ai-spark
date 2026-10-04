@@ -279,7 +279,7 @@ form{display:grid;gap:14px;margin-top:40px}
 .register .sc-num{font-size:clamp(20px,3vw,28px);margin-top:14px}
 .register .sc-demo{display:block;font-family:var(--mono);font-size:clamp(9px,1vw,11px);color:var(--grey-ink);margin-top:8px}
 .register .sc-holder{position:relative;z-index:1;padding:0 0 18px;border-bottom:1px dashed var(--border-dark)}
-.register .sc-name{font-size:clamp(27px,3.4vw,38px);line-height:1.1}
+.register .sc-name{font-size:clamp(27px,3.4vw,38px);line-height:1.1;overflow-wrap:anywhere}
 .register .sc-school,.register .sc-city{font-size:clamp(13px,1.5vw,16px);line-height:1.35;overflow-wrap:anywhere}
 .register .sc-city{color:var(--grey-ink);margin-top:4px}
 .register .sc-foot{border:0;padding:0}
