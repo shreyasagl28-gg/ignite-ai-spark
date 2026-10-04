@@ -10,6 +10,7 @@ import { StackedJourney } from "@/components/motion/StackedJourney";
 import { HorizontalScroll } from "@/components/motion/HorizontalScroll";
 import { SpotlightCard } from "@/components/motion/SpotlightCard";
 import { Marquee } from "@/components/motion/Marquee";
+import { TiltCard } from "@/components/motion/TiltCard";
 import iaibLogo from "@/assets/iaib-logo-dark.png.asset.json";
 
 function approvedSection(start: string, end: string) {
