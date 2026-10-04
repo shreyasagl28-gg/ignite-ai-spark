@@ -10,7 +10,7 @@ const LERP = 0.16;
  * reduced motion; on hover-capable desktops the button leans gently toward
  * the cursor and settles back on leave. Transform only — layout untouched.
  */
-export function MagneticButton({ href, children }: { href: string; children: ReactNode }) {
+export function MagneticButton({ href, children, className }: { href: string; children: ReactNode; className?: string }) {
   const ref = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export function MagneticButton({ href, children }: { href: string; children: Rea
   }, []);
 
   return (
-    <Button asChild variant="iaib">
+    <Button asChild variant="iaib" className={className}>
       <a ref={ref} href={href} style={{ willChange: "transform" }}>
         {children}
       </a>

@@ -422,3 +422,27 @@ img.portrait{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:co
 .sparkbots canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
 .sparkbot-tip{position:absolute;transform:translate(-50%,calc(-100% - 6px));background:#0B0B0C;color:#FAFAF7;border:1px solid #2A2A2D;font:500 12px/1 "JetBrains Mono",monospace;padding:7px 9px;border-radius:4px;white-space:nowrap;pointer-events:none}
 @media (max-width:700px){.sparkbots{height:72px}.hero{padding-bottom:calc(28px + 84px)}}
+
+/* Register CTA emphasis */
+.hero-actions{align-items:center}
+.btn.btn-hero{height:64px;padding:0 32px;font-family:var(--display,"Poppins"),sans-serif;font-weight:600;font-size:20px;border-radius:16px;background:#E50913}
+.btn.btn-hero:hover{background:#B0070F}
+.close-countdown{font-family:"JetBrains Mono",monospace;font-size:14px;color:#9A9A9F;white-space:nowrap}
+.nav-pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--foreground-dark);margin-right:2px;animation:nav-pulse 1.8s ease-in-out infinite}
+@keyframes nav-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+@media (max-width:767px){.nav-pulse{display:none}}
+.sticky-reg{display:none}
+@media (max-width:767px){
+  .sticky-reg{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;height:calc(64px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:#0B0B0C;border-top:1px solid #2A2A2D;transform:translateY(100%);transition:transform .3s ease}
+  .sticky-reg.is-on{transform:none}
+  .sticky-reg-count{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 20px;min-width:0}
+  .sticky-reg-count b{font-family:"JetBrains Mono",monospace;font-weight:500;font-size:18px;color:#E50913}
+  .sticky-reg-count span{font-size:12px;color:#9A9A9F}
+  .sticky-reg-btn{display:flex;align-items:center;padding:0 24px;height:64px;background:#E50913;color:#FAFAF7;font-family:"Poppins",sans-serif;font-weight:600;font-size:16px;text-decoration:none}
+  .sticky-reg-btn:active{background:#B0070F}
+  .btn.btn-hero{height:56px;padding:0 24px;font-size:18px;border-radius:14px}
+}
+.spark-burst{position:fixed;width:0;height:0;pointer-events:none;z-index:80}
+.spark-burst i{position:absolute;left:0;top:0;width:5px;height:5px}
+@media (prefers-reduced-motion:reduce){.nav-pulse{animation:none}.sticky-reg{transition:none}}
+@media (max-width:767px){body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}}
