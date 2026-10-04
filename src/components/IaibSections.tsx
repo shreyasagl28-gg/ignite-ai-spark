@@ -19,47 +19,137 @@ export function SiteNav() {
     <div className="nav-cta"><Action href="#register">Register free</Action></div>
   </div></header>;
 }
-function StaticSparks() {
+function StaticSparks({ studentCount }: { studentCount: number }) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const flareRef = useRef<(() => void) | null>(null);
+  const previousCount = useRef(studentCount);
+  useEffect(() => {
+    if (studentCount > previousCount.current) flareRef.current?.();
+    previousCount.current = studentCount;
+  }, [studentCount]);
   useEffect(() => {
     const canvas = ref.current;
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
-    const draw = () => {
-      const width = canvas.clientWidth;
-      const height = canvas.clientHeight;
-      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const colors = ["229,9,19", "255,77,46", "255,138,61"];
+    const noise = (seed: number) => {
+      const value = Math.sin(seed * 127.1 + 37.7) * 43758.5453;
+      return value - Math.floor(value);
+    };
+    type Spark = { x: number; y: number; speed: number; drift: number; radius: number; tone: number; opacity: number };
+    let width = 0;
+    let height = 0;
+    let sparks: Spark[] = [];
+    let frame = 0;
+    let lastFrame = 0;
+    let flareStarted = -Infinity;
+    let inView = true;
+
+    const makeSpark = (i: number): Spark => ({
+      x: .12 + noise(i + 1) * .76,
+      y: noise(i + 402),
+      speed: .055 + noise(i + 719) * .12,
+      drift: (noise(i + 815) - .5) * .018,
+      radius: .65 + noise(i + 901) * 1.45,
+      tone: i % colors.length,
+      opacity: .2 + noise(i + 1200) * .55,
+    });
+    const draw = (now: number) => {
+      context.clearRect(0, 0, width, height);
+      const flare = Math.max(0, 1 - (now - flareStarted) / 850);
+      const glow = context.createRadialGradient(width * .5, height * 1.03, 0, width * .5, height * 1.03, height * .85);
+      glow.addColorStop(0, `rgba(229,9,19,${.16 + flare * .24})`);
+      glow.addColorStop(1, "rgba(229,9,19,0)");
+      context.fillStyle = glow;
+      context.fillRect(0, 0, width, height);
+      context.globalCompositeOperation = "lighter";
+      for (const spark of sparks) {
+        const x = spark.x * width;
+        const y = spark.y * height;
+        const fade = Math.min(1, (1 - spark.y) * 3) * Math.min(1, spark.y * 5);
+        const intensity = 1 + flare * (1.8 + Math.max(0, 1 - Math.abs(spark.x - .5) * 2));
+        const alpha = Math.min(1, spark.opacity * fade * intensity);
+        context.fillStyle = `rgba(${colors[spark.tone]},${alpha * .2})`;
+        context.beginPath();
+        context.arc(x, y, spark.radius * (3 + flare * 2), 0, Math.PI * 2);
+        context.fill();
+        context.fillStyle = `rgba(${colors[spark.tone]},${alpha})`;
+        context.beginPath();
+        context.arc(x, y, spark.radius * (1 + flare * .6), 0, Math.PI * 2);
+        context.fill();
+      }
+      context.globalCompositeOperation = "source-over";
+    };
+    const tick = (now: number) => {
+      if (now - lastFrame >= 32) {
+        const elapsed = lastFrame ? Math.min((now - lastFrame) / 1000, .06) : 0;
+        lastFrame = now;
+        for (const spark of sparks) {
+          spark.y -= spark.speed * elapsed;
+          spark.x += spark.drift * elapsed;
+          if (spark.y < -.03 || spark.x < .04 || spark.x > .96) {
+            spark.y = 1.02;
+            spark.x = .12 + noise(now + spark.speed * 1000) * .76;
+          }
+        }
+        draw(now);
+      }
+      frame = window.requestAnimationFrame(tick);
+    };
+    const shouldAnimate = () => !reducedMotion.matches && inView && !document.hidden;
+    const sync = () => {
+      window.cancelAnimationFrame(frame);
+      frame = 0;
+      lastFrame = 0;
+      if (shouldAnimate()) frame = window.requestAnimationFrame(tick);
+      else draw(performance.now());
+    };
+    const resize = () => {
+      width = canvas.clientWidth;
+      height = canvas.clientHeight;
+      if (!width || !height) return;
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
       canvas.width = Math.round(width * ratio);
       canvas.height = Math.round(height * ratio);
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      context.clearRect(0, 0, width, height);
-      const glow = context.createRadialGradient(width * .5, height * 1.05, 0, width * .5, height * 1.05, height * .9);
-      glow.addColorStop(0, "rgba(229,9,19,.22)"); glow.addColorStop(1, "rgba(229,9,19,0)");
-      context.fillStyle = glow; context.fillRect(0, 0, width, height);
-      const colors = ["229,9,19", "255,77,46", "255,138,61"];
-      const count = Math.min(220, Math.floor(width / 5));
-      for (let i = 0; i < count; i++) {
-        const noise = (seed: number) => { const x = Math.sin(seed * 127.1 + 37.7) * 43758.5453; return x - Math.floor(x); };
-        const x = width * (.14 + noise(i + 1) * .72);
-        const y = height * (.08 + noise(i + 402) * .9);
-        const r = .55 + noise(i + 901) * 1.8;
-        const opacity = (.1 + noise(i + 1200) * .72) * (y / height);
-        context.beginPath(); context.arc(x, y, r, 0, Math.PI * 2);
-        context.fillStyle = `rgba(${colors[i % colors.length]},${opacity})`; context.fill();
-      }
+      const count = width <= 700 ? Math.min(90, Math.floor(width / 4)) : Math.min(260, Math.floor(width / 5));
+      sparks = Array.from({ length: count }, (_, i) => makeSpark(i));
+      draw(performance.now());
     };
-    draw();
-    window.addEventListener("resize", draw, { passive: true });
-    return () => window.removeEventListener("resize", draw);
+    flareRef.current = () => {
+      if (reducedMotion.matches || !inView || document.hidden) return;
+      flareStarted = performance.now();
+      draw(flareStarted);
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = entry?.isIntersecting ?? false;
+      sync();
+    });
+    const resizer = new ResizeObserver(resize);
+    resize();
+    observer.observe(canvas);
+    resizer.observe(canvas);
+    reducedMotion.addEventListener("change", sync);
+    document.addEventListener("visibilitychange", sync);
+    sync();
+    return () => {
+      flareRef.current = null;
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+      resizer.disconnect();
+      reducedMotion.removeEventListener("change", sync);
+      document.removeEventListener("visibilitychange", sync);
+    };
   }, []);
   return <canvas id="sparks" ref={ref} aria-hidden="true" />;
 }
-export function Hero() {
-  return <section className="hero night" aria-labelledby="hero-h"><StaticSparks /><div className="wrap">
+export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: number }) {
+  return <section className="hero night" aria-labelledby="hero-h"><StaticSparks studentCount={studentsRegistered} /><div className="wrap">
     <p className="season"><span className="live-dot" aria-hidden="true" />Season 01 is live. Registrations open 8 Oct 2026.</p>
     <h1 id="hero-h">India's next AI builders start here.</h1>
     <div className="hero-row"><div className="hero-copy"><p>Ignite AI Buildathon is free for students in Classes 9 to 12. Learn AI from zero, test what you know, then build a working product and pitch it to VCs.</p><div className="hero-actions"><Action href="#register">Register free</Action><Action href="#journey" ghost>See how it works</Action></div></div>
-    <div className="counter" aria-label="Registrations, demo data"><div><b className="hot">12,480</b><span>students registered</span></div><div><b>214</b><span>schools</span></div><div><b>19</b><span>states and UTs</span></div></div></div>
+    <div className="counter" aria-label="Registrations, demo data"><div><b className="hot">{studentsRegistered.toLocaleString("en-IN")}</b><span>students registered</span></div><div><b>214</b><span>schools</span></div><div><b>19</b><span>states and UTs</span></div></div></div>
     <p className="counter-disclaimer">Demo data</p>
     <div className="support"><span>Supported by <strong>Government of Karnataka</strong></span><span>University partner <strong>Sri Siddhartha Academy of Higher Education</strong></span><span>Organised by <strong>upGrad School of Technology</strong></span></div>
   </div></section>;
