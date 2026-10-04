@@ -12,6 +12,7 @@ import { SpotlightCard } from "@/components/motion/SpotlightCard";
 import { Marquee } from "@/components/motion/Marquee";
 import { TiltCard } from "@/components/motion/TiltCard";
 import { MagneticButton } from "@/components/motion/MagneticButton";
+import { Sparkbots } from "@/components/motion/Sparkbots";
 import iaibLogo from "@/assets/iaib-logo-dark.png.asset.json";
 
 function approvedSection(start: string, end: string) {
@@ -163,7 +164,7 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
   return <canvas id="sparks" ref={ref} aria-hidden="true" />;
 }
 export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: number }) {
-  return <section className="hero night" aria-labelledby="hero-h"><StaticSparks studentCount={studentsRegistered} /><div className="wrap">
+  return <section className="hero night" aria-labelledby="hero-h"><StaticSparks studentCount={studentsRegistered} /><Sparkbots studentCount={studentsRegistered} /><div className="wrap">
     <div className="hero-identity"><img src={iaibLogo.url} alt="IAIB · Ignite AI Buildathon" width="160" height="77" /><span className="hero-identity-line" aria-hidden="true" /></div>
     <p className="season"><span className="live-dot" aria-hidden="true" />Season 01 is live. Registrations open 8 Oct 2026.</p>
     <Reveal><h1 id="hero-h">India's next AI builders start here.</h1></Reveal>
