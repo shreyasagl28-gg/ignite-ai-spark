@@ -1,0 +1,23 @@
+# IAIB motion-led visual refinement
+
+## Direction
+Keep the approved IAIB words, section order, upGrad red/ink/paper palette, Poppins–Inter–JetBrains type system, and demo-only registration. Make the experience feel more like a premium builder launch without turning it into a different event site. Use one visual grammar: a spark ignites, travels through four milestones, and resolves into a collectible Spark card. The hero remains the only ambient animated scene; all other movement is brief and tied to a deliberate action or scroll position.
+
+## Research translated into IAIB
+- [LINE HACK 2025](https://romanbordo.com/work/line-hack-2025/) uses one controlled motion identity across screens, badges and event material. Translate that consistency into IAIB's red spark, fine line, and ticket motifs rather than borrow its artwork or colors.
+- [Vercel Ship's design case study](https://vercel.com/blog/designing-and-building-the-vercel-ship-conference-platform) describes evolving magnetic particles into a restrained visual system, then pulling back when an effect became uncomfortable. Refine the existing canvas instead of adding heavy 3D, clustered effects or a second visual spectacle.
+- [IndiaAI's YUVAi](https://impact.indiaai.gov.in/events/yuvai) targets young Indian AI builders; [Gen AI Exchange Hackathon](https://hack2skill.com/event/genaiexchangehackathon) foregrounds real-world building, progress and recognition. Keep IAIB's school-student eligibility, four-step path and shareable card unusually easy to understand on a phone. Do not borrow claims, prizes or adult eligibility from those events.
+- [OpenAI Build Week](https://developers.openai.com/blog/build-week-winners) reported nearly 47,000 builders and over 8,000 projects, with design/UX among judging criteria. Those numbers reflect that event, **not** proof that any motion treatment goes viral. We can design for shareability, not promise virality or invent IAIB engagement statistics.
+
+## What to change
+1. **Hero:** Preserve the approved headline, hierarchy and existing canvas. Tune spark rhythm, scale and additive glow so the field is visible yet subtle behind readable copy; keep the existing counter-triggered flare, particle caps and static reduced-motion frame. No WebGL or autoplay video.
+2. **Journey:** Keep the existing four-step copy and GSAP pin/draw behavior; refine timing and node/rank transitions into one calm spark-to-fire progression. Keep mobile stacked and unpinned, with a fully readable static reduced-motion state.
+3. **Spark card:** Complete the deferred motion phase with a single restrained reveal when a valid demo preview is ready, plus tactile focus/press feedback for its download action. The card should remain a crisp 4:5 collectible ticket and the exported 1080×1350 PNG should be motion-free and match the on-screen design. No photo, surname, persistence, or implied official registration.
+4. **Supporting UI:** Improve spacing, contrast, button states and scanability where needed, but avoid new section-wide reveal animations, moving leaderboard figures, fabricated countdowns, background blobs or decorative 3D. Keep red as a sparing accent and partner marks monochrome.
+5. **Accessibility and performance:** Lazy/client-only motion, pause work outside view or when hidden, limit device-pixel cost on mid-range Android, respect reduced motion and keyboard access, and keep forms usable while animations are off.
+
+## Validation
+Compare the result against the existing IAIB page and attached references at 375px, 768px and 1440px. Check that the hero text stays legible, the desktop Journey pins without overlap, mobile does not pin, reduced motion is static, the form/card still validates consent and exports a 1080×1350 PNG, and all figures remain marked demo. Do not connect live data or claim measurable virality without evidence.
+
+## Technical notes
+Keep the existing TanStack Start page and approved HTML fragment. Implement presentation changes in the IAIB section component and dedicated stylesheet, reusing CSS tokens and the installed GSAP/Lenis motion setup. Preserve the client-only browser boundary and do not alter the registration/data contract.
