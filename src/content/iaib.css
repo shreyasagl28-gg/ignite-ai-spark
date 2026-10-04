@@ -288,7 +288,7 @@ form{display:grid;gap:14px;margin-top:40px}
 @media(min-width:901px) and (prefers-reduced-motion:no-preference){
   .journey .step{position:sticky;z-index:calc(1 + var(--sj-i,0));top:calc(96px + var(--sj-i,0)*14px);margin-bottom:min(38vh,380px);background:var(--ink-2);border:1px solid var(--ink-line);border-radius:16px;padding:30px 32px 28px;transition:opacity .5s ease,transform .5s ease}
   .journey .step:last-child{margin-bottom:0}
-  .journey .step.past{opacity:.5;transform:scale(.985)}
+  .journey .step.past{transform:scale(.985)}
   .journey .step .node{left:-44px;top:38px}
   .journey .step .node,.journey .step .rank{transition:background-color .65s ease,border-color .65s ease,color .65s ease}
   .journey .step p{max-width:none}
