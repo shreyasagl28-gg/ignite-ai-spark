@@ -7,6 +7,8 @@ import { IndiaStateMap } from "@/components/IndiaStateMap";
 import { BentoStakes } from "@/components/motion/BentoStakes";
 import { Reveal } from "@/components/motion/Reveal";
 import { StackedJourney } from "@/components/motion/StackedJourney";
+import { HorizontalScroll } from "@/components/motion/HorizontalScroll";
+import { SpotlightCard } from "@/components/motion/SpotlightCard";
 import iaibLogo from "@/assets/iaib-logo-dark.png.asset.json";
 
 function approvedSection(start: string, end: string) {
@@ -206,7 +208,28 @@ function Accordion({ title, detail, children, initial = false, id }: { title: st
   const [open, setOpen] = useState(initial);
   return <div className={`mod${open ? " open" : ""}`}><Button variant="ghost" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}><span className="mod-title">{title}</span><span className="mod-tail">{detail && <span className="mod-meta">{detail}</span>}<span className="plus" aria-hidden="true">+</span></span></Button><div className="mod-body" id={id} aria-hidden={!open}><div className="mod-inner">{children}</div></div></div>;
 }
-export function Curriculum() { return <section className="curriculum day" id="curriculum" aria-labelledby="cur-h"><div className="wrap cur-grid"><div><h2 id="cur-h">Starts from zero. Ends with you shipping an agent.</h2><p className="lead">Six modules, 30 live sessions on weekend mornings. No prior coding needed.</p></div><div id="modules">{modules.map((m, i) => <Accordion key={m[0]} id={`mb${i}`} title={m[0]} detail={m[1]} initial={i === 0}><p>{m[2]}</p><ol>{m[3].map((item: string) => <li key={item}>{item}</li>)}</ol></Accordion>)}</div></div></section>; }
+export function Curriculum() {
+  const titleBlock = (
+    <div className="cur-head">
+      <h2 id="cur-h">Starts from zero. Ends with you shipping an agent.</h2>
+      <p className="lead">Six modules, 30 live sessions on weekend mornings. No prior coding needed.</p>
+    </div>
+  );
+  return (
+    <section className="curriculum day" id="curriculum" aria-labelledby="cur-h">
+      <HorizontalScroll title={titleBlock}>
+        {modules.map((m) => (
+          <SpotlightCard key={m[0]} tone="light" className="mod-card">
+            <span className="mod-num">{m[1]}</span>
+            <h3>{m[0]}</h3>
+            <p className="mod-desc">{m[2]}</p>
+            <ol>{m[3].map((item: string) => <li key={item}>{item}</li>)}</ol>
+          </SpotlightCard>
+        ))}
+      </HorizontalScroll>
+    </section>
+  );
+}
 export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><h2 id="board-h">Which state is lighting up first?</h2><span className="demo-tag">Demo data, updates live in production</span></div><div className="board-grid"><IndiaStateMap /><div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol></div></div></div></section>; }
 const mentorPhoto: Record<string, string> = { "Vishwa Mohan": "/vishwa-mohan.webp", "Rishi Saraf": "/rishi-saraf.webp", "Gaurav Kaushik": "/gaurav-kaushik.png", "Gladden Rumao": "/gladden-rumao.webp", "Jyoti Nigam": "/jyoti-nigam.webp", "Rishabh Bafna": "/rishabh-bafna.png", "Mithun S": "/mithun-s.webp", "Piyush Jain": "/piyush-jain.png" };
 export function Mentors() { return <section className="mentors day" id="mentors" aria-labelledby="m-h"><div className="wrap"><h2 id="m-h">Learn from people shipping AI today.</h2><div className="m-grid">{mentors.map(([name, role]) => <div key={name}>{mentorPhoto[name] ? <img className="portrait" src={mentorPhoto[name]} alt={name} loading="lazy" width={400} height={500} /> : <div className="portrait" aria-hidden="true">{name.split(" ").map((word: string) => word[0]).join("").slice(0, 2)}</div>}<h3>{name}</h3><p>{role}</p></div>)}</div></div></section>; }
