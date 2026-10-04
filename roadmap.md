@@ -9,3 +9,4 @@ Deferred, not part of this static phase:
 - [x] Apply the approved visual refinement: supplied IAIB logo in navigation and hero, original hero spark assembly, calm Journey timing, and restrained Spark card motion.
 - [x] Replace leaderboard tiles with an interactive India state map, demo-count sparks, mobile tap targets, legend and accessible count table.
 - Connect registration and verified live figures after parent-consent and programme details are confirmed.
+- [ ] Add a clearly labeled demo registration marquee directly below the hero.
