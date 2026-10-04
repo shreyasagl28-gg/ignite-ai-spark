@@ -413,3 +413,4 @@ img.portrait{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:co
 .sched-body p{color:#BDBBB6;margin:0 0 16px;max-width:46ch}
 @media (max-width:900px){.sched-row{grid-template-columns:minmax(0,1fr);gap:10px;padding:28px 0}.sched-title{font-size:28px}}
 @media (prefers-reduced-motion:reduce){.sched-row::before,.sched-title{transition:none}}
+.nav,.nav.solid{background:#0B0B0C;backdrop-filter:none;-webkit-backdrop-filter:none}
