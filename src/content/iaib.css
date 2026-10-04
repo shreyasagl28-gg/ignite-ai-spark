@@ -322,3 +322,5 @@ form{display:grid;gap:14px;margin-top:40px}
 .map-accessible-table{overflow:hidden;white-space:nowrap}
 @media(max-width:767px){.board-grid{grid-template-columns:1fr}.india-map-wrap{height:420px}.map-tooltip{max-width:95%;white-space:normal}.board-grid{gap:42px}}
 @media(prefers-reduced-motion:reduce){.map-state{transition:none}.map-state.map-flash,.map-spark{animation:none}}
+img.portrait{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;padding:0}
+.partner-logo{height:44px;width:auto;max-width:240px;object-fit:contain;filter:grayscale(1) contrast(1.1);opacity:.85}
