@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteNav, Hero, RecentRegistrations, Stakes, Journey, PartnersAndPrizes, Curriculum, StateBoard, Mentors, RegistrationAndSparkCard, SchoolsAndParents, FAQ, ClosingAndFooter } from "@/components/IaibSections";
+import { StickyRegisterBar } from "@/components/cta/RegisterCta";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -31,6 +32,7 @@ function Index() {
         <FAQ />
         <ClosingAndFooter />
       </main>
+      <StickyRegisterBar count={12480} />
     </>
   );
 }

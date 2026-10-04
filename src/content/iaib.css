@@ -445,3 +445,4 @@ img.portrait{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:co
 .spark-burst{position:fixed;width:0;height:0;pointer-events:none;z-index:80}
 .spark-burst i{position:absolute;left:0;top:0;width:5px;height:5px}
 @media (prefers-reduced-motion:reduce){.nav-pulse{animation:none}.sticky-reg{transition:none}}
+@media (max-width:767px){body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}}
