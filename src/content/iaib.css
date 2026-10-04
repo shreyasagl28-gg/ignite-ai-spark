@@ -262,3 +262,8 @@ form{display:grid;gap:14px;margin-top:40px}
 .register form>.btn{justify-self:start}
 .mod button{height:auto;border-radius:0;white-space:normal}
 @media(max-width:700px){.counter-disclaimer{text-align:left}.mod-tail{gap:8px}.mod button{gap:8px}}
+
+/* Journey: the desktop fill is scrubbed across node centres; mobile remains unpinned. */
+@media(min-width:901px){.journey{min-height:100svh;display:flex;align-items:center;padding:96px 0}.journey>.wrap{width:100%}.journey .track-fill{transform-origin:left center}.journey .step .node,.journey .rank{transition:background-color .45s ease,border-color .45s ease,color .45s ease}}
+@media(max-width:900px){.journey .track-line{background:var(--red)}}
+@media(prefers-reduced-motion:reduce){.journey .track-line{background:var(--red)}.journey .track-fill{display:none}.journey .step .node,.journey .rank{transition:none}}

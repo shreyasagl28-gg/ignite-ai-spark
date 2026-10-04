@@ -4,5 +4,6 @@
 
 Deferred, not part of this static phase:
 - [x] Add Hero spark animation with counter-change flare and reduced-motion static frame.
-- Add journey scroll motion and Spark card motion section by section.
+- [x] Add Journey line motion and desktop pinning, with unpinned mobile and reduced-motion fallback.
+- Add Spark card motion in its own phase.
 - Connect registration and verified live figures after parent-consent and programme details are confirmed.
