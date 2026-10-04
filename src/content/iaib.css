@@ -76,6 +76,20 @@ h2{font-size:clamp(40px,6.2vw,88px)}
 .ratio em{font-style:normal;color:var(--foreground-dark)}
 @media (max-width:900px){.stake-grid{grid-template-columns:1fr 1fr}.stake{border-right:0;border-bottom:1px solid var(--ink-line);margin-right:0}}
 
+/* STAKES BENTO */
+.bento-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;list-style:none}
+.bento{background:var(--ink-2);border:1px solid var(--ink-line);border-radius:16px;padding:clamp(24px,3vw,40px)}
+.bento b{display:block;font-family:var(--display);font-weight:600;font-size:clamp(40px,4.8vw,72px);letter-spacing:-.045em;line-height:1}
+.bento.lead b{color:var(--red)}
+.bento p{margin-top:12px;color:var(--grey-ink);font-size:16px;max-width:24ch}
+.bento.wide{grid-column:span 2}
+@media (max-width:900px){.bento-grid{grid-template-columns:1fr}.bento.wide{grid-column:auto}}
+
+/* REVEAL */
+.reveal-armed{opacity:0;transform:translateY(22px)}
+.reveal-in{opacity:1;transform:translateY(0);transition:opacity .8s cubic-bezier(.22,.61,.36,1),transform .8s cubic-bezier(.22,.61,.36,1)}
+@media (prefers-reduced-motion:reduce){.reveal-armed,.reveal-in{opacity:1;transform:none;transition:none}}
+
 /* JOURNEY */
 .journey{padding:160px 0 120px}
 .journey-head{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;margin-bottom:96px}
