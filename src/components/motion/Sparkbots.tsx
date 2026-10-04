@@ -87,7 +87,7 @@ function drawBot(c: CanvasRenderingContext2D, bot: Bot, frame: number, walking: 
 
 function burst(c: CanvasRenderingContext2D, x: number, y: number, age: number) {
   const r = 3 + age * 3;
-  const pts = [[0, -1], [1, 0], [0, 1], [-1, 0], [1, -1], [-1, -1], [1, 1], [-1, 1]];
+  const pts: Array<[number, number]> = [[0, -1], [1, 0], [0, 1], [-1, 0], [1, -1], [-1, -1], [1, 1], [-1, 1]];
   for (const [dx, dy] of pts) {
     const k = dx !== 0 && dy !== 0 ? 0.7 : 1;
     px(c, Math.round(x + dx * r * k), Math.round(y + dy * r * k), 1, 1, age % 2 ? SPARK : RED);
