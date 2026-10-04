@@ -35,3 +35,6 @@ export const recentRegistrations: Array<[string, string, number]> = [
   ['Kabir', 'Chennai', 12479],
 ];
 
+
+/** PLACEHOLDER close date for registrations (IST) — awaiting confirmation. */
+export const registrationClosesAt = "2026-11-15T23:59:00+05:30";
