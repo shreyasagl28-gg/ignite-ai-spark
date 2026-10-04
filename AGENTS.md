@@ -15,3 +15,4 @@
 - Generate and export Spark card previews entirely in the browser without persisting student or parent details, because registration has no verified parental-consent service yet.
 - Serve the supplied IAIB logo through a static asset pointer and derive its favicon locally, because brand imagery must stay consistent without embedding screenshots or hotlinking references.
 - Keep the leaderboard's simplified Survey of India-derived GeoJSON local and attributed, with demo-only browser-side updates; this avoids hotlinked geography and misleading real-registration claims.
+- Mount the client-only Lenis controller once in the TanStack root route, because this app has no App.tsx and duplicate scroll controllers conflict.
