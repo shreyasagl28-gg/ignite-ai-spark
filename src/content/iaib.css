@@ -24,6 +24,7 @@ h2{font-size:clamp(40px,6.2vw,88px)}
 .nav{position:fixed;inset:0 0 auto 0;z-index:50;padding:env(safe-area-inset-top,0) 0 0;transition:background .3s,backdrop-filter .3s}
 .nav.solid{background:color-mix(in oklch,var(--background-dark) 72%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:72px;color:var(--foreground-dark)}
+.nav .brand img{width:106px;height:auto;max-height:54px;object-fit:contain}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.02em}
 .brand-mark{width:30px;height:30px;border-radius:8px;background:var(--red);display:grid;place-items:center}
 .brand-mark svg{width:16px;height:16px}
@@ -40,6 +41,11 @@ h2{font-size:clamp(40px,6.2vw,88px)}
 #sparks{position:absolute;inset:0;width:100%;height:100%}
 .hero::after{content:"";position:absolute;inset:auto 0 0 0;height:45%;background:linear-gradient(to top,var(--ink) 15%,transparent);pointer-events:none}
 .hero .wrap{position:relative;z-index:2;width:100%}
+.hero-identity{display:flex;align-items:center;gap:22px;margin-bottom:22px}
+.hero-identity img{width:154px;height:auto;filter:drop-shadow(0 0 12px color-mix(in oklch,var(--primary) 17%,transparent))}
+.hero-identity-line{display:block;width:72px;height:1px;background:var(--ink-line);position:relative;overflow:hidden}
+.hero-identity-line::after{content:"";position:absolute;inset:0;background:var(--red);transform:translateX(-100%);animation:ignite-line 1.6s cubic-bezier(.22,1,.36,1) .35s both}
+@keyframes ignite-line{to{transform:translateX(0)}}
 .season{display:inline-flex;align-items:center;gap:10px;font-size:15px;color:var(--grey-ink);margin-bottom:28px}
 .live-dot{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 0 0 color-mix(in oklch,var(--primary) 60%,transparent);animation:none}
 @keyframes pulse{70%{box-shadow:0 0 0 10px transparent}100%{box-shadow:0 0 0 0 transparent}}
@@ -55,7 +61,7 @@ h2{font-size:clamp(40px,6.2vw,88px)}
 .counter span{font-size:14px;color:var(--grey-ink)}
 .support{display:flex;align-items:center;gap:22px;margin-top:56px;padding-top:24px;border-top:1px solid var(--ink-line);font-size:14px;color:var(--grey-ink);flex-wrap:wrap}
 .support strong{color:var(--foreground-dark);font-weight:500}
-@media (max-width:700px){.counter{gap:22px}.hero{padding-top:120px}}
+@media (max-width:700px){.counter{gap:22px}.hero{padding-top:120px}.hero-identity{margin-bottom:16px}.hero-identity img{width:115px}.hero-identity-line{width:48px}}
 
 /* STAKES */
 .stakes{padding:160px 0}
@@ -264,7 +270,7 @@ form{display:grid;gap:14px;margin-top:40px}
 @media(max-width:700px){.counter-disclaimer{text-align:left}.mod-tail{gap:8px}.mod button{gap:8px}}
 
 /* Journey: the desktop fill is scrubbed across node centres; mobile remains unpinned. */
-@media(min-width:901px){.journey{min-height:100svh;display:flex;align-items:center;padding:96px 0}.journey>.wrap{width:100%}.journey .track-fill{transform-origin:left center}.journey .step .node,.journey .rank{transition:background-color .45s ease,border-color .45s ease,color .45s ease}}
+@media(min-width:901px){.journey{min-height:100svh;display:flex;align-items:center;padding:96px 0}.journey>.wrap{width:100%}.journey .track-fill{transform-origin:left center}.journey .step .node,.journey .rank{transition:background-color .65s ease,border-color .65s ease,color .65s ease}}
 @media(max-width:900px){.journey .track-line{background:var(--red)}}
 @media(prefers-reduced-motion:reduce){.journey .track-line{background:var(--red)}.journey .track-fill{display:none}.journey .step .node,.journey .rank{transition:none}}
 
@@ -289,3 +295,8 @@ form{display:grid;gap:14px;margin-top:40px}
 .register .reg-actions .btn{justify-self:start}
 .register .reg-actions .btn:disabled{opacity:.6;cursor:wait}
 @media(max-width:700px){.register .spark-card{width:min(340px,100%)}.register .sc-rank{font-size:60px}}
+.register .card-ready{animation:ticket-claim .75s cubic-bezier(.2,.7,.3,1) both}
+@keyframes ticket-claim{0%{opacity:.78;transform:translateY(12px) rotate(-1deg)}100%{opacity:1;transform:translateY(0) rotate(0)}}
+.register .reg-actions .btn{transition:background-color .22s ease,border-color .22s ease,transform .22s ease}
+.register .reg-actions .btn:active{transform:translateY(2px)}
+@media(prefers-reduced-motion:reduce){.hero-identity-line::after,.register .card-ready{animation:none}.register .reg-actions .btn{transition:none}}

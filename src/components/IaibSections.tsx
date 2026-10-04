@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import approvedHtml from "@/content/iaib-body.html?raw";
 import { modules, faqs, mentors, states, schools } from "@/content/iaib-data";
+import iaibLogo from "@/assets/iaib-logo-dark.png.asset.json";
 
 function approvedSection(start: string, end: string) {
   return approvedHtml.split(`<!-- ${start} -->`)[1]?.split(`<!-- ${end} -->`)[0]?.trim() ?? "";
@@ -15,7 +16,7 @@ function Action({ children, href, ghost = false }: { children: React.ReactNode; 
 }
 export function SiteNav() {
   return <header className="nav solid" id="nav"><div className="wrap">
-    <a className="brand" href="#top" aria-label="IAIB home"><span className="brand-mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1c1 3 4 4 4 8a4 4 0 1 1-8 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 0-7z" /></svg></span>IAIB</a>
+    <a className="brand" href="#top" aria-label="IAIB home"><img src={iaibLogo.url} alt="IAIB · Ignite AI Buildathon" width="126" height="61" /></a>
     <nav className="nav-links" aria-label="Main"><a href="#journey">How it works</a><a href="#prizes">Prizes</a><a href="#curriculum">Curriculum</a><a href="#mentors">Mentors</a><a href="#faqs">FAQs</a></nav>
     <div className="nav-cta"><Action href="#register">Register free</Action></div>
   </div></header>;
@@ -38,7 +39,7 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
       const value = Math.sin(seed * 127.1 + 37.7) * 43758.5453;
       return value - Math.floor(value);
     };
-    type Spark = { x: number; y: number; speed: number; drift: number; radius: number; tone: number; opacity: number };
+    type Spark = { x: number; y: number; speed: number; drift: number; radius: number; tone: number; opacity: number; square: boolean };
     let width = 0;
     let height = 0;
     let sparks: Spark[] = [];
@@ -55,8 +56,9 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
       radius: .65 + noise(i + 901) * 1.45,
       tone: i % colors.length,
       opacity: .2 + noise(i + 1200) * .55,
+      square: i % 13 === 0,
     });
-    const draw = (now: number) => {
+     const draw = (now: number) => {
       context.clearRect(0, 0, width, height);
       const flare = Math.max(0, 1 - (now - flareStarted) / 850);
       const glow = context.createRadialGradient(width * .5, height * 1.03, 0, width * .5, height * 1.03, height * .85);
@@ -65,20 +67,26 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
       context.fillStyle = glow;
       context.fillRect(0, 0, width, height);
       context.globalCompositeOperation = "lighter";
-      for (const spark of sparks) {
-        const x = spark.x * width;
-        const y = spark.y * height;
+       for (const [index, spark] of sparks.entries()) {
+         // A handful of original square sparks briefly find one another, then disperse.
+         // This happens inside the existing particle budget rather than adding a second scene.
+         const assembly = reducedMotion.matches ? 0 : Math.max(0, 1 - Math.abs((now / 1000 + index * .055) % 10 - 2) / 1.25);
+         const gather = index < 12 ? assembly * assembly * (3 - 2 * assembly) * .75 : 0;
+         const targetX = (.43 + (index % 4) * .045) * width;
+         const targetY = (.68 + Math.floor(index / 4) * .045) * height;
+         const x = spark.x * width * (1 - gather) + targetX * gather;
+         const y = spark.y * height * (1 - gather) + targetY * gather;
         const fade = Math.min(1, (1 - spark.y) * 3) * Math.min(1, spark.y * 5);
         const intensity = 1 + flare * (1.8 + Math.max(0, 1 - Math.abs(spark.x - .5) * 2));
-        const alpha = Math.min(1, spark.opacity * fade * intensity);
+         const alpha = Math.min(1, spark.opacity * fade * intensity + gather * .25);
         context.fillStyle = `rgba(${colors[spark.tone]},${alpha * .2})`;
         context.beginPath();
         context.arc(x, y, spark.radius * (3 + flare * 2), 0, Math.PI * 2);
         context.fill();
         context.fillStyle = `rgba(${colors[spark.tone]},${alpha})`;
-        context.beginPath();
-        context.arc(x, y, spark.radius * (1 + flare * .6), 0, Math.PI * 2);
-        context.fill();
+        const size = spark.radius * (1 + flare * .6);
+        if (spark.square) context.fillRect(x - size, y - size, size * 2, size * 2);
+        else { context.beginPath(); context.arc(x, y, size, 0, Math.PI * 2); context.fill(); }
       }
       context.globalCompositeOperation = "source-over";
     };
@@ -147,6 +155,7 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
 }
 export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: number }) {
   return <section className="hero night" aria-labelledby="hero-h"><StaticSparks studentCount={studentsRegistered} /><div className="wrap">
+    <div className="hero-identity"><img src={iaibLogo.url} alt="IAIB · Ignite AI Buildathon" width="160" height="77" /><span className="hero-identity-line" aria-hidden="true" /></div>
     <p className="season"><span className="live-dot" aria-hidden="true" />Season 01 is live. Registrations open 8 Oct 2026.</p>
     <h1 id="hero-h">India's next AI builders start here.</h1>
     <div className="hero-row"><div className="hero-copy"><p>Ignite AI Buildathon is free for students in Classes 9 to 12. Learn AI from zero, test what you know, then build a working product and pitch it to VCs.</p><div className="hero-actions"><Action href="#register">Register free</Action><Action href="#journey" ghost>See how it works</Action></div></div>
@@ -196,7 +205,7 @@ export function Journey() {
             trigger: section,
             pin: true,
             start: "top top",
-            end: () => `+=${Math.max(1000, window.innerHeight * 1.6)}`,
+             end: () => `+=${Math.max(1200, window.innerHeight * 1.9)}`,
             scrub: true,
             invalidateOnRefresh: true,
             onRefresh: setGeometry,
@@ -284,7 +293,7 @@ export function RegistrationAndSparkCard() {
     <label className="consent"><input type="checkbox" checked={consent} aria-invalid={!!errors.consent} aria-describedby={errors.consent ? "f-consent-error" : undefined} onChange={e => { setConsent(e.target.checked); changed(); }} />My parent or guardian has read the terms and agrees to my participation. We'll email them to confirm.</label>{errors.consent && <small className="consent-error" id="f-consent-error" role="alert">{errors.consent}</small>}
     <div className="reg-actions"><Button variant="iaib" type="submit">Register free</Button>{confirmed && <Button variant="iaibOutline" type="button" onClick={download} disabled={downloading} aria-label="Download demo Spark card as PNG">{downloading ? "Preparing PNG…" : "Download Spark card ↓"}</Button>}</div><p className="form-msg" role="status">{message || "Preview only — no registration is submitted."}</p>
   </form></div>
-  <div className="card-stage"><div ref={cardRef} className="spark-card" aria-label="Your Spark card preview, demo data"><div className="sc-top"><span>Ignite AI Buildathon</span><span>Season 01</span></div><div className="sc-ticket"><div className="sc-rank">Spark</div><div className="sc-num">{sparkNumber}</div><span className="sc-demo">DEMO · NOT AN ISSUED REGISTRATION</span></div><div className="sc-holder"><div className="sc-name">{first.trim() || "Your name"}</div><div className="sc-school">{school.trim() || "Your school"}</div><div className="sc-city">{city.trim() || "Your city"}</div></div><div className="sc-foot"><span>{classroom ? `Class ${classroom}` : "Class"}</span><span>Demo preview</span></div></div></div></div></section>;
+   <div className={`card-stage${confirmed ? " card-ready" : ""}`}><div ref={cardRef} className="spark-card" aria-label="Your Spark card preview, demo data"><div className="sc-top"><span>Ignite AI Buildathon</span><span>Season 01</span></div><div className="sc-ticket"><div className="sc-rank">Spark</div><div className="sc-num">{sparkNumber}</div><span className="sc-demo">DEMO · NOT AN ISSUED REGISTRATION</span></div><div className="sc-holder"><div className="sc-name">{first.trim() || "Your name"}</div><div className="sc-school">{school.trim() || "Your school"}</div><div className="sc-city">{city.trim() || "Your city"}</div></div><div className="sc-foot"><span>{classroom ? `Class ${classroom}` : "Class"}</span><span>Demo preview</span></div></div></div></div></section>;
 }
 export function SchoolsAndParents() { return <section className="audiences day" aria-label="For schools and parents"><div className="wrap aud-grid">
   <article className="aud dark"><h3>Bring it to your school.</h3><p>Your students are ready to build the future. Give them free AI learning, real projects and a national stage.</p><ul><li>Free AI learning for every student</li><li>A national competition</li><li>₹25L in prizes and ₹2 Cr in scholarships</li></ul><Action href="#register">Register your school</Action></article>
