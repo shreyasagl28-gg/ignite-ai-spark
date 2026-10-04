@@ -58,7 +58,7 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
       opacity: .2 + noise(i + 1200) * .55,
       square: i % 13 === 0,
     });
-    const draw = (now: number) => {
+     const draw = (now: number) => {
       context.clearRect(0, 0, width, height);
       const flare = Math.max(0, 1 - (now - flareStarted) / 850);
       const glow = context.createRadialGradient(width * .5, height * 1.03, 0, width * .5, height * 1.03, height * .85);
@@ -67,12 +67,18 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
       context.fillStyle = glow;
       context.fillRect(0, 0, width, height);
       context.globalCompositeOperation = "lighter";
-      for (const spark of sparks) {
-        const x = spark.x * width;
-        const y = spark.y * height;
+       for (const [index, spark] of sparks.entries()) {
+         // A handful of original square sparks briefly find one another, then disperse.
+         // This happens inside the existing particle budget rather than adding a second scene.
+         const assembly = reducedMotion.matches ? 0 : Math.max(0, 1 - Math.abs((now / 1000 + index * .055) % 10 - 2) / 1.25);
+         const gather = index < 12 ? assembly * assembly * (3 - 2 * assembly) * .75 : 0;
+         const targetX = (.43 + (index % 4) * .045) * width;
+         const targetY = (.68 + Math.floor(index / 4) * .045) * height;
+         const x = spark.x * width * (1 - gather) + targetX * gather;
+         const y = spark.y * height * (1 - gather) + targetY * gather;
         const fade = Math.min(1, (1 - spark.y) * 3) * Math.min(1, spark.y * 5);
         const intensity = 1 + flare * (1.8 + Math.max(0, 1 - Math.abs(spark.x - .5) * 2));
-        const alpha = Math.min(1, spark.opacity * fade * intensity);
+         const alpha = Math.min(1, spark.opacity * fade * intensity + gather * .25);
         context.fillStyle = `rgba(${colors[spark.tone]},${alpha * .2})`;
         context.beginPath();
         context.arc(x, y, spark.radius * (3 + flare * 2), 0, Math.PI * 2);
