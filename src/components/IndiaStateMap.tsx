@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { geoBounds, geoContains, geoMercator, geoPath } from "d3-geo";
 import type { FeatureCollection, Geometry } from "geojson";
-import indiaBoundaries from "@/content/india-states.geojson";
+import indiaBoundaries from "@/content/india-states.json";
 import { states } from "@/content/iaib-data";
 
 // Boundaries: Survey of India-derived SOI_States.parquet, republished by India Geodata
@@ -51,7 +51,7 @@ export function IndiaStateMap() {
       const target = shapes[step % 19];
       step += 1;
       if (!target) return;
-      setCounts((previous) => ({ ...previous, [target.name]: previous[target.name] + 1 }));
+      setCounts((previous) => ({ ...previous, [target.name]: (previous[target.name] ?? 0) + 1 }));
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       setFlash(target.name);
       // Sample inside the chosen polygon; a centroid alone can fall outside multipart islands.
@@ -75,20 +75,20 @@ export function IndiaStateMap() {
   return <div className="india-board">
     <div className="india-map-wrap" onPointerLeave={() => setActive(null)}>
       <svg className="india-map" viewBox="0 0 600 550" role="img" aria-label="Interactive map of registrations by Indian state and union territory, demo data">
-        {shapes.map(({ name, path, center }) => <path key={name} d={path} className={`map-state${flash === name ? " map-flash" : ""}`} style={{ "--map-heat": `${Math.round(counts[name] / highest * 100)}%` } as React.CSSProperties}
+        {shapes.map(({ name, path }) => <path key={name} d={path} className={`map-state${flash === name ? " map-flash" : ""}`} style={{ "--map-heat": `${Math.round((counts[name] ?? 0) / highest * 100)}%` } as React.CSSProperties}
           onAnimationEnd={() => { if (flash === name) setFlash(null); }}
           onPointerEnter={() => setActive(name)} onClick={() => setActive(name)} onFocus={() => setActive(name)}
-          tabIndex={0} role="button" aria-label={`${name}, ${counts[name].toLocaleString("en-IN")} students, demo data`}>
-          <title>{name} · {counts[name].toLocaleString("en-IN")} students</title>
+          tabIndex={0} role="button" aria-label={`${name}, ${(counts[name] ?? 0).toLocaleString("en-IN")} students, demo data`}>
+          <title>{name} · {(counts[name] ?? 0).toLocaleString("en-IN")} students</title>
         </path>)}
         {shapes.filter(({ name }) => compactStates.has(name)).map(({ name, center }) => <circle key={`hit-${name}`} className="map-hit" cx={center[0]} cy={center[1]} r="13"
           onPointerEnter={() => setActive(name)} onClick={() => setActive(name)} aria-hidden="true" />)}
         {spark && !reduced && <circle key={spark.id} className="map-spark" cx={spark.x} cy={spark.y} r="2" onAnimationEnd={() => setSpark(null)} aria-hidden="true" />}
       </svg>
-      {selected && <div className="map-tooltip" role="status" style={{ left: `${selected.center[0] / 6}%`, top: `${selected.center[1] / 5.5}%` }}>{selected.name} · {counts[selected.name].toLocaleString("en-IN")} students</div>}
+      {selected && <div className="map-tooltip" role="status" style={{ left: `${selected.center[0] / 6}%`, top: `${selected.center[1] / 5.5}%` }}>{selected.name} · {(counts[selected.name] ?? 0).toLocaleString("en-IN")} students</div>}
     </div>
     <div className="map-scale" aria-label={`Registration density from zero to ${highest.toLocaleString("en-IN")}`}><span>0</span><div className="map-ramp" /><span>{highest.toLocaleString("en-IN")}</span></div>
     <p className="map-lit">{lit} of 36 states and UTs are lit.</p>
-    <table className="sr-only"><caption>Demo registrations by state and union territory</caption><thead><tr><th scope="col">State or UT</th><th scope="col">Students</th></tr></thead><tbody>{states.map((name) => <tr key={name}><th scope="row">{name}</th><td>{counts[name].toLocaleString("en-IN")}</td></tr>)}</tbody></table>
+    <table className="sr-only"><caption>Demo registrations by state and union territory</caption><thead><tr><th scope="col">State or UT</th><th scope="col">Students</th></tr></thead><tbody>{states.map((name) => <tr key={name}><th scope="row">{name}</th><td>{(counts[name] ?? 0).toLocaleString("en-IN")}</td></tr>)}</tbody></table>
   </div>;
 }
