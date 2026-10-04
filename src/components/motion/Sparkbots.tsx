@@ -176,7 +176,7 @@ export function Sparkbots({ studentCount }: { studentCount: number }) {
       const b = bots.find((b) => !b.leaving && Math.abs(lx - b.x) < 9 && ly > b.y && ly < b.y + CELL);
       if (!b) { setTip(null); canvas.style.cursor = ""; return; }
       canvas.style.cursor = "pointer";
-      setTip({ x: (b.x / W) * r.width, y: ((b.y + 2) / H) * r.height, text: `Spark #${b.spark.toLocaleString("en-IN")} · ${b.city}` });
+      setTip({ x: Math.min(r.width - 90, Math.max(90, (b.x / W) * r.width)), y: ((b.y + 2) / H) * r.height, text: `Spark #${b.spark.toLocaleString("en-IN")} · ${b.city}` });
     };
     const onMove = (e: PointerEvent) => hit(e.clientX, e.clientY);
     const onLeave = () => setTip(null);
