@@ -10,3 +10,5 @@ Deferred, not part of this static phase:
 - [x] Replace leaderboard tiles with an interactive India state map, demo-count sparks, mobile tap targets, legend and accessible count table.
 - Connect registration and verified live figures after parent-consent and programme details are confirmed.
 - [x] Add a clearly labeled demo registration marquee directly below the hero.
+- [x] Wrap the Spark card in a TiltCard (pointer tilt, desktop only).
+- [x] Replace Hero and Closing "Register free" buttons with a MagneticButton (magnetic pull, desktop only).
