@@ -74,7 +74,7 @@ export function IndiaStateMap() {
   const selected = shapes.find((shape) => shape.name === active);
   return <div className="india-board">
     <div className="india-map-wrap" onPointerLeave={() => setActive(null)}>
-      <svg className="india-map" viewBox="0 0 600 550" role="img" aria-label="Interactive map of registrations by Indian state and union territory, demo data">
+      <svg className="india-map" viewBox="0 0 600 550" role="group" aria-label="Interactive map of registrations by Indian state and union territory, demo data">
         {shapes.map(({ name, path }) => <path key={name} d={path} className={`map-state${flash === name ? " map-flash" : ""}`} style={{ "--map-heat": `${Math.round((counts[name] ?? 0) / highest * 100)}%` } as React.CSSProperties}
           onAnimationEnd={() => { if (flash === name) setFlash(null); }}
           onPointerEnter={() => setActive(name)} onClick={() => setActive(name)} onFocus={() => setActive(name)}
@@ -87,6 +87,6 @@ export function IndiaStateMap() {
     </div>
     <div className="map-scale" aria-label={`Registration density from zero to ${highest.toLocaleString("en-IN")}`}><span>0</span><div className="map-ramp" /><span>{highest.toLocaleString("en-IN")}</span></div>
     <p className="map-lit">{lit} of 36 states and UTs are lit.</p>
-    <table className="sr-only"><caption>Demo registrations by state and union territory</caption><thead><tr><th scope="col">State or UT</th><th scope="col">Students</th></tr></thead><tbody>{states.map((name) => <tr key={name}><th scope="row">{name}</th><td>{(counts[name] ?? 0).toLocaleString("en-IN")}</td></tr>)}</tbody></table>
+     <div className="map-accessible-table sr-only"><table><caption>Demo registrations by state and union territory</caption><thead><tr><th scope="col">State or UT</th><th scope="col">Students</th></tr></thead><tbody>{states.map((name) => <tr key={name}><th scope="row">{name}</th><td>{(counts[name] ?? 0).toLocaleString("en-IN")}</td></tr>)}</tbody></table></div>
   </div>;
 }
