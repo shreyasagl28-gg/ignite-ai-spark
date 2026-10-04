@@ -11,6 +11,7 @@ import { HorizontalScroll } from "@/components/motion/HorizontalScroll";
 import { SpotlightCard } from "@/components/motion/SpotlightCard";
 import { Marquee } from "@/components/motion/Marquee";
 import { TiltCard } from "@/components/motion/TiltCard";
+import { MagneticButton } from "@/components/motion/MagneticButton";
 import iaibLogo from "@/assets/iaib-logo-dark.png.asset.json";
 
 function approvedSection(start: string, end: string) {
@@ -166,7 +167,7 @@ export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: numb
     <div className="hero-identity"><img src={iaibLogo.url} alt="IAIB · Ignite AI Buildathon" width="160" height="77" /><span className="hero-identity-line" aria-hidden="true" /></div>
     <p className="season"><span className="live-dot" aria-hidden="true" />Season 01 is live. Registrations open 8 Oct 2026.</p>
     <h1 id="hero-h">India's next AI builders start here.</h1>
-    <div className="hero-row"><div className="hero-copy"><p>Ignite AI Buildathon is free for students in Classes 9 to 12. Learn AI from zero, test what you know, then build a working product and pitch it to VCs.</p><div className="hero-actions"><Action href="#register">Register free</Action><Action href="#journey" ghost>See how it works</Action></div></div>
+    <div className="hero-row"><div className="hero-copy"><p>Ignite AI Buildathon is free for students in Classes 9 to 12. Learn AI from zero, test what you know, then build a working product and pitch it to VCs.</p><div className="hero-actions"><MagneticButton href="#register">Register free</MagneticButton><Action href="#journey" ghost>See how it works</Action></div></div>
     <div className="counter" aria-label="Registrations, demo data"><div><b className="hot">{studentsRegistered.toLocaleString("en-IN")}</b><span>students registered</span></div><div><b>214</b><span>schools</span></div><div><b>19</b><span>states and UTs</span></div></div></div>
     <p className="counter-disclaimer">Demo data</p>
     <div className="support"><span>Supported by <strong>Government of Karnataka</strong></span><span>University partner <strong>Sri Siddhartha Academy of Higher Education</strong></span><span>Organised by <strong>upGrad School of Technology</strong></span></div>
@@ -326,4 +327,4 @@ export function SchoolsAndParents() { return <section className="audiences day" 
   <article className="aud"><h3>For parents.</h3><p>Your child learns online on weekend mornings, so it never clashes with school. Finalists travel to the finale with full supervision.</p><ul><li>Free to join, no hidden costs</li><li>Parental consent before any participation</li><li>Supervised travel and stay for finalists</li></ul><Action href="#faqs" ghost>Read parent FAQs</Action></article>
   </div></section>; }
 export function FAQ() { return <section className="faq day" id="faqs" aria-labelledby="faq-h"><div className="wrap faq-grid"><h2 id="faq-h">Questions, answered.</h2><div id="faqlist">{faqs.map(([question, answer], i) => <Accordion key={question} id={`fb${i}`} title={question}><p className="faq-answer">{answer}</p></Accordion>)}</div></div></section>; }
-export function ClosingAndFooter() { return <section className="closing night" aria-labelledby="close-h"><div className="wrap"><h2 id="close-h">Season 01 is filling up. Don't watch it happen.</h2><Action href="#register">Register free</Action><footer className="foot"><span>Ignite AI Buildathon, by upGrad School of Technology</span><nav aria-label="Footer"><a href="#">Privacy policy</a><a href="#">Terms</a><a href="#">Code of conduct</a><a href="#">Instagram</a><a href="#">LinkedIn</a><a href="#">YouTube</a></nav></footer></div></section>; }
+export function ClosingAndFooter() { return <section className="closing night" aria-labelledby="close-h"><div className="wrap"><h2 id="close-h">Season 01 is filling up. Don't watch it happen.</h2><MagneticButton href="#register">Register free</MagneticButton><footer className="foot"><span>Ignite AI Buildathon, by upGrad School of Technology</span><nav aria-label="Footer"><a href="#">Privacy policy</a><a href="#">Terms</a><a href="#">Code of conduct</a><a href="#">Instagram</a><a href="#">LinkedIn</a><a href="#">YouTube</a></nav></footer></div></section>; }
