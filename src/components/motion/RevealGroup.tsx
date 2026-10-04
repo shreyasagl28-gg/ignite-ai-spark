@@ -53,7 +53,8 @@ export function RevealGroup({ children, className, bare = false }: { children: R
     const groupEl = container.current;
     const entries = [...items.current.entries()].filter(([, index]) => index >= 0).filter(([el]) => el.isConnected);
     if (!groupEl || !entries.length) return;
-    if (!arm(groupEl)) return;
+    // Observe the group box only; the armed/in classes belong to the cards.
+    if (groupEl.getBoundingClientRect().bottom < 0) return;
     const observer = new IntersectionObserver(
       (observerEntries) => {
         if (!observerEntries.some((entry) => entry.isIntersecting)) return;
