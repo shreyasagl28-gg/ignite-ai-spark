@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import approvedHtml from "@/content/iaib-body.html?raw";
-import { modules, faqs, mentors, schools } from "@/content/iaib-data";
+import { modules, faqs, mentors, schools, recentRegistrations } from "@/content/iaib-data";
 import { IndiaStateMap } from "@/components/IndiaStateMap";
 import { BentoStakes } from "@/components/motion/BentoStakes";
 import { Reveal } from "@/components/motion/Reveal";
@@ -170,6 +170,16 @@ export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: numb
     <p className="counter-disclaimer">Demo data</p>
     <div className="support"><span>Supported by <strong>Government of Karnataka</strong></span><span>University partner <strong>Sri Siddhartha Academy of Higher Education</strong></span><span>Organised by <strong>upGrad School of Technology</strong></span></div>
   </div></section>;
+}
+export function RecentRegistrations() {
+  return <aside className="registration-strip night" aria-label="Sample recent registrations">
+    <span className="registration-strip-label">Demo data</span>
+    <Marquee label="Sample recent registrations" speed={60}>
+      {recentRegistrations.map(([firstName, city, number]) =>
+        <span className="registration-update" key={number}>{firstName} from {city} just became Spark <strong>#{number.toLocaleString("en-IN")}</strong></span>
+      )}
+    </Marquee>
+  </aside>;
 }
 export function Stakes() {
   return (

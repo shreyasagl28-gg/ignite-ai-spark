@@ -168,6 +168,13 @@ h2{font-size:clamp(40px,6.2vw,88px)}
 .marquee-track{display:flex;width:max-content;animation:marquee 28s linear infinite}
 .marquee-set{display:flex;align-items:center;gap:72px;padding-right:72px}
 .marquee-logo{height:32px;width:auto;object-fit:contain;filter:grayscale(1);opacity:.75}
+/* Demo-only activity beneath the hero. */
+.registration-strip{display:flex;align-items:center;min-height:54px;border-top:1px solid var(--ink-line);border-bottom:1px solid var(--ink-line)}
+.registration-strip-label{flex:none;padding:0 20px 0 max(24px,calc((100vw - var(--max))/2 + 24px));font-family:var(--mono);font-size:11px;color:var(--grey-ink);white-space:nowrap}
+.registration-strip .marquee{flex:1;min-width:0;margin:0;padding:12px 0;border:0}
+.registration-strip .marquee-set{gap:56px;padding-right:56px}
+.registration-update{font-size:13px;color:var(--grey-ink);white-space:nowrap}
+.registration-update strong{color:var(--red);font-family:var(--mono);font-weight:500}
 @keyframes marquee{to{transform:translateX(-50%)}}
 @media (prefers-reduced-motion:reduce){.marquee-track{animation:none;flex-wrap:wrap;width:auto}}
 

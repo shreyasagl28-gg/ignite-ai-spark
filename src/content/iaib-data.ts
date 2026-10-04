@@ -27,4 +27,10 @@ export const mentors: Array<[string, string]> = [
   ];
 export const states = ['Karnataka','Maharashtra','Tamil Nadu','Delhi','Telangana','Uttar Pradesh','Kerala','Gujarat','West Bengal','Rajasthan','Andhra Pradesh','Madhya Pradesh','Haryana','Punjab','Bihar','Odisha','Assam','Jharkhand','Chhattisgarh','Uttarakhand','Himachal Pradesh','Goa','J&K','Tripura','Meghalaya','Manipur','Nagaland','Mizoram','Arunachal','Sikkim','Chandigarh','Puducherry','Ladakh','A&N Islands','Lakshadweep','DNH & DD'];
 export const schools: Array<[string, string, number]> = [['Delhi Public School','Bengaluru',642],['Kendriya Vidyalaya No. 1','Hyderabad',517],['National Public School','Chennai',489],['St. Xavier\'s High School','Mumbai',433],['Sri Siddhartha School','Tumkur',401]];
+export const recentRegistrations: Array<[string, string, number]> = [
+  ['Ananya', 'Mysuru', 12482],
+  ['Aarav', 'Bengaluru', 12481],
+  ['Diya', 'Hyderabad', 12480],
+  ['Kabir', 'Chennai', 12479],
+];
 

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteNav, Hero, Stakes, Journey, PartnersAndPrizes, Curriculum, StateBoard, Mentors, RegistrationAndSparkCard, SchoolsAndParents, FAQ, ClosingAndFooter } from "@/components/IaibSections";
+import { SiteNav, Hero, RecentRegistrations, Stakes, Journey, PartnersAndPrizes, Curriculum, StateBoard, Mentors, RegistrationAndSparkCard, SchoolsAndParents, FAQ, ClosingAndFooter } from "@/components/IaibSections";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -19,6 +19,7 @@ function Index() {
       <SiteNav />
       <main id="top">
         <Hero />
+        <RecentRegistrations />
         <Stakes />
         <Journey />
         <PartnersAndPrizes />
