@@ -15,6 +15,7 @@ import { NavPulseDot, sparkBurst } from "@/components/cta/RegisterCta";
 import { Eyebrow } from "@/components/motion/Eyebrow";
 import { SlotNumber } from "@/components/motion/SlotNumber";
 import { PixelField } from "@/components/motion/PixelField";
+import { MoneyRain } from "@/components/motion/MoneyRain";
 import { IaibLogo } from "@/components/IaibLogo";
 
 function Action({ children, href, ghost = false }: { children: React.ReactNode; href: string; ghost?: boolean }) {
@@ -40,12 +41,12 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const colors = ["229,9,19", "255,77,46", "255,138,61"];
+    const colors = ["255,77,46", "229,9,19", "255,138,61", "255,214,180"];
     const noise = (seed: number) => {
       const value = Math.sin(seed * 127.1 + 37.7) * 43758.5453;
       return value - Math.floor(value);
     };
-    type Spark = { x: number; y: number; speed: number; drift: number; radius: number; tone: number; opacity: number; square: boolean };
+    type Spark = { x: number; y: number; speed: number; drift: number; radius: number; tone: number; opacity: number };
     let width = 0;
     let height = 0;
     let sparks: Spark[] = [];
@@ -57,42 +58,31 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
     const makeSpark = (i: number): Spark => ({
       x: .12 + noise(i + 1) * .76,
       y: noise(i + 402),
-      speed: .055 + noise(i + 719) * .12,
-      drift: (noise(i + 815) - .5) * .018,
-      radius: .65 + noise(i + 901) * 1.45,
-      tone: i % colors.length,
-      opacity: .2 + noise(i + 1200) * .55,
-      square: i % 13 === 0,
+      speed: .025 + noise(i + 719) * .06,
+      drift: (noise(i + 815) - .5) * .012,
+      radius: .7 + noise(i + 901) * 1.1,
+      tone: i % 11 === 0 ? 3 : i % 3,
+      opacity: .4 + noise(i + 1200) * .6,
     });
-     const draw = (now: number) => {
+    // Fine embers drifting up through a dark stage. The light and the floor are CSS layers.
+    const draw = (now: number) => {
       context.clearRect(0, 0, width, height);
       const flare = Math.max(0, 1 - (now - flareStarted) / 850);
-      const glow = context.createRadialGradient(width * .5, height * 1.03, 0, width * .5, height * 1.03, height * .85);
-      glow.addColorStop(0, `rgba(229,9,19,${.16 + flare * .24})`);
-      glow.addColorStop(1, "rgba(229,9,19,0)");
-      context.fillStyle = glow;
-      context.fillRect(0, 0, width, height);
       context.globalCompositeOperation = "lighter";
-       for (const [index, spark] of sparks.entries()) {
-         // A handful of original square sparks briefly find one another, then disperse.
-         // This happens inside the existing particle budget rather than adding a second scene.
-         const assembly = reducedMotion.matches ? 0 : Math.max(0, 1 - Math.abs((now / 1000 + index * .055) % 10 - 2) / 1.25);
-         const gather = index < 12 ? assembly * assembly * (3 - 2 * assembly) * .75 : 0;
-         const targetX = (.43 + (index % 4) * .045) * width;
-         const targetY = (.68 + Math.floor(index / 4) * .045) * height;
-         const x = spark.x * width * (1 - gather) + targetX * gather;
-         const y = spark.y * height * (1 - gather) + targetY * gather;
-        const fade = Math.min(1, (1 - spark.y) * 3) * Math.min(1, spark.y * 5);
-        const intensity = 1 + flare * (1.8 + Math.max(0, 1 - Math.abs(spark.x - .5) * 2));
-         const alpha = Math.min(1, spark.opacity * fade * intensity + gather * .25);
-        context.fillStyle = `rgba(${colors[spark.tone]},${alpha * .2})`;
+      for (const [index, spark] of sparks.entries()) {
+        const x = spark.x * width;
+        const y = spark.y * height;
+        const fade = Math.min(1, (1 - spark.y) * 2.5) * Math.min(1, spark.y * 4);
+        const twinkle = reducedMotion.matches ? 1 : .65 + .35 * Math.sin(now / 650 + index * 1.7);
+        const alpha = Math.min(1, spark.opacity * fade * twinkle * (1 + flare));
+        context.fillStyle = `rgba(${colors[spark.tone]},${alpha * .14})`;
         context.beginPath();
-        context.arc(x, y, spark.radius * (3 + flare * 2), 0, Math.PI * 2);
+        context.arc(x, y, spark.radius * 4.5, 0, Math.PI * 2);
         context.fill();
         context.fillStyle = `rgba(${colors[spark.tone]},${alpha})`;
-        const size = spark.radius * (1 + flare * .6);
-        if (spark.square) context.fillRect(x - size, y - size, size * 2, size * 2);
-        else { context.beginPath(); context.arc(x, y, size, 0, Math.PI * 2); context.fill(); }
+        context.beginPath();
+        context.arc(x, y, spark.radius, 0, Math.PI * 2);
+        context.fill();
       }
       context.globalCompositeOperation = "source-over";
     };
@@ -128,7 +118,7 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
       canvas.width = Math.round(width * ratio);
       canvas.height = Math.round(height * ratio);
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      const count = width <= 700 ? Math.min(90, Math.floor(width / 4)) : Math.min(260, Math.floor(width / 5));
+      const count = width <= 700 ? 36 : Math.min(90, Math.floor(width / 16));
       sparks = Array.from({ length: count }, (_, i) => makeSpark(i));
       draw(performance.now());
     };
@@ -162,6 +152,7 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
 export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: number }) {
   return (
     <section className="hero night" aria-labelledby="hero-h">
+      <div className="hero-stage" aria-hidden="true"><div className="hero-light" /><div className="hero-floor" /></div>
       <StaticSparks studentCount={studentsRegistered} />
       <Sparkbots studentCount={studentsRegistered} />
       <div className="wrap">
@@ -207,6 +198,7 @@ export function Stakes() {
     <section className="stakes night" id="prizes" aria-labelledby="stakes-h">
       <div className="wrap">
         <Reveal><Eyebrow>Prizes</Eyebrow><h2 id="stakes-h">What's on the table this season.</h2></Reveal>
+        <MoneyRain />
         <div className="sk">
           <div className="sk-row">
             <div className="sk-copy"><span className="sk-label">Scholarship pool</span><b className="sk-num sk-red"><SlotNumber value="₹2 Cr" /></b><p>in scholarships for standout builders</p></div>
