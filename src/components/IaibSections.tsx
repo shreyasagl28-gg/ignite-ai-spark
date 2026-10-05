@@ -11,7 +11,10 @@ import { Marquee } from "@/components/motion/Marquee";
 import { TiltCard } from "@/components/motion/TiltCard";
 import { MagneticButton } from "@/components/motion/MagneticButton";
 import { Sparkbots } from "@/components/motion/Sparkbots";
-import { CloseCountdown, NavPulseDot, sparkBurst } from "@/components/cta/RegisterCta";
+import { NavPulseDot, sparkBurst } from "@/components/cta/RegisterCta";
+import { Eyebrow } from "@/components/motion/Eyebrow";
+import { SlotNumber } from "@/components/motion/SlotNumber";
+import { PixelField } from "@/components/motion/PixelField";
 import { IaibLogo } from "@/components/IaibLogo";
 
 function Action({ children, href, ghost = false }: { children: React.ReactNode; href: string; ghost?: boolean }) {
@@ -163,24 +166,27 @@ export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: numb
       <Sparkbots studentCount={studentsRegistered} />
       <div className="wrap">
         <p className="hero-credits">
+          <span className="hc-present">Presented by</span>
           <span className="hc-org"><img src="/government-of-karnataka.webp" alt="" width={56} height={48} /><span>Government of<br />Karnataka</span></span>
           <span className="hc-x" aria-hidden="true">×</span>
           <img className="hc-upgrad" src="/upgrad-sot-on-dark.webp" alt="upGrad School of Technology" width={135} height={40} />
-          <span className="hc-present">present</span>
         </p>
         <h1 id="hero-h" className="hero-name"><span>Ignite <em>AI</em></span> <span>Buildathon</span></h1>
         <p className="hero-tag">Learn AI from zero. Build a real product. Pitch it to VCs.</p>
         <ul className="hero-facts">
           <li><span className="live-dot" aria-hidden="true" />Season 01 · Registrations open 8 Oct 2026</li>
           <li>Free for Classes 9–12</li>
+          <li>No coding needed</li>
           <li>₹25L in prizes</li>
           <li>Finale in Bengaluru</li>
         </ul>
         <div className="hero-row">
-          <div className="hero-actions"><MagneticButton href="#register" className="btn-hero">Register free</MagneticButton><CloseCountdown /><Action href="#journey" ghost>See how it works</Action></div>
-          <div className="counter" aria-label="Registrations, demo data"><div><b className="hot">{studentsRegistered.toLocaleString("en-IN")}</b><span>students registered</span></div><div><b>214</b><span>schools</span></div><div><b>19</b><span>states and UTs</span></div></div>
+          <div className="hero-actions"><MagneticButton href="#register" className="btn-hero">Register free</MagneticButton><Action href="#journey" ghost>See how it works</Action></div>
+          <div className="counter-wrap">
+<div className="counter" aria-label="Registrations, demo data"><div><b className="hot">{studentsRegistered.toLocaleString("en-IN")}</b><span>students registered</span></div><div><b>214</b><span>schools</span></div><div><b>19</b><span>states and UTs</span></div></div>
+            <p className="counter-disclaimer">Demo data</p>
+          </div>
         </div>
-        <p className="counter-disclaimer">Demo data</p>
       </div>
     </section>
   );
@@ -198,28 +204,30 @@ export function RecentRegistrations() {
 const art = (name: string) => ({ src: `/art/${name}.webp`, srcSet: `/art/${name}-sm.webp 512w, /art/${name}.webp 1024w` });
 export function Stakes() {
   return (
-    <section className="stakes night" id="prizes-top" aria-labelledby="stakes-h">
+    <section className="stakes night" id="prizes" aria-labelledby="stakes-h">
       <div className="wrap">
-        <Reveal><p className="eyebrow">Prizes</p><h2 id="stakes-h">What's on the table this season.</h2></Reveal>
+        <Reveal><Eyebrow>Prizes</Eyebrow><h2 id="stakes-h">What's on the table this season.</h2></Reveal>
         <div className="sk">
           <div className="sk-row">
-            <div className="sk-copy"><b className="sk-num sk-red">₹2 Cr</b><p>in scholarships for standout builders</p></div>
+            <div className="sk-copy"><span className="sk-label">Scholarship pool</span><b className="sk-num sk-red"><SlotNumber value="₹2 Cr" /></b><p>in scholarships for standout builders</p></div>
             <img className="sk-img" {...art("ember")} sizes="(max-width: 900px) 100vw, 55vw" alt="" width={1024} height={559} loading="lazy" decoding="async" />
           </div>
           <div className="sk-row sk-row-flip">
             <img className="sk-img" {...art("trophy")} sizes="(max-width: 900px) 100vw, 55vw" alt="" width={1024} height={559} loading="lazy" decoding="async" />
-            <div className="sk-copy"><b className="sk-num">₹25L</b><p>in prizes at the grand finale</p></div>
+            <div className="sk-copy"><span className="sk-label">Prize pool</span><b className="sk-num"><SlotNumber value="₹25L" /></b><p>in prizes at the grand finale</p></div>
           </div>
         </div>
       </div>
-      <div className="sk-band">
-        <img src="/art/finale-hall.webp" alt="" width={816} height={434} loading="lazy" decoding="async" />
-        <div className="wrap sk-band-copy">
-          <div><b className="sk-num">100</b><p>finalists build live for 36 hours</p></div>
-          <div><b className="sk-num">VCs</b><p>hear your pitch on finale day</p></div>
+      <figure className="sk-band wrap">
+        <div className="sk-stage">
+          <img src="/art/finale-hall.webp" alt="" width={816} height={434} loading="lazy" decoding="async" />
+          <figcaption className="sk-stage-line">Thousands will learn. <em>Only 100 make the finale.</em></figcaption>
         </div>
-      </div>
-      <div className="wrap"><p className="ratio">Thousands will learn. <em>Only 100 make the finale.</em></p></div>
+        <div className="sk-facts">
+          <div><span className="sk-label">Finalists</span><b className="sk-num"><SlotNumber value="100" /></b><p>finalists build live for 36 hours</p></div>
+          <div><span className="sk-label">Investors</span><b className="sk-num">VCs</b><p>hear your pitch on finale day</p></div>
+        </div>
+      </figure>
     </section>
   );
 }
@@ -235,7 +243,7 @@ export function Journey() {
     <section className="journey night" id="journey" aria-labelledby="journey-h">
       <div className="wrap">
         <div className="journey-head">
-          <Reveal><p className="eyebrow">How it works</p><h2 id="journey-h">Four steps. One spark to a fire.</h2></Reveal>
+          <Reveal><Eyebrow>How it works</Eyebrow><h2 id="journey-h">Four steps. One spark to a fire.</h2></Reveal>
           <p>Every step earns you a rank. Start as a Spark. Finish as one of the Ignited 100.</p>
         </div>
         <JourneyLadder steps={journeySteps} />
@@ -251,10 +259,10 @@ const partners = [
 const buildPartners = ["AI Partner", "Build Partner", "Voice Partner"];
 export function PartnersAndPrizes() {
   return (
-    <section className="partners day" id="prizes" aria-labelledby="partners-h">
+    <section className="partners day" id="partners" aria-labelledby="partners-h">
       <div className="wrap">
         <div className="sec-head">
-          <Reveal><p className="eyebrow">Partners</p><h2 id="partners-h">Backed by people who build.</h2></Reveal>
+          <Reveal><Eyebrow>Partners</Eyebrow><h2 id="partners-h">Backed by people who build.</h2></Reveal>
           <p className="lead partners-lead">Every build partner runs its own prize track, so there's more than one way to win.</p>
         </div>
         <ul className="pw">
@@ -297,7 +305,7 @@ export function Curriculum() {
     <section className="curriculum night" id="curriculum" aria-labelledby="cur-h">
       <div className="wrap">
         <div className="cur-head sec-head">
-          <Reveal><p className="eyebrow">Curriculum</p><h2 id="cur-h">Starts from zero. Ends with you shipping an agent.</h2></Reveal>
+          <Reveal><Eyebrow>Curriculum</Eyebrow><h2 id="cur-h">Starts from zero. Ends with you shipping an agent.</h2></Reveal>
           <p className="lead">Six modules, 30 live sessions on weekend mornings. No prior coding needed.</p>
         </div>
         <CurriculumStory />
@@ -305,7 +313,7 @@ export function Curriculum() {
     </section>
   );
 }
-export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><Reveal><p className="eyebrow">Leaderboard</p><h2 id="board-h">Which state is lighting up first?</h2></Reveal><span className="demo-tag">Demo data. Live counts appear once registrations open.</span></div><div className="board-grid"><IndiaStateMap /><div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol><a className="board-cta" href="#register">Register your school →</a></div></div></div></section>; }
+export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><Reveal><Eyebrow>Leaderboard</Eyebrow><h2 id="board-h">Which state is lighting up first?</h2></Reveal><span className="demo-tag">Demo data. Live counts appear once registrations open.</span></div><div className="board-grid"><IndiaStateMap /><div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol><a className="board-cta" href="#register">Register your school →</a></div></div></div></section>; }
 const mentorPhoto: Record<string, string> = { "Vishwa Mohan": "/vishwa-mohan.webp", "Rishi Saraf": "/rishi-saraf.webp", "Gaurav Kaushik": "/gaurav-kaushik.png", "Gladden Rumao": "/gladden-rumao.webp", "Jyoti Nigam": "/jyoti-nigam.webp", "Rishabh Bafna": "/rishabh-bafna.png", "Mithun S": "/mithun-s.webp", "Piyush Jain": "/piyush-jain.png" };
 // Current and past companies, as listed on each mentor's public profile. Confirm with each mentor before launch.
 const mentorLogos: Record<string, Array<[string, string]>> = {
@@ -322,7 +330,7 @@ export function Mentors() {
   return (
     <section className="mentors day" id="mentors" aria-labelledby="m-h">
       <div className="wrap">
-        <Reveal><p className="eyebrow">Mentors</p><h2 id="m-h">Learn from people shipping AI today.</h2></Reveal>
+        <Reveal><Eyebrow>Mentors</Eyebrow><h2 id="m-h">Learn from people shipping AI today.</h2></Reveal>
         <RevealGroup className="m-grid">
           {mentors.map(([name, role]) => (
             <RevealItem key={name}>
@@ -420,12 +428,12 @@ export function RegistrationAndSparkCard() {
       if ((error as DOMException)?.name !== "AbortError") setMessage("Sharing didn't work here. Download the card and share the image instead.");
     } finally { setSharing(false); }
   };
-  return <section className="register night" id="register" aria-labelledby="reg-h"><div className="wrap reg-grid"><div><Reveal><p className="eyebrow">Register</p><h2 id="reg-h">Claim your Spark.</h2></Reveal><p className="lead">Registration takes under a minute and it's free. You'll get your Spark card to share.</p><form onSubmit={submit} noValidate>
+  return <section className="register night" id="register" aria-labelledby="reg-h"><div className="wrap reg-grid"><div><Reveal><Eyebrow>Register</Eyebrow><h2 id="reg-h">Claim your Spark.</h2></Reveal><p className="lead">Registration takes under a minute and it's free. You'll get your Spark card to share.</p><form onSubmit={submit} noValidate>
     <div className="two"><div className="field"><label htmlFor="f-name">First name</label><input id="f-name" autoComplete="given-name" maxLength={40} value={first} aria-invalid={!!errors.first} aria-describedby={errors.first ? "f-name-error" : undefined} onChange={e => { setFirst(e.target.value.split(/\s/)[0] ?? ""); changed(); }} />{errors.first && <small id="f-name-error" role="alert">{errors.first}</small>}</div><div className="field"><label htmlFor="f-class">Class</label><select id="f-class" value={classroom} aria-invalid={!!errors.classroom} aria-describedby={errors.classroom ? "f-class-error" : undefined} onChange={e => { setClassroom(e.target.value); changed(); }}><option value="">Select</option><option>9</option><option>10</option><option>11</option><option>12</option></select>{errors.classroom && <small id="f-class-error" role="alert">{errors.classroom}</small>}</div></div>
     <div className="field"><label htmlFor="f-school">School</label><input id="f-school" maxLength={100} value={school} aria-invalid={!!errors.school} aria-describedby={errors.school ? "f-school-error" : undefined} onChange={e => { setSchool(e.target.value); changed(); }} />{errors.school && <small id="f-school-error" role="alert">{errors.school}</small>}</div>
     <div className="two"><div className="field"><label htmlFor="f-city">City</label><input id="f-city" maxLength={80} value={city} aria-invalid={!!errors.city} aria-describedby={errors.city ? "f-city-error" : undefined} onChange={e => { setCity(e.target.value); changed(); }} />{errors.city && <small id="f-city-error" role="alert">{errors.city}</small>}</div><div className="field"><label htmlFor="f-email">Parent's email</label><input id="f-email" type="email" autoComplete="email" maxLength={255} value={email} aria-invalid={!!errors.email} aria-describedby={errors.email ? "f-email-error" : undefined} onChange={e => { setEmail(e.target.value); changed(); }} />{errors.email && <small id="f-email-error" role="alert">{errors.email}</small>}</div></div>
     <label className="consent"><input type="checkbox" checked={consent} aria-invalid={!!errors.consent} aria-describedby={errors.consent ? "f-consent-error" : undefined} onChange={e => { setConsent(e.target.checked); changed(); }} />My parent or guardian has read the terms and agrees to my participation. We'll email them to confirm.</label>{errors.consent && <small className="consent-error" id="f-consent-error" role="alert">{errors.consent}</small>}
-    <div className="reg-actions"><Button ref={submitRef} variant="iaib" type="submit">Register free</Button>{confirmed && <><Button variant="iaibOutline" type="button" onClick={share} disabled={sharing} aria-label="Share demo Spark card">{sharing ? "Preparing…" : "Share card"}</Button><Button variant="iaibOutline" type="button" onClick={download} disabled={downloading} aria-label="Download demo Spark card as PNG">{downloading ? "Preparing PNG…" : "Download ↓"}</Button></>}</div><p className="form-msg" role="status">{message || "Preview only — no registration is submitted."}</p>
+    <div className="reg-actions"><Button ref={submitRef} variant="iaib" type="submit">Register free</Button>{confirmed && <><Button variant="iaibOutline" type="button" onClick={share} disabled={sharing} aria-label="Share demo Spark card">{sharing ? "Preparing…" : "Share card"}</Button><Button variant="iaibOutline" type="button" onClick={download} disabled={downloading} aria-label="Download demo Spark card as PNG">{downloading ? "Preparing PNG…" : "Download ↓"}</Button></>}</div><p className="reg-trust">Free forever · No payment details, ever · Parent consent required</p><p className="form-msg" role="status">{message || "Preview only — no registration is submitted."}</p>
   </form></div>
    <div className={`card-stage${confirmed ? " card-ready" : ""}`}><TiltCard><div ref={cardRef} className="spark-card" aria-label="Your Spark card preview, demo data"><div className="sc-top"><IaibLogo className="sc-logo" /><span>Season 01</span></div><div className="sc-ticket"><div className="sc-rank">Spark</div><div className="sc-num">{sparkNumber}</div><span className="sc-demo">DEMO · NOT AN ISSUED REGISTRATION</span></div><div className="sc-holder"><div className="sc-name">{first.trim() || "Your name"}</div><div className="sc-school">{school.trim() || "Your school"}</div><div className="sc-city">{city.trim() || "Your city"}</div></div><div className="sc-foot"><span>{classroom ? `Class ${classroom}` : "Class"}</span><img className="sc-org" src="/upgrad-sot-on-dark.webp" alt="upGrad School of Technology" width={120} height={36} /></div></div></TiltCard></div></div></section>;
 }
@@ -433,7 +441,7 @@ export function SchoolsAndParents() { return <section className="audiences day" 
   <RevealItem><article className="aud dark"><div className="aud-art"><img src="/art/schools.webp" srcSet="/art/schools-sm.webp 512w, /art/schools.webp 1024w" sizes="(max-width: 900px) 90vw, 45vw" alt="" width={1024} height={559} loading="lazy" decoding="async" /></div><h3>Bring it to your school.</h3><p>Your students are ready to build the future. Give them free AI learning, real projects and a national stage.</p><ul><li>Free AI learning for every student</li><li>A national competition</li><li>₹25L in prizes and ₹2 Cr in scholarships</li></ul><Action href="#register">Register your school</Action></article></RevealItem>
   <RevealItem><article className="aud"><div className="aud-art"><img src="/art/parents.webp" srcSet="/art/parents-sm.webp 512w, /art/parents.webp 1024w" sizes="(max-width: 900px) 90vw, 45vw" alt="" width={1024} height={559} loading="lazy" decoding="async" /></div><h3>For parents.</h3><p>Your child learns online on weekend mornings, so it never clashes with school. Finalists travel to the finale with full supervision.</p><ul><li>Free to join, no hidden costs</li><li>Parental consent before any participation</li><li>Supervised travel and stay for finalists</li></ul><Action href="#faqs" ghost>Read parent FAQs</Action></article></RevealItem>
   </RevealGroup></section>; }
-export function FAQ() { return <section className="faq day" id="faqs" aria-labelledby="faq-h"><div className="wrap faq-grid"><Reveal><p className="eyebrow">FAQs</p><h2 id="faq-h">Questions, answered.</h2></Reveal><div id="faqlist">{faqs.map(([question, answer], i) => <Accordion key={question} id={`fb${i}`} title={question}><p className="faq-answer">{answer}</p></Accordion>)}</div></div></section>; }
+export function FAQ() { return <section className="faq day" id="faqs" aria-labelledby="faq-h"><div className="wrap faq-grid"><Reveal><Eyebrow>FAQs</Eyebrow><h2 id="faq-h">Questions, answered.</h2></Reveal><div id="faqlist">{faqs.map(([question, answer], i) => <Accordion key={question} id={`fb${i}`} title={question}><p className="faq-answer">{answer}</p></Accordion>)}</div></div></section>; }
 function FooterDialog({ label }: { label: string }) {
   const ref = useRef<HTMLDialogElement>(null);
   return <><button type="button" className="foot-link" onClick={() => ref.current?.showModal()}>{label}</button><dialog ref={ref} className="foot-dialog" aria-label={label} onClick={(e) => { if (e.target === ref.current) ref.current?.close(); }}><h3>{label}</h3><p>This page is being finalised and will be published before registrations open.</p><button type="button" className="btn btn-red" onClick={() => ref.current?.close()}>Close</button></dialog></>;
@@ -441,8 +449,8 @@ function FooterDialog({ label }: { label: string }) {
 export function ClosingAndFooter() {
   return (
     <section className="closing night" aria-label="Ignite AI Buildathon">
-      <img className="closing-art" src="/art/closing.webp" srcSet="/art/closing-sm.webp 512w, /art/closing.webp 1024w" sizes="100vw" alt="" width={1024} height={434} loading="lazy" decoding="async" />
       <div className="finale-mark">
+        <PixelField className="finale-field" />
         <div className="wrap">
           <IaibLogo animate className="finale-logo" />
           <div className="finale-cta"><MagneticButton href="#register">Register free</MagneticButton></div>
