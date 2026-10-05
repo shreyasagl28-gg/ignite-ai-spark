@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteNav, Hero, RecentRegistrations, Stakes, Journey, PartnersAndPrizes, Curriculum, StateBoard, Mentors, RegistrationAndSparkCard, SchoolsAndParents, FAQ, ClosingAndFooter } from "@/components/IaibSections";
 import { StickyRegisterBar } from "@/components/cta/RegisterCta";
+import { SHOW_LIVE_STATS } from "@/content/iaib-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -20,7 +21,7 @@ function Index() {
       <SiteNav />
       <main id="top">
         <Hero />
-        <RecentRegistrations />
+        {SHOW_LIVE_STATS && <RecentRegistrations />}
         <Stakes />
         <Journey />
         <PartnersAndPrizes />

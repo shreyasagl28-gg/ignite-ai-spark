@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { registrationClosesAt } from "@/content/iaib-data";
+import { registrationClosesAt, SHOW_LIVE_STATS } from "@/content/iaib-data";
 
-const CLOSE = new Date(registrationClosesAt).getTime();
+const CLOSE = registrationClosesAt ? new Date(registrationClosesAt).getTime() : null;
 
 /** Ticks once a minute on the client; null during SSR to avoid hydration mismatch. */
 function useNow(intervalMs = 30_000) {
@@ -16,12 +16,12 @@ function useNow(intervalMs = 30_000) {
 
 export function useRegistrationsOpen() {
   const now = useNow();
-  return now !== null && now < CLOSE;
+  return now !== null && CLOSE !== null && now < CLOSE;
 }
 
 export function CloseCountdown() {
   const now = useNow();
-  if (now === null || now >= CLOSE) return null;
+  if (now === null || CLOSE === null || now >= CLOSE) return null;
   const mins = Math.floor((CLOSE - now) / 60000);
   const d = Math.floor(mins / 1440), h = Math.floor((mins % 1440) / 60), m = mins % 60;
   const p = (n: number) => String(n).padStart(2, "0");
@@ -39,16 +39,20 @@ export function StickyRegisterBar({ count }: { count: number }) {
   useEffect(() => {
     const hero = document.querySelector(".hero");
     const form = document.getElementById("register");
-    const io1 = new IntersectionObserver(([e]) => setPastHero(!!e && !e.isIntersecting && e.boundingClientRect.top < 0));
-    const io2 = new IntersectionObserver(([e]) => setFormVisible(!!e?.isIntersecting), { threshold: 0.15 });
-    if (hero) io1.observe(hero);
-    if (form) io2.observe(form);
-    return () => { io1.disconnect(); io2.disconnect(); };
+    const update = () => {
+      setPastHero((hero?.getBoundingClientRect().bottom ?? 0) <= 0);
+      const rect = form?.getBoundingClientRect();
+      setFormVisible(!!rect && rect.top < window.innerHeight && rect.bottom > 0);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => { window.removeEventListener("scroll", update); window.removeEventListener("resize", update); };
   }, []);
   const show = pastHero && !formVisible;
   return (
     <div className={`sticky-reg${show ? " is-on" : ""}`} aria-hidden={!show} inert={!show}>
-      <div className="sticky-reg-count"><b>{count.toLocaleString("en-IN")}</b><span>students registered</span></div>
+      {SHOW_LIVE_STATS && <div className="sticky-reg-count"><b>{count.toLocaleString("en-IN")}</b><span>students registered</span></div>}
       <a className="sticky-reg-btn" href="#register" tabIndex={show ? 0 : -1}>Register free</a>
     </div>
   );

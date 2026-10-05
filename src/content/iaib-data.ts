@@ -36,5 +36,7 @@ export const recentRegistrations: Array<[string, string, number]> = [
 ];
 
 
-/** PLACEHOLDER close date for registrations (IST) — awaiting confirmation. */
-export const registrationClosesAt = "2026-11-15T23:59:00+05:30";
+/** Keep unverified signup activity off the public page. */
+export const SHOW_LIVE_STATS = false;
+/** No closing date has been confirmed. */
+export const registrationClosesAt: string | null = null;

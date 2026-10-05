@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import approvedHtml from "@/content/iaib-body.html?raw";
-import { modules, faqs, mentors, schools, recentRegistrations } from "@/content/iaib-data";
+import { modules, faqs, mentors, schools, recentRegistrations, SHOW_LIVE_STATS } from "@/content/iaib-data";
 import { IndiaStateMap } from "@/components/IndiaStateMap";
 import { BentoStakes } from "@/components/motion/BentoStakes";
 import { Reveal } from "@/components/motion/Reveal";
@@ -14,7 +14,6 @@ import { TiltCard } from "@/components/motion/TiltCard";
 import { MagneticButton } from "@/components/motion/MagneticButton";
 import { Sparkbots } from "@/components/motion/Sparkbots";
 import { CloseCountdown, NavPulseDot, sparkBurst } from "@/components/cta/RegisterCta";
-import iaibLogo from "@/assets/iaib-logo-dark.png.asset.json";
 
 function approvedSection(start: string, end: string) {
   return approvedHtml.split(`<!-- ${start} -->`)[1]?.split(`<!-- ${end} -->`)[0]?.trim() ?? "";
@@ -27,7 +26,7 @@ function Action({ children, href, ghost = false }: { children: React.ReactNode; 
 }
 export function SiteNav() {
   return <header className="nav solid" id="nav"><div className="wrap">
-    <a className="brand" href="#top" aria-label="IAIB home"><img src={iaibLogo.url} alt="IAIB · Ignite AI Buildathon" width="126" height="61" /></a>
+    <a className="brand" href="#top" aria-label="IAIB home"><img src="/iaib-logo.svg" alt="IAIB · Ignite AI Buildathon" width="126" height="61" /></a>
     <nav className="nav-links" aria-label="Main"><a href="#journey">How it works</a><a href="#prizes">Prizes</a><a href="#curriculum">Curriculum</a><a href="#mentors">Mentors</a><a href="#faqs">FAQs</a></nav>
     <div className="nav-cta"><Action href="#register"><NavPulseDot />Register free</Action></div>
   </div></header>;
@@ -166,12 +165,11 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
 }
 export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: number }) {
   return <section className="hero night" aria-labelledby="hero-h"><StaticSparks studentCount={studentsRegistered} /><Sparkbots studentCount={studentsRegistered} /><div className="wrap">
-    <div className="hero-identity"><img src={iaibLogo.url} alt="IAIB · Ignite AI Buildathon" width="160" height="77" /><span className="hero-identity-line" aria-hidden="true" /></div>
     <p className="season"><span className="live-dot" aria-hidden="true" />Season 01 is live. Registrations open 8 Oct 2026.</p>
-    <Reveal><h1 id="hero-h">India's next AI builders start here.</h1></Reveal>
+    <h1 id="hero-h">India's next AI builders start here.</h1>
     <div className="hero-row"><div className="hero-copy"><p>Ignite AI Buildathon is free for students in Classes 9 to 12. Learn AI from zero, test what you know, then build a working product and pitch it to VCs.</p><div className="hero-actions"><MagneticButton href="#register" className="btn-hero">Register free</MagneticButton><CloseCountdown /><Action href="#journey" ghost>See how it works</Action></div></div>
-    <div className="counter" aria-label="Registrations, demo data"><div><b className="hot">{studentsRegistered.toLocaleString("en-IN")}</b><span>students registered</span></div><div><b>214</b><span>schools</span></div><div><b>19</b><span>states and UTs</span></div></div></div>
-    <p className="counter-disclaimer">Demo data</p>
+    {SHOW_LIVE_STATS && <div className="counter" aria-label="Registrations, demo data"><div><b className="hot">{studentsRegistered.toLocaleString("en-IN")}</b><span>students registered</span></div><div><b>214</b><span>schools</span></div><div><b>19</b><span>states and UTs</span></div></div>}</div>
+    {SHOW_LIVE_STATS && <p className="counter-disclaimer">Demo data</p>}
     <div className="support"><span>Supported by <strong>Government of Karnataka</strong></span><span>University partner <strong>Sri Siddhartha Academy of Higher Education</strong></span><span>Organised by <strong>upGrad School of Technology</strong></span></div>
   </div></section>;
 }
@@ -286,7 +284,7 @@ export function Curriculum() {
     </section>
   );
 }
-export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><Reveal><h2 id="board-h">Which state is lighting up first?</h2></Reveal><span className="demo-tag">Demo data, updates live in production</span></div><div className="board-grid"><IndiaStateMap /><div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol><a className="board-cta" href="#register">Register your school →</a></div></div></div></section>; }
+export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><Reveal><h2 id="board-h">Which state is lighting up first?</h2></Reveal>{SHOW_LIVE_STATS && <span className="demo-tag">Demo data, updates live in production</span>}</div><div className="board-grid"><IndiaStateMap />{SHOW_LIVE_STATS && <div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol><a className="board-cta" href="#register">Register your school →</a></div>}</div></div></section>; }
 const mentorPhoto: Record<string, string> = { "Vishwa Mohan": "/vishwa-mohan.webp", "Rishi Saraf": "/rishi-saraf.webp", "Gaurav Kaushik": "/gaurav-kaushik.png", "Gladden Rumao": "/gladden-rumao.webp", "Jyoti Nigam": "/jyoti-nigam.webp", "Rishabh Bafna": "/rishabh-bafna.png", "Mithun S": "/mithun-s.webp", "Piyush Jain": "/piyush-jain.png" };
 const mentorBadge: Record<string, [string, string]> = { "Vishwa Mohan": ["/upgrad.webp", "upGrad"], "Jyoti Nigam": ["/upgrad.webp", "upGrad"], "Mithun S": ["/cisco.webp", "Cisco"] };
 const mentorCompanyText: Record<string, string> = { "Rishi Saraf": "DevDynamics" };
