@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { registrationClosesAt } from "@/content/iaib-data";
+import { registrationClosesAt, SHOW_LIVE_STATS } from "@/content/iaib-data";
 
-const CLOSE = new Date(registrationClosesAt).getTime();
+const CLOSE = registrationClosesAt ? new Date(registrationClosesAt).getTime() : null;
 
 /** Ticks once a minute on the client; null during SSR to avoid hydration mismatch. */
 function useNow(intervalMs = 30_000) {
@@ -16,12 +16,12 @@ function useNow(intervalMs = 30_000) {
 
 export function useRegistrationsOpen() {
   const now = useNow();
-  return now !== null && now < CLOSE;
+  return now !== null && CLOSE !== null && now < CLOSE;
 }
 
 export function CloseCountdown() {
   const now = useNow();
-  if (now === null || now >= CLOSE) return null;
+  if (now === null || CLOSE === null || now >= CLOSE) return null;
   const mins = Math.floor((CLOSE - now) / 60000);
   const d = Math.floor(mins / 1440), h = Math.floor((mins % 1440) / 60), m = mins % 60;
   const p = (n: number) => String(n).padStart(2, "0");
@@ -48,7 +48,7 @@ export function StickyRegisterBar({ count }: { count: number }) {
   const show = pastHero && !formVisible;
   return (
     <div className={`sticky-reg${show ? " is-on" : ""}`} aria-hidden={!show} inert={!show}>
-      <div className="sticky-reg-count"><b>{count.toLocaleString("en-IN")}</b><span>students registered</span></div>
+      {SHOW_LIVE_STATS && <div className="sticky-reg-count"><b>{count.toLocaleString("en-IN")}</b><span>students registered</span></div>}
       <a className="sticky-reg-btn" href="#register" tabIndex={show ? 0 : -1}>Register free</a>
     </div>
   );
