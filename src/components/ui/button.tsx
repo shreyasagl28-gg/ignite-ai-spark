@@ -27,9 +27,8 @@ const buttonVariants = cva(
       },
     },
     compoundVariants: [
-      // IAIB buttons size themselves through .btn; drop the shadcn default height.
-      { variant: "iaib", size: "default", class: "h-auto" },
-      { variant: "iaibOutline", size: "default", class: "h-auto" },
+      { variant: "iaib", size: "default", className: "h-auto" },
+      { variant: "iaibOutline", size: "default", className: "h-auto" },
     ],
     defaultVariants: {
       variant: "default",

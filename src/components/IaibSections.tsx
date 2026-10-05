@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
-import { faqs, mentors, schools, recentRegistrations } from "@/content/iaib-data";
+import { faqs, mentors, schools, recentRegistrations, SHOW_LIVE_STATS } from "@/content/iaib-data";
 import { IndiaStateMap } from "@/components/IndiaStateMap";
 import { Reveal } from "@/components/motion/Reveal";
 import { RevealGroup, RevealItem } from "@/components/motion/RevealGroup";
@@ -176,10 +176,10 @@ export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: numb
         </ul>
         <div className="hero-row">
           <div className="hero-actions"><MagneticButton href="#register" className="btn-hero">Register free</MagneticButton><Action href="#journey" ghost>See how it works</Action></div>
-          <div className="counter-wrap">
+          {SHOW_LIVE_STATS && <div className="counter-wrap">
 <div className="counter" aria-label="Registrations, demo data"><div><b className="hot">{studentsRegistered.toLocaleString("en-IN")}</b><span>students registered</span></div><div><b>214</b><span>schools</span></div><div><b>19</b><span>states and UTs</span></div></div>
             <p className="counter-disclaimer">Demo data</p>
-          </div>
+          </div>}
         </div>
       </div>
     </section>

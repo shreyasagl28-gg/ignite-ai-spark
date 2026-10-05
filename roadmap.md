@@ -13,3 +13,6 @@ Deferred, not part of this static phase:
 - [x] Wrap the Spark card in a TiltCard (pointer tilt, desktop only).
 - [x] Replace Hero and Closing "Register free" buttons with a MagneticButton (magnetic pull, desktop only).
 - [x] Wrap every section headline in Reveal; card rows (mentors, curriculum, prize row, audience panels) in RevealGroup/RevealItem with 80ms stagger. Paragraphs, nav and footer untouched.
+- [x] Fit hero to five requested viewport sizes, remove duplicate CSS rules, and adjust safe-area spacing and contrast.
+- [x] Hide unverified registration figures and countdown; simplify map accessibility and tablet layout.
+- [x] Serve the IAIB logo locally and remove root duplicate images and public manifest.
