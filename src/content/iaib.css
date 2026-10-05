@@ -673,3 +673,35 @@ img.portrait{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:co
 .pd-note{padding:10px 16px;border-top:1px solid var(--ink-line);font:500 11px var(--mono);color:var(--grey-ink)}
 @media (max-width:900px){.pd{grid-template-columns:minmax(0,1fr)}.pd-window{min-height:300px}}
 @media (prefers-reduced-motion:reduce){.pd-caret{animation:none}}
+
+/* Phones: Instagram-style swipe rows instead of long stacks */
+@media (max-width:700px){
+  .jl,.cs-list,.prize-row,.perks-grid{display:flex;gap:12px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;margin-inline:-22px;padding:4px 22px 14px;scroll-padding-inline:22px;scrollbar-width:none}
+  .jl::-webkit-scrollbar,.cs-list::-webkit-scrollbar,.prize-row::-webkit-scrollbar,.perks-grid::-webkit-scrollbar{display:none}
+  .jl>*,.cs-list>*,.prize-row>*,.perks-grid>*{flex:0 0 82%;scroll-snap-align:start;min-width:0}
+  .jl-step{display:flex;flex-direction:column}
+  .jl-art{aspect-ratio:4/3}
+  .cs{display:block}
+  .cs-list{counter-reset:none}
+  .cs-item{min-height:0;padding:18px;border:1px solid var(--ink-line);border-radius:16px;background:var(--ink-2);gap:12px;opacity:1}
+  .cs-item:first-child{padding-top:18px;border-top:1px solid var(--ink-line)}
+  .cs-item-img{max-width:none;width:100%;height:190px;object-fit:contain;aspect-ratio:auto}
+  .cs-item h3{font-size:28px}
+  .cs-desc{font-size:15px}
+  .cs-topics li{padding:8px 0;font-size:14px}
+  .swipe-hint{display:flex}
+  .prize-row{margin-top:32px}
+  .pw-seal{display:none}
+  .aud-art{height:170px}
+  .nav .btn{min-height:44px}
+  .nav .brand{display:inline-flex;align-items:center;min-height:44px}
+}
+.swipe-hint{display:none;align-items:center;gap:8px;margin-top:6px;font:500 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--grey-ink)}
+.swipe-hint::after{content:"";width:28px;height:1px;background:currentColor}
+
+/* Spark card preview for in-app browsers (long-press to save) */
+.card-preview{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:20px;padding-bottom:calc(20px + env(safe-area-inset-bottom));background:var(--background-dark)}
+.card-preview-box{display:grid;gap:14px;justify-items:center;max-width:380px;width:100%}
+.card-preview-box img{width:100%;height:auto;border-radius:12px;border:1px solid var(--border-dark);-webkit-touch-callout:default;user-select:auto}
+.card-preview-box p{text-align:center;color:var(--foreground-dark);font-size:15px}
+.card-preview-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}

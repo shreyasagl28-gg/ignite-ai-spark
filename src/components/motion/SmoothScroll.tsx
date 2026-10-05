@@ -9,11 +9,10 @@ export function SmoothScroll() {
       destroy();
       destroy = () => {};
       if (motion.matches) return;
-      const [{ default: Lenis }, { ScrollTrigger }] = await Promise.all([import("lenis"), import("gsap/ScrollTrigger")]);
+      const { default: Lenis } = await import("lenis");
       if (disposed || motion.matches) return;
       const lenis = new Lenis({ autoRaf: true, anchors: true, duration: 1.2, easing: t => 1 - Math.pow(1 - t, 3) });
-      const off = lenis.on("scroll", ScrollTrigger.update);
-      destroy = () => { off(); lenis.destroy(); };
+      destroy = () => lenis.destroy();
     };
     void sync();
     motion.addEventListener("change", sync);
