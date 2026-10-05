@@ -15,7 +15,7 @@ const FPS_MS = 1000 / 7;
 
 type Gear = "antenna" | "headphones" | "cap" | "backpack" | "goggles" | "none";
 type Action = "typing" | "carrying" | "waving" | "celebrating";
-type Bot = { id: number; gear: Gear; action: Action; x: number; tx: number; y: number; vy: number; phase: number; leaving: boolean; spark: number; city: string };
+export type Bot = { id: number; gear: Gear; action: Action; x: number; tx: number; y: number; vy: number; phase: number; leaving: boolean; spark: number; city: string };
 
 const GEARS: Gear[] = ["antenna", "headphones", "cap", "backpack", "goggles", "none"];
 const ACTIONS: Action[] = ["typing", "carrying", "waving", "celebrating"];
@@ -30,7 +30,7 @@ function box(c: CanvasRenderingContext2D, x: number, y: number, w: number, h: nu
   px(c, x, y, w, h, fill);
 }
 
-function drawBot(c: CanvasRenderingContext2D, bot: Bot, frame: number, walking: boolean) {
+export function drawBot(c: CanvasRenderingContext2D, bot: Bot, frame: number, walking: boolean) {
   const ox = Math.round(bot.x - CELL / 2);
   const f = (frame + bot.phase) % 4;
   let oy = Math.round(bot.y);

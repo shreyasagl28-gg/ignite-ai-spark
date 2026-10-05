@@ -26,7 +26,7 @@ function Index() {
         <Journey />
         <PartnersAndPrizes />
         <Curriculum />
-        <StateBoard />
+        {SHOW_LIVE_STATS && <StateBoard />}
         <Mentors />
         <RegistrationAndSparkCard />
         <SchoolsAndParents />

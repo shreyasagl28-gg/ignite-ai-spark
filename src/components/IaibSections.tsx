@@ -1,35 +1,35 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
-import approvedHtml from "@/content/iaib-body.html?raw";
-import { modules, faqs, mentors, schools, recentRegistrations, SHOW_LIVE_STATS } from "@/content/iaib-data";
+import { faqs, mentors, schools, recentRegistrations, SHOW_LIVE_STATS } from "@/content/iaib-data";
 import { IndiaStateMap } from "@/components/IndiaStateMap";
-import { BentoStakes } from "@/components/motion/BentoStakes";
 import { Reveal } from "@/components/motion/Reveal";
 import { RevealGroup, RevealItem } from "@/components/motion/RevealGroup";
-import { HorizontalScroll } from "@/components/motion/HorizontalScroll";
-import { SpotlightCard } from "@/components/motion/SpotlightCard";
+import { CurriculumStory } from "@/components/CurriculumStory";
+import { JourneyLadder } from "@/components/JourneyLadder";
 import { Marquee } from "@/components/motion/Marquee";
 import { TiltCard } from "@/components/motion/TiltCard";
 import { MagneticButton } from "@/components/motion/MagneticButton";
 import { Sparkbots } from "@/components/motion/Sparkbots";
-import { CloseCountdown, NavPulseDot, sparkBurst } from "@/components/cta/RegisterCta";
+import { NavPulseDot, sparkBurst } from "@/components/cta/RegisterCta";
+import { Eyebrow } from "@/components/motion/Eyebrow";
+import { SlotNumber } from "@/components/motion/SlotNumber";
+import { PixelField } from "@/components/motion/PixelField";
+import { MoneyRain } from "@/components/motion/MoneyRain";
+import { ScrollBot } from "@/components/motion/ScrollBot";
+import { Perks } from "@/components/Perks";
+import { PromptDemo } from "@/components/PromptDemo";
+import { IaibLogo } from "@/components/IaibLogo";
 
-function approvedSection(start: string, end: string) {
-  return approvedHtml.split(`<!-- ${start} -->`)[1]?.split(`<!-- ${end} -->`)[0]?.trim() ?? "";
-}
-function Approved({ start, end }: { start: string; end: string }) {
-  return <div className="contents" dangerouslySetInnerHTML={{ __html: approvedSection(start, end) }} />;
-}
 function Action({ children, href, ghost = false }: { children: React.ReactNode; href: string; ghost?: boolean }) {
   return <Button asChild variant={ghost ? "iaibOutline" : "iaib"}><a href={href}>{children}</a></Button>;
 }
 export function SiteNav() {
   return <header className="nav solid" id="nav"><div className="wrap">
-    <a className="brand" href="#top" aria-label="IAIB home"><img src="/iaib-logo.svg" alt="IAIB · Ignite AI Buildathon" width="126" height="61" /></a>
+    <a className="brand" href="#top" aria-label="IAIB home"><IaibLogo className="nav-logo" title="IAIB · Ignite AI Buildathon" /></a>
     <nav className="nav-links" aria-label="Main"><a href="#journey">How it works</a><a href="#prizes">Prizes</a><a href="#curriculum">Curriculum</a><a href="#mentors">Mentors</a><a href="#faqs">FAQs</a></nav>
     <div className="nav-cta"><Action href="#register"><NavPulseDot />Register free</Action></div>
-  </div></header>;
+  </div><ScrollBot /></header>;
 }
 function StaticSparks({ studentCount }: { studentCount: number }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -44,12 +44,12 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const colors = ["229,9,19", "255,77,46", "255,138,61"];
+    const colors = ["255,77,46", "229,9,19", "255,138,61", "255,214,180"];
     const noise = (seed: number) => {
       const value = Math.sin(seed * 127.1 + 37.7) * 43758.5453;
       return value - Math.floor(value);
     };
-    type Spark = { x: number; y: number; speed: number; drift: number; radius: number; tone: number; opacity: number; square: boolean };
+    type Spark = { x: number; y: number; speed: number; drift: number; radius: number; tone: number; opacity: number };
     let width = 0;
     let height = 0;
     let sparks: Spark[] = [];
@@ -61,42 +61,31 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
     const makeSpark = (i: number): Spark => ({
       x: .12 + noise(i + 1) * .76,
       y: noise(i + 402),
-      speed: .055 + noise(i + 719) * .12,
-      drift: (noise(i + 815) - .5) * .018,
-      radius: .65 + noise(i + 901) * 1.45,
-      tone: i % colors.length,
-      opacity: .2 + noise(i + 1200) * .55,
-      square: i % 13 === 0,
+      speed: .025 + noise(i + 719) * .06,
+      drift: (noise(i + 815) - .5) * .012,
+      radius: .7 + noise(i + 901) * 1.1,
+      tone: i % 11 === 0 ? 3 : i % 3,
+      opacity: .4 + noise(i + 1200) * .6,
     });
-     const draw = (now: number) => {
+    // Fine embers drifting up through a dark stage. The light and the floor are CSS layers.
+    const draw = (now: number) => {
       context.clearRect(0, 0, width, height);
       const flare = Math.max(0, 1 - (now - flareStarted) / 850);
-      const glow = context.createRadialGradient(width * .5, height * 1.03, 0, width * .5, height * 1.03, height * .85);
-      glow.addColorStop(0, `rgba(229,9,19,${.16 + flare * .24})`);
-      glow.addColorStop(1, "rgba(229,9,19,0)");
-      context.fillStyle = glow;
-      context.fillRect(0, 0, width, height);
       context.globalCompositeOperation = "lighter";
-       for (const [index, spark] of sparks.entries()) {
-         // A handful of original square sparks briefly find one another, then disperse.
-         // This happens inside the existing particle budget rather than adding a second scene.
-         const assembly = reducedMotion.matches ? 0 : Math.max(0, 1 - Math.abs((now / 1000 + index * .055) % 10 - 2) / 1.25);
-         const gather = index < 12 ? assembly * assembly * (3 - 2 * assembly) * .75 : 0;
-         const targetX = (.43 + (index % 4) * .045) * width;
-         const targetY = (.68 + Math.floor(index / 4) * .045) * height;
-         const x = spark.x * width * (1 - gather) + targetX * gather;
-         const y = spark.y * height * (1 - gather) + targetY * gather;
-        const fade = Math.min(1, (1 - spark.y) * 3) * Math.min(1, spark.y * 5);
-        const intensity = 1 + flare * (1.8 + Math.max(0, 1 - Math.abs(spark.x - .5) * 2));
-         const alpha = Math.min(1, spark.opacity * fade * intensity + gather * .25);
-        context.fillStyle = `rgba(${colors[spark.tone]},${alpha * .2})`;
+      for (const [index, spark] of sparks.entries()) {
+        const x = spark.x * width;
+        const y = spark.y * height;
+        const fade = Math.min(1, (1 - spark.y) * 2.5) * Math.min(1, spark.y * 4);
+        const twinkle = reducedMotion.matches ? 1 : .65 + .35 * Math.sin(now / 650 + index * 1.7);
+        const alpha = Math.min(1, spark.opacity * fade * twinkle * (1 + flare));
+        context.fillStyle = `rgba(${colors[spark.tone]},${alpha * .14})`;
         context.beginPath();
-        context.arc(x, y, spark.radius * (3 + flare * 2), 0, Math.PI * 2);
+        context.arc(x, y, spark.radius * 4.5, 0, Math.PI * 2);
         context.fill();
         context.fillStyle = `rgba(${colors[spark.tone]},${alpha})`;
-        const size = spark.radius * (1 + flare * .6);
-        if (spark.square) context.fillRect(x - size, y - size, size * 2, size * 2);
-        else { context.beginPath(); context.arc(x, y, size, 0, Math.PI * 2); context.fill(); }
+        context.beginPath();
+        context.arc(x, y, spark.radius, 0, Math.PI * 2);
+        context.fill();
       }
       context.globalCompositeOperation = "source-over";
     };
@@ -132,7 +121,7 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
       canvas.width = Math.round(width * ratio);
       canvas.height = Math.round(height * ratio);
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      const count = width <= 700 ? Math.min(90, Math.floor(width / 4)) : Math.min(260, Math.floor(width / 5));
+      const count = width <= 700 ? 36 : Math.min(90, Math.floor(width / 16));
       sparks = Array.from({ length: count }, (_, i) => makeSpark(i));
       draw(performance.now());
     };
@@ -164,14 +153,37 @@ function StaticSparks({ studentCount }: { studentCount: number }) {
   return <canvas id="sparks" ref={ref} aria-hidden="true" />;
 }
 export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: number }) {
-  return <section className="hero night" aria-labelledby="hero-h"><StaticSparks studentCount={studentsRegistered} /><Sparkbots studentCount={studentsRegistered} /><div className="wrap">
-    <p className="season"><span className="live-dot" aria-hidden="true" />Season 01 is live. Registrations open 8 Oct 2026.</p>
-    <h1 id="hero-h">India's next AI builders start here.</h1>
-    <div className="hero-row"><div className="hero-copy"><p>Ignite AI Buildathon is free for students in Classes 9 to 12. Learn AI from zero, test what you know, then build a working product and pitch it to VCs.</p><div className="hero-actions"><MagneticButton href="#register" className="btn-hero">Register free</MagneticButton><CloseCountdown /><Action href="#journey" ghost>See how it works</Action></div></div>
-    {SHOW_LIVE_STATS && <div className="counter" aria-label="Registrations, demo data"><div><b className="hot">{studentsRegistered.toLocaleString("en-IN")}</b><span>students registered</span></div><div><b>214</b><span>schools</span></div><div><b>19</b><span>states and UTs</span></div></div>}</div>
-    {SHOW_LIVE_STATS && <p className="counter-disclaimer">Demo data</p>}
-    <div className="support"><span>Supported by <strong>Government of Karnataka</strong></span><span>University partner <strong>Sri Siddhartha Academy of Higher Education</strong></span><span>Organised by <strong>upGrad School of Technology</strong></span></div>
-  </div></section>;
+  return (
+    <section className="hero night" aria-labelledby="hero-h">
+      <div className="hero-stage" aria-hidden="true"><div className="hero-light" /><div className="hero-floor" /></div>
+      <StaticSparks studentCount={studentsRegistered} />
+      <Sparkbots studentCount={studentsRegistered} />
+      <div className="wrap">
+        <p className="hero-credits">
+          <span className="hc-present">Presented by</span>
+          <span className="hc-org"><img src="/government-of-karnataka.webp" alt="" width={56} height={48} /><span>Government of<br />Karnataka</span></span>
+          <span className="hc-x" aria-hidden="true">×</span>
+          <img className="hc-upgrad" src="/upgrad-sot-on-dark.webp" alt="upGrad School of Technology" width={135} height={40} />
+        </p>
+        <h1 id="hero-h" className="hero-name"><span>Ignite <em>AI</em></span> <span>Buildathon</span></h1>
+        <p className="hero-tag">Learn AI from zero. Build a real product. Pitch it to VCs.</p>
+        <ul className="hero-facts">
+          <li><span className="live-dot" aria-hidden="true" />Season 01 · Registrations open 8 Oct 2026</li>
+          <li>Free for Classes 9–12</li>
+          <li>No coding needed</li>
+          <li>₹25L in prizes</li>
+          <li>Finale in Bengaluru</li>
+        </ul>
+        <div className="hero-row">
+          <div className="hero-actions"><MagneticButton href="#register" className="btn-hero">Register free</MagneticButton><Action href="#journey" ghost>See how it works</Action></div>
+          {SHOW_LIVE_STATS && <div className="counter-wrap">
+<div className="counter" aria-label="Registrations, demo data"><div><b className="hot">{studentsRegistered.toLocaleString("en-IN")}</b><span>students registered</span></div><div><b>214</b><span>schools</span></div><div><b>19</b><span>states and UTs</span></div></div>
+            <p className="counter-disclaimer">Demo data</p>
+          </div>}
+        </div>
+      </div>
+    </section>
+  );
 }
 export function RecentRegistrations() {
   return <aside className="registration-strip night" aria-label="Sample recent registrations">
@@ -185,14 +197,22 @@ export function RecentRegistrations() {
 }
 export function Stakes() {
   return (
-    <section className="stakes night" id="prizes-top" aria-labelledby="stakes-h">
+    <section className="stakes night" id="prizes" aria-labelledby="stakes-h">
       <div className="wrap">
-        <Reveal>
-          <h2 id="stakes-h">What's on the table this season.</h2>
-        </Reveal>
-        <BentoStakes />
-        <p className="ratio">Thousands will learn. <em>Only 100 make the finale.</em></p>
+        <Reveal><Eyebrow>Prizes</Eyebrow><h2 id="stakes-h">What's on the table this season.</h2></Reveal>
+        <MoneyRain />
+        <Perks />
       </div>
+      <figure className="sk-band wrap">
+        <div className="sk-stage">
+          <img src="/art/finale-hall.webp" alt="" width={816} height={434} loading="lazy" decoding="async" />
+          <figcaption className="sk-stage-line">Thousands will learn. <em>Only 100 make the finale.</em></figcaption>
+        </div>
+        <div className="sk-facts">
+          <div><span className="sk-label">Finalists</span><b className="sk-num"><SlotNumber value="100" /></b><p>finalists build live for 36 hours</p></div>
+          <div><span className="sk-label">Investors</span><b className="sk-num">VCs</b><p>hear your pitch on finale day</p></div>
+        </div>
+      </figure>
     </section>
   );
 }
@@ -208,48 +228,55 @@ export function Journey() {
     <section className="journey night" id="journey" aria-labelledby="journey-h">
       <div className="wrap">
         <div className="journey-head">
-          <Reveal><h2 id="journey-h">Four steps. One spark to a fire.</h2></Reveal>
+          <Reveal><Eyebrow>How it works</Eyebrow><h2 id="journey-h">Four steps. One spark to a fire.</h2></Reveal>
           <p>Every step earns you a rank. Start as a Spark. Finish as one of the Ignited 100.</p>
         </div>
-        <RevealGroup className="sched">{journeySteps.map((s) => <RevealItem key={s.title}><div className="sched-row"><p className="sched-when">{s.when}</p><h3 className="sched-title">{s.title}</h3><div className="sched-body"><p>{s.body}</p><span className="rank">{s.rank}</span></div></div></RevealItem>)}</RevealGroup>
+        <JourneyLadder steps={journeySteps} />
       </div>
     </section>
   );
 }
+const partners = [
+  { role: "Supported by", name: "Government of Karnataka", logo: "/government-of-karnataka.png", shape: "emblem" },
+  { role: "Organised by", name: "upGrad School of Technology", logo: "/upgrad-school-of-technology.png", shape: "wordmark" },
+  { role: "University partner", name: "Sri Siddhartha Academy of Higher Education", logo: "/ssahe.png", shape: "emblem" },
+] as const;
+const buildPartners = ["AI Partner", "Build Partner", "Voice Partner"];
 export function PartnersAndPrizes() {
-  const html = approvedSection("PARTNERS & PRIZES", "CURRICULUM");
-  const tierStart = html.indexOf('<div class="tier');
-  const prizeStart = html.indexOf('<div class="prize-row">');
-  const clean = (part: string) => part.replace(/^<section[^>]*>|<\/section>$/g, "").replace(/<div class="wrap">/, "").trim();
-  const headHtml = clean(tierStart > -1 ? html.slice(0, tierStart) : html);
-  const tiersHtml = tierStart > -1 ? clean(html.slice(tierStart, prizeStart > -1 ? prizeStart : undefined)) : "";
-  const hEnd = headHtml.indexOf("</h2>");
-  const h2Html = hEnd > -1 ? headHtml.slice(0, hEnd + 5) : "";
-  const headRest = hEnd > -1 ? headHtml.slice(hEnd + 5).trim() : "";
-  const prizeParts = prizeStart > -1
-    ? html.slice(prizeStart).split("</article>")
-      .map((part) => part.trim())
-      .filter((part) => part.startsWith("<article") || part.startsWith('<div class="prize-row"'))
-      .map((part) => part.replace(/^<div class="prize-row">/, "").trim())
-    : [];
   return (
-    <section className="partners day" id="prizes" aria-labelledby="partners-h">
+    <section className="partners day" id="partners" aria-labelledby="partners-h">
       <div className="wrap">
-        <Reveal><div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: h2Html }} /></Reveal>
-        {headRest && <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: headRest }} />}
-        <Marquee label="Partners">
-          <img className="marquee-logo" src="/government-of-karnataka.png" alt="Government of Karnataka" loading="lazy" />
-          <img className="marquee-logo" src="/upgrad-school-of-technology.png" alt="upGrad School of Technology" loading="lazy" />
-          <img className="marquee-logo" src="/ssahe.png" alt="Sri Siddhartha Academy of Higher Education" loading="lazy" />
-        </Marquee>
-        <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: tiersHtml }} />
-        {prizeParts.length > 0 && (
-          <RevealGroup className="prize-row">
-            {prizeParts.map((part, i) => (
-              <RevealItem key={i}><div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `${part}</article>` }} /></RevealItem>
+        <div className="sec-head">
+          <Reveal><Eyebrow>Partners</Eyebrow><h2 id="partners-h">Backed by people who build.</h2></Reveal>
+          <p className="lead partners-lead">Every build partner runs its own prize track, so there's more than one way to win.</p>
+        </div>
+        <ul className="pw">
+          {partners.map((p) => (
+            <li key={p.name} className="pw-tile">
+              <span className="pw-role">{p.role}</span>
+              <span className={`pw-logo pw-logo-${p.shape}`}><img src={p.logo} alt={p.name} loading="lazy" /></span>
+              <span className="pw-name">{p.name}</span>
+            </li>
+          ))}
+        </ul>
+        <div className="pw-build">
+          <img className="pw-seal" src="/art/partner-seal-sm.webp" srcSet="/art/partner-seal-sm.webp 512w, /art/partner-seal.webp 1024w" sizes="(max-width: 900px) 90vw, 30vw" alt="" width={1024} height={559} loading="lazy" decoding="async" />
+          <p className="pw-role">Build partners</p>
+          <ul className="pw-slots">
+            {buildPartners.map((name) => (
+              <li key={name} className="pw-slot">
+                <span className="pw-slot-mark" aria-hidden="true" />
+                <span className="pw-slot-name">{name}</span>
+                <span className="pw-soon">soon</span>
+              </li>
             ))}
-          </RevealGroup>
-        )}
+          </ul>
+        </div>
+        <RevealGroup className="prize-row">
+          <RevealItem><article className="prize grand"><h3>Grand prize</h3><div className="amt">₹25L</div><p>Total prize pool for the finale winners. Breakdown by rank to be announced.</p></article></RevealItem>
+          <RevealItem><article className="prize"><h3>Partner prize tracks</h3><p>Best use of each build partner's tool, judged on that partner's own criteria. Tracks open as partners are announced.</p></article></RevealItem>
+          <RevealItem><article className="prize"><h3>Scholarships</h3><div className="amt amt-sm">₹2 Cr</div><p>Eligibility and amounts per student to be announced.</p></article></RevealItem>
+        </RevealGroup>
       </div>
     </section>
   );
@@ -259,36 +286,57 @@ function Accordion({ title, detail, children, initial = false, id }: { title: st
   return <div className={`mod${open ? " open" : ""}`}><Button variant="ghost" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}><span className="mod-title">{title}</span><span className="mod-tail">{detail && <span className="mod-meta">{detail}</span>}<span className="plus" aria-hidden="true">+</span></span></Button><div className="mod-body" id={id} aria-hidden={!open}><div className="mod-inner">{children}</div></div></div>;
 }
 export function Curriculum() {
-  const titleBlock = (
-    <div className="cur-head">
-      <h2 id="cur-h"><Reveal>Starts from zero. Ends with you shipping an agent.</Reveal></h2>
-      <p className="lead">Six modules, 30 live sessions on weekend mornings. No prior coding needed.</p>
-    </div>
-  );
   return (
-    <section className="curriculum day" id="curriculum" aria-labelledby="cur-h">
-      <HorizontalScroll title={titleBlock}>
-        <RevealGroup bare>
-          {modules.map((m) => (
-            <RevealItem key={m[0]}>
-              <SpotlightCard tone="light" className="mod-card">
-                <span className="mod-num">{m[1]}</span>
-                <h3>{m[0]}</h3>
-                <p className="mod-desc">{m[2]}</p>
-                <ol>{m[3].map((item: string) => <li key={item}>{item}</li>)}</ol>
-              </SpotlightCard>
-            </RevealItem>
-          ))}
-        </RevealGroup>
-      </HorizontalScroll>
+    <section className="curriculum night" id="curriculum" aria-labelledby="cur-h">
+      <div className="wrap">
+        <div className="cur-head sec-head">
+          <Reveal><Eyebrow>Curriculum</Eyebrow><h2 id="cur-h">Starts from zero. Ends with you shipping an agent.</h2></Reveal>
+          <p className="lead">Six modules, 30 live sessions on weekend mornings. No prior coding needed.</p>
+        </div>
+        <CurriculumStory />
+        <PromptDemo />
+      </div>
     </section>
   );
 }
-export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><Reveal><h2 id="board-h">Which state is lighting up first?</h2></Reveal>{SHOW_LIVE_STATS && <span className="demo-tag">Demo data, updates live in production</span>}</div><div className="board-grid"><IndiaStateMap />{SHOW_LIVE_STATS && <div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol><a className="board-cta" href="#register">Register your school →</a></div>}</div></div></section>; }
+export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><Reveal><Eyebrow>Leaderboard</Eyebrow><h2 id="board-h">Which state is lighting up first?</h2></Reveal><span className="demo-tag">Demo data. Live counts appear once registrations open.</span></div><div className="board-grid"><IndiaStateMap /><div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol><a className="board-cta" href="#register">Register your school →</a></div></div></div></section>; }
 const mentorPhoto: Record<string, string> = { "Vishwa Mohan": "/vishwa-mohan.webp", "Rishi Saraf": "/rishi-saraf.webp", "Gaurav Kaushik": "/gaurav-kaushik.png", "Gladden Rumao": "/gladden-rumao.webp", "Jyoti Nigam": "/jyoti-nigam.webp", "Rishabh Bafna": "/rishabh-bafna.png", "Mithun S": "/mithun-s.webp", "Piyush Jain": "/piyush-jain.png" };
-const mentorBadge: Record<string, [string, string]> = { "Vishwa Mohan": ["/upgrad.webp", "upGrad"], "Jyoti Nigam": ["/upgrad.webp", "upGrad"], "Mithun S": ["/cisco.webp", "Cisco"] };
-const mentorCompanyText: Record<string, string> = { "Rishi Saraf": "DevDynamics" };
-export function Mentors() { return <section className="mentors day" id="mentors" aria-labelledby="m-h"><div className="wrap"><Reveal><h2 id="m-h">Learn from people shipping AI today.</h2></Reveal><RevealGroup className="m-grid">{mentors.map(([name, role]) => <RevealItem key={name}>{mentorPhoto[name] ? <img className="portrait" src={mentorPhoto[name]} alt={name} loading="lazy" width={400} height={500} /> : <div className="portrait" aria-hidden="true">{name.split(" ").map((word: string) => word[0]).join("").slice(0, 2)}</div>}<h3>{name}</h3><p>{role}</p>{!mentorBadge[name] && mentorCompanyText[name] && <span className="mentor-company">{mentorCompanyText[name]}</span>}{mentorBadge[name] && <img className="mentor-badge" src={mentorBadge[name][0]} alt={mentorBadge[name][1]} loading="lazy" height={20} />}</RevealItem>)}</RevealGroup></div></section>; }
+// Current and past companies, as listed on each mentor's public profile. Confirm with each mentor before launch.
+const mentorLogos: Record<string, Array<[string, string]>> = {
+  "Vishwa Mohan": [["/upgrad.webp", "upGrad"], ["/linkedin.webp", "LinkedIn"], ["/walmart.webp", "Walmart"], ["/paypal.webp", "PayPal"], ["/oracle.webp", "Oracle"], ["/pw.webp", "Physics Wallah"]],
+  "Rishi Saraf": [["/hotstar.webp", "Hotstar"], ["/vmware.webp", "VMware"], ["/walmart.webp", "Walmart"]],
+  "Gaurav Kaushik": [["/salesforce.webp", "Salesforce"], ["/microsoft.webp", "Microsoft"], ["/paypal.webp", "PayPal"]],
+  "Gladden Rumao": [["/upgrad.webp", "upGrad"], ["/barclays.webp", "Barclays"]],
+  "Jyoti Nigam": [["/upgrad.webp", "upGrad"]],
+  "Rishabh Bafna": [["/upgrad.webp", "upGrad"]],
+  "Mithun S": [["/cisco.webp", "Cisco"], ["/ineuron.webp", "iNeuron"]],
+  "Piyush Jain": [["/upgrad.webp", "upGrad"]],
+};
+export function Mentors() {
+  return (
+    <section className="mentors day" id="mentors" aria-labelledby="m-h">
+      <div className="wrap">
+        <Reveal><Eyebrow>Mentors</Eyebrow><h2 id="m-h">Learn from people shipping AI today.</h2></Reveal>
+        <RevealGroup className="m-grid">
+          {mentors.map(([name, role]) => (
+            <RevealItem key={name}>
+              <div className="m-photo">
+                {mentorPhoto[name] ? <img className="portrait" src={mentorPhoto[name]} alt={name} loading="lazy" width={400} height={500} /> : <div className="portrait" aria-hidden="true">{name.split(" ").map((word: string) => word[0]).join("").slice(0, 2)}</div>}
+              </div>
+              <h3>{name}</h3>
+              <p>{role}</p>
+              {mentorLogos[name] && (
+                <ul className="m-logos" aria-label={`${name} has worked at`}>
+                  {mentorLogos[name]!.map(([src, company]) => <li key={company}><img src={src} alt={company} loading="lazy" height={18} /></li>)}
+                </ul>
+              )}
+            </RevealItem>
+          ))}
+        </RevealGroup>
+      </div>
+    </section>
+  );
+}
 const registrationSchema = z.object({
   first: z.string().trim().min(1, "Enter your first name.").max(40, "Use 40 characters or fewer.").regex(/^[\p{L}\p{M}][\p{L}\p{M}'’-]*$/u, "Enter a first name only, without a surname."),
   classroom: z.enum(["9", "10", "11", "12"], { errorMap: () => ({ message: "Select your class." }) }),
@@ -324,38 +372,89 @@ export function RegistrationAndSparkCard() {
     sparkBurst(submitRef.current);
     setErrors({}); setConfirmed(true); setMessage("Spark card ready. This is a demo preview — no registration or parent email was sent.");
   };
+  const [sharing, setSharing] = useState(false);
+  const fileName = () => `iaib-spark-${first.trim().toLocaleLowerCase() || "card"}.png`;
+  const renderPng = async () => {
+    await document.fonts.ready;
+    const { toBlob } = await import("html-to-image");
+    const blob = await toBlob(cardRef.current!, { canvasWidth: 1080, canvasHeight: 1350, pixelRatio: 1, cacheBust: true });
+    if (!blob) throw new Error("empty image");
+    return blob;
+  };
   const download = async () => {
     if (!confirmed || !cardRef.current || downloading) return;
     setDownloading(true);
     try {
-      await document.fonts.ready;
-      const { toPng } = await import("html-to-image");
-      const png = await toPng(cardRef.current, { canvasWidth: 1080, canvasHeight: 1350, pixelRatio: 1, cacheBust: true });
+      const url = URL.createObjectURL(await renderPng());
       const link = document.createElement("a");
-      link.download = `iaib-spark-${first.trim().toLocaleLowerCase()}.png`;
-      link.href = png;
+      link.download = fileName();
+      link.href = url;
       link.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 4000);
       setMessage("Demo Spark card downloaded. No registration or parent email was sent.");
     } catch {
       setMessage("The image couldn't be saved. Please try again.");
     } finally { setDownloading(false); }
   };
-  return <section className="register night" id="register" aria-labelledby="reg-h"><div className="wrap reg-grid"><div><Reveal><h2 id="reg-h">Claim your spark.</h2></Reveal><p className="lead">Registration takes under a minute and it's free. You'll get your Spark card to share.</p><form onSubmit={submit} noValidate>
+  const share = async () => {
+    if (!confirmed || !cardRef.current || sharing) return;
+    setSharing(true);
+    const text = `My Spark card for Ignite AI Buildathon Season 01, by upGrad School of Technology with the Government of Karnataka. Free for Classes 9–12. Registrations open 8 Oct 2026: ${window.location.origin}`;
+    try {
+      const file = new File([await renderPng()], fileName(), { type: "image/png" });
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: "My IAIB Spark card", text });
+      } else if (navigator.share) {
+        await navigator.share({ title: "My IAIB Spark card", text });
+      } else {
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+      }
+      setMessage("Shared. This is a demo preview, so no registration was submitted.");
+    } catch (error) {
+      if ((error as DOMException)?.name !== "AbortError") setMessage("Sharing didn't work here. Download the card and share the image instead.");
+    } finally { setSharing(false); }
+  };
+  return <section className="register night" id="register" aria-labelledby="reg-h"><div className="wrap reg-grid"><div><Reveal><Eyebrow>Register</Eyebrow><h2 id="reg-h">Claim your Spark.</h2></Reveal><p className="lead">Registration takes under a minute and it's free. You'll get your Spark card to share.</p><form onSubmit={submit} noValidate>
     <div className="two"><div className="field"><label htmlFor="f-name">First name</label><input id="f-name" autoComplete="given-name" maxLength={40} value={first} aria-invalid={!!errors.first} aria-describedby={errors.first ? "f-name-error" : undefined} onChange={e => { setFirst(e.target.value.split(/\s/)[0] ?? ""); changed(); }} />{errors.first && <small id="f-name-error" role="alert">{errors.first}</small>}</div><div className="field"><label htmlFor="f-class">Class</label><select id="f-class" value={classroom} aria-invalid={!!errors.classroom} aria-describedby={errors.classroom ? "f-class-error" : undefined} onChange={e => { setClassroom(e.target.value); changed(); }}><option value="">Select</option><option>9</option><option>10</option><option>11</option><option>12</option></select>{errors.classroom && <small id="f-class-error" role="alert">{errors.classroom}</small>}</div></div>
     <div className="field"><label htmlFor="f-school">School</label><input id="f-school" maxLength={100} value={school} aria-invalid={!!errors.school} aria-describedby={errors.school ? "f-school-error" : undefined} onChange={e => { setSchool(e.target.value); changed(); }} />{errors.school && <small id="f-school-error" role="alert">{errors.school}</small>}</div>
     <div className="two"><div className="field"><label htmlFor="f-city">City</label><input id="f-city" maxLength={80} value={city} aria-invalid={!!errors.city} aria-describedby={errors.city ? "f-city-error" : undefined} onChange={e => { setCity(e.target.value); changed(); }} />{errors.city && <small id="f-city-error" role="alert">{errors.city}</small>}</div><div className="field"><label htmlFor="f-email">Parent's email</label><input id="f-email" type="email" autoComplete="email" maxLength={255} value={email} aria-invalid={!!errors.email} aria-describedby={errors.email ? "f-email-error" : undefined} onChange={e => { setEmail(e.target.value); changed(); }} />{errors.email && <small id="f-email-error" role="alert">{errors.email}</small>}</div></div>
     <label className="consent"><input type="checkbox" checked={consent} aria-invalid={!!errors.consent} aria-describedby={errors.consent ? "f-consent-error" : undefined} onChange={e => { setConsent(e.target.checked); changed(); }} />My parent or guardian has read the terms and agrees to my participation. We'll email them to confirm.</label>{errors.consent && <small className="consent-error" id="f-consent-error" role="alert">{errors.consent}</small>}
-    <div className="reg-actions"><Button ref={submitRef} variant="iaib" type="submit">Register free</Button>{confirmed && <Button variant="iaibOutline" type="button" onClick={download} disabled={downloading} aria-label="Download demo Spark card as PNG">{downloading ? "Preparing PNG…" : "Download Spark card ↓"}</Button>}</div><p className="form-msg" role="status">{message || "Preview only — no registration is submitted."}</p>
+    <div className="reg-actions"><Button ref={submitRef} variant="iaib" type="submit">Register free</Button>{confirmed && <><Button variant="iaibOutline" type="button" onClick={share} disabled={sharing} aria-label="Share demo Spark card">{sharing ? "Preparing…" : "Share card"}</Button><Button variant="iaibOutline" type="button" onClick={download} disabled={downloading} aria-label="Download demo Spark card as PNG">{downloading ? "Preparing PNG…" : "Download ↓"}</Button></>}</div><p className="reg-trust">Free forever · No payment details, ever · Parent consent required</p><p className="form-msg" role="status">{message || "Preview only — no registration is submitted."}</p>
   </form></div>
-   <div className={`card-stage${confirmed ? " card-ready" : ""}`}><TiltCard><div ref={cardRef} className="spark-card" aria-label="Your Spark card preview, demo data"><div className="sc-top"><span>Ignite AI Buildathon</span><span>Season 01</span></div><div className="sc-ticket"><div className="sc-rank">Spark</div><div className="sc-num">{sparkNumber}</div><span className="sc-demo">DEMO · NOT AN ISSUED REGISTRATION</span></div><div className="sc-holder"><div className="sc-name">{first.trim() || "Your name"}</div><div className="sc-school">{school.trim() || "Your school"}</div><div className="sc-city">{city.trim() || "Your city"}</div></div><div className="sc-foot"><span>{classroom ? `Class ${classroom}` : "Class"}</span><span>Demo preview</span></div></div></TiltCard></div></div></section>;
+   <div className={`card-stage${confirmed ? " card-ready" : ""}`}><TiltCard><div ref={cardRef} className="spark-card" aria-label="Your Spark card preview, demo data"><div className="sc-top"><IaibLogo className="sc-logo" /><span>Season 01</span></div><div className="sc-ticket"><div className="sc-rank">Spark</div><div className="sc-num">{sparkNumber}</div><span className="sc-demo">DEMO · NOT AN ISSUED REGISTRATION</span></div><div className="sc-holder"><div className="sc-name">{first.trim() || "Your name"}</div><div className="sc-school">{school.trim() || "Your school"}</div><div className="sc-city">{city.trim() || "Your city"}</div></div><div className="sc-foot"><span>{classroom ? `Class ${classroom}` : "Class"}</span><img className="sc-org" src="/upgrad-sot-on-dark.webp" alt="upGrad School of Technology" width={120} height={36} /></div></div></TiltCard></div></div></section>;
 }
 export function SchoolsAndParents() { return <section className="audiences day" aria-label="For schools and parents"><RevealGroup className="wrap aud-grid">
-  <RevealItem><article className="aud dark"><h3>Bring it to your school.</h3><p>Your students are ready to build the future. Give them free AI learning, real projects and a national stage.</p><ul><li>Free AI learning for every student</li><li>A national competition</li><li>₹25L in prizes and ₹2 Cr in scholarships</li></ul><Action href="#register">Register your school</Action></article></RevealItem>
-  <RevealItem><article className="aud"><h3>For parents.</h3><p>Your child learns online on weekend mornings, so it never clashes with school. Finalists travel to the finale with full supervision.</p><ul><li>Free to join, no hidden costs</li><li>Parental consent before any participation</li><li>Supervised travel and stay for finalists</li></ul><Action href="#faqs" ghost>Read parent FAQs</Action></article></RevealItem>
+  <RevealItem><article className="aud dark"><div className="aud-art"><img src="/art/schools.webp" srcSet="/art/schools-sm.webp 512w, /art/schools.webp 1024w" sizes="(max-width: 900px) 90vw, 45vw" alt="" width={1024} height={559} loading="lazy" decoding="async" /></div><h3>Bring it to your school.</h3><p>Your students are ready to build the future. Give them free AI learning, real projects and a national stage.</p><ul><li>Free AI learning for every student</li><li>A national competition</li><li>₹25L in prizes and ₹2 Cr in scholarships</li></ul><Action href="#register">Register your school</Action></article></RevealItem>
+  <RevealItem><article className="aud"><div className="aud-art"><img src="/art/parents.webp" srcSet="/art/parents-sm.webp 512w, /art/parents.webp 1024w" sizes="(max-width: 900px) 90vw, 45vw" alt="" width={1024} height={559} loading="lazy" decoding="async" /></div><h3>For parents.</h3><p>Your child learns online on weekend mornings, so it never clashes with school. Finalists travel to the finale with full supervision.</p><ul><li>Free to join, no hidden costs</li><li>Parental consent before any participation</li><li>Supervised travel and stay for finalists</li></ul><Action href="#faqs" ghost>Read parent FAQs</Action></article></RevealItem>
   </RevealGroup></section>; }
-export function FAQ() { return <section className="faq day" id="faqs" aria-labelledby="faq-h"><div className="wrap faq-grid"><Reveal><h2 id="faq-h">Questions, answered.</h2></Reveal><div id="faqlist">{faqs.map(([question, answer], i) => <Accordion key={question} id={`fb${i}`} title={question}><p className="faq-answer">{answer}</p></Accordion>)}</div></div></section>; }
+export function FAQ() { return <section className="faq day" id="faqs" aria-labelledby="faq-h"><div className="wrap faq-grid"><Reveal><Eyebrow>FAQs</Eyebrow><h2 id="faq-h">Questions, answered.</h2></Reveal><div id="faqlist">{faqs.map(([question, answer], i) => <Accordion key={question} id={`fb${i}`} title={question}><p className="faq-answer">{answer}</p></Accordion>)}</div></div></section>; }
 function FooterDialog({ label }: { label: string }) {
   const ref = useRef<HTMLDialogElement>(null);
   return <><button type="button" className="foot-link" onClick={() => ref.current?.showModal()}>{label}</button><dialog ref={ref} className="foot-dialog" aria-label={label} onClick={(e) => { if (e.target === ref.current) ref.current?.close(); }}><h3>{label}</h3><p>This page is being finalised and will be published before registrations open.</p><button type="button" className="btn btn-red" onClick={() => ref.current?.close()}>Close</button></dialog></>;
 }
-export function ClosingAndFooter() { return <section className="closing night" aria-labelledby="close-h"><div className="wrap"><Reveal><h2 id="close-h">Season 01 is filling up. Don't watch it happen.</h2></Reveal><MagneticButton href="#register">Register free</MagneticButton><footer className="foot"><span>Ignite AI Buildathon, by upGrad School of Technology</span><nav aria-label="Footer">{["Privacy policy","Terms","Code of conduct"].map((label) => <FooterDialog key={label} label={label} />)}</nav></footer></div></section>; }
+export function ClosingAndFooter() {
+  return (
+    <section className="closing night" aria-label="Ignite AI Buildathon">
+      <div className="finale-mark">
+        <PixelField className="finale-field" />
+        <div className="wrap">
+          <IaibLogo animate className="finale-logo" />
+          <div className="finale-cta"><MagneticButton href="#register">Register free</MagneticButton></div>
+        </div>
+        <div className="finale-crew"><Sparkbots studentCount={12480} /></div>
+      </div>
+      <div className="wrap">
+        <footer className="foot">
+          <div className="foot-credits">
+            <span className="foot-credit"><span className="foot-label">Organised by</span><img src="/upgrad-sot-on-dark.webp" alt="upGrad School of Technology" width={120} height={36} loading="lazy" /></span>
+            <span className="foot-credit"><span className="foot-label">Supported by</span><img src="/government-of-karnataka.webp" alt="" width={42} height={36} loading="lazy" /><span>Government of Karnataka</span></span>
+          </div>
+          <div className="foot-base">
+            <span>© 2026 Ignite AI Buildathon</span>
+            <nav aria-label="Footer">{["Privacy policy", "Terms", "Code of conduct"].map((label) => <FooterDialog key={label} label={label} />)}</nav>
+          </div>
+        </footer>
+      </div>
+    </section>
+  );
+}
