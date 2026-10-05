@@ -52,7 +52,9 @@ export function StickyRegisterBar({ count }: { count: number }) {
   const show = pastHero && !formVisible;
   return (
     <div className={`sticky-reg${show ? " is-on" : ""}`} aria-hidden={!show} inert={!show}>
-      {SHOW_LIVE_STATS && <div className="sticky-reg-count"><b>{count.toLocaleString("en-IN")}</b><span>students registered</span></div>}
+      {SHOW_LIVE_STATS
+        ? <div className="sticky-reg-count"><b>{count.toLocaleString("en-IN")}</b><span>students registered</span></div>
+        : <div className="sticky-reg-count"><b>Free</b><span>Classes 9–12 · No coding needed</span></div>}
       <a className="sticky-reg-btn" href="#register" tabIndex={show ? 0 : -1}>Register free</a>
     </div>
   );

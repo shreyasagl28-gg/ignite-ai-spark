@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { lazy, Suspense, useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { faqs, mentors, schools, recentRegistrations, SHOW_LIVE_STATS } from "@/content/iaib-data";
-import { IndiaStateMap } from "@/components/IndiaStateMap";
+const IndiaStateMap = lazy(() => import("@/components/IndiaStateMap").then((m) => ({ default: m.IndiaStateMap })));
 import { Reveal } from "@/components/motion/Reveal";
 import { RevealGroup, RevealItem } from "@/components/motion/RevealGroup";
 import { CurriculumStory } from "@/components/CurriculumStory";
@@ -232,6 +232,7 @@ export function Journey() {
           <p>Every step earns you a rank. Start as a Spark. Finish as one of the Ignited 100.</p>
         </div>
         <JourneyLadder steps={journeySteps} />
+        <p className="swipe-hint" aria-hidden="true">Swipe</p>
       </div>
     </section>
   );
@@ -294,12 +295,13 @@ export function Curriculum() {
           <p className="lead">Six modules, 30 live sessions on weekend mornings. No prior coding needed.</p>
         </div>
         <CurriculumStory />
+        <p className="swipe-hint" aria-hidden="true">Swipe through 6 modules</p>
         <PromptDemo />
       </div>
     </section>
   );
 }
-export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><Reveal><Eyebrow>Leaderboard</Eyebrow><h2 id="board-h">Which state is lighting up first?</h2></Reveal><span className="demo-tag">Demo data. Live counts appear once registrations open.</span></div><div className="board-grid"><IndiaStateMap /><div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol><a className="board-cta" href="#register">Register your school →</a></div></div></div></section>; }
+export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><Reveal><Eyebrow>Leaderboard</Eyebrow><h2 id="board-h">Which state is lighting up first?</h2></Reveal><span className="demo-tag">Demo data. Live counts appear once registrations open.</span></div><div className="board-grid"><Suspense fallback={<div className="india-map-wrap" />}><IndiaStateMap /></Suspense><div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol><a className="board-cta" href="#register">Register your school →</a></div></div></div></section>; }
 const mentorPhoto: Record<string, string> = { "Vishwa Mohan": "/vishwa-mohan.webp", "Rishi Saraf": "/rishi-saraf.webp", "Gaurav Kaushik": "/gaurav-kaushik.png", "Gladden Rumao": "/gladden-rumao.webp", "Jyoti Nigam": "/jyoti-nigam.webp", "Rishabh Bafna": "/rishabh-bafna.png", "Mithun S": "/mithun-s.webp", "Piyush Jain": "/piyush-jain.png" };
 // Current and past companies, as listed on each mentor's public profile. Confirm with each mentor before launch.
 const mentorLogos: Record<string, Array<[string, string]>> = {
@@ -373,6 +375,11 @@ export function RegistrationAndSparkCard() {
     setErrors({}); setConfirmed(true); setMessage("Spark card ready. This is a demo preview — no registration or parent email was sent.");
   };
   const [sharing, setSharing] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const inAppBrowser = () => /Instagram|FBAN|FBAV|FB_IAB|Line\/|Snapchat/i.test(navigator.userAgent);
+  const shareText = () => `My Spark card for Ignite AI Buildathon Season 01, by upGrad School of Technology with the Government of Karnataka. Free for Classes 9–12. Registrations open 8 Oct 2026: ${window.location.origin}`;
+  const openPreview = (blob: Blob) => { setPreview((old) => { if (old) URL.revokeObjectURL(old); return URL.createObjectURL(blob); }); };
+  const closePreview = () => { setPreview((old) => { if (old) URL.revokeObjectURL(old); return null; }); };
   const fileName = () => `iaib-spark-${first.trim().toLocaleLowerCase() || "card"}.png`;
   const renderPng = async () => {
     await document.fonts.ready;
@@ -385,7 +392,10 @@ export function RegistrationAndSparkCard() {
     if (!confirmed || !cardRef.current || downloading) return;
     setDownloading(true);
     try {
-      const url = URL.createObjectURL(await renderPng());
+      const blob = await renderPng();
+      // In-app browsers (Instagram, Facebook) block file downloads: show the card to long-press instead.
+      if (inAppBrowser()) { openPreview(blob); setMessage("Long-press the card to save it."); return; }
+      const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.download = fileName();
       link.href = url;
@@ -399,17 +409,17 @@ export function RegistrationAndSparkCard() {
   const share = async () => {
     if (!confirmed || !cardRef.current || sharing) return;
     setSharing(true);
-    const text = `My Spark card for Ignite AI Buildathon Season 01, by upGrad School of Technology with the Government of Karnataka. Free for Classes 9–12. Registrations open 8 Oct 2026: ${window.location.origin}`;
     try {
-      const file = new File([await renderPng()], fileName(), { type: "image/png" });
+      const blob = await renderPng();
+      const file = new File([blob], fileName(), { type: "image/png" });
       if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: "My IAIB Spark card", text });
-      } else if (navigator.share) {
-        await navigator.share({ title: "My IAIB Spark card", text });
+        await navigator.share({ files: [file], title: "My IAIB Spark card", text: shareText() });
+        setMessage("Shared. This is a demo preview, so no registration was submitted.");
       } else {
-        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+        // No image sharing here (common in in-app browsers): show the card to save, with a WhatsApp link.
+        openPreview(blob);
+        setMessage("Long-press the card to save it, then post it to your story.");
       }
-      setMessage("Shared. This is a demo preview, so no registration was submitted.");
     } catch (error) {
       if ((error as DOMException)?.name !== "AbortError") setMessage("Sharing didn't work here. Download the card and share the image instead.");
     } finally { setSharing(false); }
@@ -421,7 +431,18 @@ export function RegistrationAndSparkCard() {
     <label className="consent"><input type="checkbox" checked={consent} aria-invalid={!!errors.consent} aria-describedby={errors.consent ? "f-consent-error" : undefined} onChange={e => { setConsent(e.target.checked); changed(); }} />My parent or guardian has read the terms and agrees to my participation. We'll email them to confirm.</label>{errors.consent && <small className="consent-error" id="f-consent-error" role="alert">{errors.consent}</small>}
     <div className="reg-actions"><Button ref={submitRef} variant="iaib" type="submit">Register free</Button>{confirmed && <><Button variant="iaibOutline" type="button" onClick={share} disabled={sharing} aria-label="Share demo Spark card">{sharing ? "Preparing…" : "Share card"}</Button><Button variant="iaibOutline" type="button" onClick={download} disabled={downloading} aria-label="Download demo Spark card as PNG">{downloading ? "Preparing PNG…" : "Download ↓"}</Button></>}</div><p className="reg-trust">Free forever · No payment details, ever · Parent consent required</p><p className="form-msg" role="status">{message || "Preview only — no registration is submitted."}</p>
   </form></div>
-   <div className={`card-stage${confirmed ? " card-ready" : ""}`}><TiltCard><div ref={cardRef} className="spark-card" aria-label="Your Spark card preview, demo data"><div className="sc-top"><IaibLogo className="sc-logo" /><span>Season 01</span></div><div className="sc-ticket"><div className="sc-rank">Spark</div><div className="sc-num">{sparkNumber}</div><span className="sc-demo">DEMO · NOT AN ISSUED REGISTRATION</span></div><div className="sc-holder"><div className="sc-name">{first.trim() || "Your name"}</div><div className="sc-school">{school.trim() || "Your school"}</div><div className="sc-city">{city.trim() || "Your city"}</div></div><div className="sc-foot"><span>{classroom ? `Class ${classroom}` : "Class"}</span><img className="sc-org" src="/upgrad-sot-on-dark.webp" alt="upGrad School of Technology" width={120} height={36} /></div></div></TiltCard></div></div></section>;
+   <div className={`card-stage${confirmed ? " card-ready" : ""}`}><TiltCard><div ref={cardRef} className="spark-card" aria-label="Your Spark card preview, demo data"><div className="sc-top"><IaibLogo className="sc-logo" /><span>Season 01</span></div><div className="sc-ticket"><div className="sc-rank">Spark</div><div className="sc-num">{sparkNumber}</div><span className="sc-demo">DEMO · NOT AN ISSUED REGISTRATION</span></div><div className="sc-holder"><div className="sc-name">{first.trim() || "Your name"}</div><div className="sc-school">{school.trim() || "Your school"}</div><div className="sc-city">{city.trim() || "Your city"}</div></div><div className="sc-foot"><span>{classroom ? `Class ${classroom}` : "Class"}</span><img className="sc-org" src="/upgrad-sot-on-dark.webp" alt="upGrad School of Technology" width={120} height={36} /></div></div></TiltCard></div></div>
+    {preview && <div className="card-preview" role="dialog" aria-modal="true" aria-label="Your Spark card" onClick={(e) => { if (e.target === e.currentTarget) closePreview(); }}>
+      <div className="card-preview-box">
+        <img src={preview} alt="Your Spark card" />
+        <p>Long-press the card to save it, then post it to your story.</p>
+        <div className="card-preview-actions">
+          <a className="btn btn-red" href={`https://wa.me/?text=${encodeURIComponent(shareText())}`} target="_blank" rel="noopener noreferrer">Send link on WhatsApp</a>
+          <button type="button" className="btn btn-ghost" onClick={closePreview}>Close</button>
+        </div>
+      </div>
+    </div>}
+  </section>;
 }
 export function SchoolsAndParents() { return <section className="audiences day" aria-label="For schools and parents"><RevealGroup className="wrap aud-grid">
   <RevealItem><article className="aud dark"><div className="aud-art"><img src="/art/schools.webp" srcSet="/art/schools-sm.webp 512w, /art/schools.webp 1024w" sizes="(max-width: 900px) 90vw, 45vw" alt="" width={1024} height={559} loading="lazy" decoding="async" /></div><h3>Bring it to your school.</h3><p>Your students are ready to build the future. Give them free AI learning, real projects and a national stage.</p><ul><li>Free AI learning for every student</li><li>A national competition</li><li>₹25L in prizes and ₹2 Cr in scholarships</li></ul><Action href="#register">Register your school</Action></article></RevealItem>
