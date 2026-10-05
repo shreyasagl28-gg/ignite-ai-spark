@@ -16,3 +16,4 @@ Deferred, not part of this static phase:
 - [x] Fit hero to five requested viewport sizes, remove duplicate CSS rules, and adjust safe-area spacing and contrast.
 - [x] Hide unverified registration figures and countdown; simplify map accessibility and tablet layout.
 - [x] Serve the IAIB logo locally and remove root duplicate images and public manifest.
+- [x] Replace the soft finale hall background with a sharper high-resolution version.
