@@ -16,6 +16,9 @@ import { Eyebrow } from "@/components/motion/Eyebrow";
 import { SlotNumber } from "@/components/motion/SlotNumber";
 import { PixelField } from "@/components/motion/PixelField";
 import { MoneyRain } from "@/components/motion/MoneyRain";
+import { ScrollBot } from "@/components/motion/ScrollBot";
+import { Perks } from "@/components/Perks";
+import { PromptDemo } from "@/components/PromptDemo";
 import { IaibLogo } from "@/components/IaibLogo";
 
 function Action({ children, href, ghost = false }: { children: React.ReactNode; href: string; ghost?: boolean }) {
@@ -26,7 +29,7 @@ export function SiteNav() {
     <a className="brand" href="#top" aria-label="IAIB home"><IaibLogo className="nav-logo" title="IAIB · Ignite AI Buildathon" /></a>
     <nav className="nav-links" aria-label="Main"><a href="#journey">How it works</a><a href="#prizes">Prizes</a><a href="#curriculum">Curriculum</a><a href="#mentors">Mentors</a><a href="#faqs">FAQs</a></nav>
     <div className="nav-cta"><Action href="#register"><NavPulseDot />Register free</Action></div>
-  </div></header>;
+  </div><ScrollBot /></header>;
 }
 function StaticSparks({ studentCount }: { studentCount: number }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -198,6 +201,7 @@ export function Stakes() {
       <div className="wrap">
         <Reveal><Eyebrow>Prizes</Eyebrow><h2 id="stakes-h">What's on the table this season.</h2></Reveal>
         <MoneyRain />
+        <Perks />
       </div>
       <figure className="sk-band wrap">
         <div className="sk-stage">
@@ -290,6 +294,7 @@ export function Curriculum() {
           <p className="lead">Six modules, 30 live sessions on weekend mornings. No prior coding needed.</p>
         </div>
         <CurriculumStory />
+        <PromptDemo />
       </div>
     </section>
   );

@@ -629,3 +629,48 @@ img.portrait{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:co
 .money-total{font-family:var(--display);font-weight:600;font-size:clamp(40px,8.6vw,132px);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;color:var(--foreground-dark);text-shadow:0 0 48px color-mix(in oklch,var(--primary) 50%,transparent)}
 .money-pot p{font-size:clamp(15px,1.4vw,19px);color:var(--foreground-dark-soft)}
 @media (max-width:700px){.money{border-radius:16px}.money-total{font-size:clamp(36px,11.5vw,56px)}}
+
+/* Scroll progress with a walking Sparkbot (ScrollBot.tsx) */
+.scrollbot{position:absolute;left:0;right:0;bottom:0;height:2px;background:color-mix(in oklch,var(--foreground-dark) 8%,transparent);pointer-events:none}
+.scrollbot-fill{position:absolute;inset:0;background:var(--red);transform-origin:left;transform:scaleX(0)}
+.scrollbot-bot{position:absolute;left:0;bottom:1px;width:23px;height:24px;image-rendering:pixelated;will-change:transform}
+
+/* More than money (Perks.tsx) */
+.perks{margin:-24px 0 clamp(48px,7vw,88px)}
+.perks-label{margin-bottom:18px}
+.perks-grid{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.perk{display:flex;gap:18px;align-items:flex-start;padding:22px;border:1px solid var(--ink-line);border-radius:16px;background:var(--ink-2)}
+.perk-icon{flex:none;width:48px;height:48px}
+.px-body{fill:var(--foreground-dark)}
+.px-red{fill:var(--red)}
+.perk h3{font-size:19px;letter-spacing:-.015em;margin-bottom:6px}
+.perk p{font-size:14.5px;line-height:1.45;color:var(--foreground-dark-soft)}
+@media (max-width:900px){.perks-grid{grid-template-columns:minmax(0,1fr)}.perks{margin-top:-16px}}
+
+/* Try your first prompt (PromptDemo.tsx) */
+.pd{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,4vw,56px);align-items:center;margin-top:clamp(64px,9vw,120px);padding:clamp(24px,4vw,48px);border:1px solid var(--ink-line);border-radius:24px;background:radial-gradient(70% 100% at 100% 0%,color-mix(in oklch,var(--primary) 14%,transparent),transparent 60%),var(--ink-2)}
+.pd-kicker{font:500 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--primary-on-dark);margin-bottom:12px}
+.pd-intro h3{font-size:clamp(28px,3vw,40px);letter-spacing:-.03em;margin-bottom:12px}
+.pd-intro>p:not(.pd-kicker){color:var(--foreground-dark-soft);max-width:38ch}
+.pd-prompts{list-style:none;display:grid;gap:8px;margin-top:22px}
+.pd-chip{width:100%;text-align:left;font:500 15px var(--body);color:var(--foreground-dark);background:var(--background-dark);border:1px solid var(--ink-line);border-radius:12px;padding:13px 16px;cursor:pointer;transition:border-color .2s ease,background-color .2s ease}
+.pd-chip:hover{border-color:var(--foreground-dark-soft)}
+.pd-chip.on{border-color:var(--red);background:color-mix(in oklch,var(--primary) 12%,var(--background-dark))}
+.pd-chip:focus-visible{outline:2px solid var(--primary-on-dark);outline-offset:2px}
+.pd-window{border:1px solid var(--ink-line);border-radius:16px;background:var(--background-dark);overflow:hidden;min-height:340px;display:flex;flex-direction:column}
+.pd-bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--ink-line);font:500 12px var(--mono);color:var(--grey-ink)}
+.pd-bar i{width:9px;height:9px;border-radius:50%;background:var(--border-dark)}
+.pd-bar i:first-child{background:var(--red)}
+.pd-bar span{margin-left:8px}
+.pd-body{flex:1;padding:22px;display:grid;gap:16px;align-content:start}
+.pd-empty{color:var(--grey-ink);font:500 14px var(--mono)}
+.pd-you,.pd-ai{display:grid;gap:6px;font-size:16px;line-height:1.55}
+.pd-you span,.pd-ai span{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--grey-ink)}
+.pd-you{justify-self:end;max-width:85%;padding:12px 16px;border-radius:14px 14px 4px 14px;background:color-mix(in oklch,var(--foreground-dark) 8%,transparent)}
+.pd-ai{color:var(--foreground-dark);max-width:95%}
+.pd-ai span{color:var(--primary-on-dark)}
+.pd-caret{display:inline-block;width:8px;height:1.05em;margin-left:2px;vertical-align:-2px;background:var(--red);animation:pd-blink 1s steps(1) infinite}
+@keyframes pd-blink{50%{opacity:0}}
+.pd-note{padding:10px 16px;border-top:1px solid var(--ink-line);font:500 11px var(--mono);color:var(--grey-ink)}
+@media (max-width:900px){.pd{grid-template-columns:minmax(0,1fr)}.pd-window{min-height:300px}}
+@media (prefers-reduced-motion:reduce){.pd-caret{animation:none}}
