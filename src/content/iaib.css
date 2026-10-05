@@ -705,3 +705,24 @@ img.portrait{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:co
 .card-preview-box img{width:100%;height:auto;border-radius:12px;border:1px solid var(--border-dark);-webkit-touch-callout:default;user-select:auto}
 .card-preview-box p{text-align:center;color:var(--foreground-dark);font-size:15px}
 .card-preview-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+
+/* Hero prize pair (shown while live stats are off) */
+.hero-prizes{display:grid;grid-template-columns:repeat(2,auto);gap:0}
+.hero-prizes>div{padding:4px 28px;display:grid;gap:8px}
+.hero-prizes>div+div{border-left:1px solid var(--ink-line)}
+.hero-prizes>div:first-child{padding-left:0}
+.hero-prizes .sk-label{margin:0}
+.hero-prizes b{font-family:var(--display);font-weight:600;font-size:clamp(36px,min(4.6vw,6svh),64px);line-height:.95;letter-spacing:-.04em;color:var(--foreground-dark)}
+.hero-prizes b.sk-red{color:var(--red)}
+@media (max-width:700px){.hero-prizes{width:100%;grid-template-columns:repeat(2,minmax(0,1fr))}.hero-prizes>div{padding:2px 16px}.hero-prizes b{font-size:clamp(30px,9vw,40px)}}
+
+/* Register prompt after key sections */
+.sec-cta{display:flex;align-items:center;flex-wrap:wrap;gap:12px 20px;margin-top:clamp(36px,5vw,56px)}
+.sec-cta span{font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--grey-ink)}
+
+/* Mentors: swipe row on phones */
+@media (max-width:700px){
+  .m-grid{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:-22px;padding:4px 22px 14px;scroll-padding-inline:22px;scrollbar-width:none}
+  .m-grid::-webkit-scrollbar{display:none}
+  .m-grid>*{flex:0 0 62%;scroll-snap-align:start;min-width:0}
+}

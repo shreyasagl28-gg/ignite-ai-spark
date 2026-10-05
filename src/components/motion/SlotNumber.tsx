@@ -6,13 +6,19 @@ import { useEffect, useRef, useState } from "react";
  * still. Screen readers get the plain value; SSR and reduced motion show it
  * settled.
  */
-export function SlotNumber({ value, className = "" }: { value: string; className?: string }) {
+export function SlotNumber({ value, className = "", onLoad = false }: { value: string; className?: string; onLoad?: boolean }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [state, setState] = useState<"settled" | "armed" | "rolling">("settled");
 
   useEffect(() => {
     const el = ref.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (onLoad) {
+      // above the fold: spin once shortly after the page appears
+      setState("armed");
+      const t = window.setTimeout(() => requestAnimationFrame(() => setState("rolling")), 450);
+      return () => window.clearTimeout(t);
+    }
     if (el.getBoundingClientRect().top < window.innerHeight * 0.85) return; // already on screen: leave it
     setState("armed");
     const io = new IntersectionObserver(([entry]) => {
@@ -22,7 +28,7 @@ export function SlotNumber({ value, className = "" }: { value: string; className
     }, { threshold: 0.6 });
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [onLoad]);
 
   let digitIndex = 0;
   return (
