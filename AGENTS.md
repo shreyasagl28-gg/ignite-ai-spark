@@ -13,6 +13,7 @@
 - Treat registration and statistics in this initial page as demonstrations until a verified parent-consent and registration service is configured, because minors' data must not be silently collected or represented as confirmed.
 - Keep site-wide Lenis and Journey ScrollTrigger as client-only, motion-preference-aware effects; this preserves SSR and lets mobile and reduced-motion users read the unpinned timeline.
 - Generate and export Spark card previews entirely in the browser without persisting student or parent details, because registration has no verified parental-consent service yet.
-- Serve the supplied IAIB logo through a static asset pointer and derive its favicon locally, because brand imagery must stay consistent without embedding screenshots or hotlinking references.
+- Serve the supplied IAIB logo from a local public SVG and keep its favicon local, because brand imagery must stay consistent without external asset dependencies.
+- Gate unverified registration figures behind a single disabled live-statistics flag, because demonstration numbers must not look like real sign-ups.
 - Keep the leaderboard's simplified Survey of India-derived GeoJSON local and attributed, with demo-only browser-side updates; this avoids hotlinked geography and misleading real-registration claims.
 - Mount the client-only Lenis controller once in the TanStack root route, because this app has no App.tsx and duplicate scroll controllers conflict.
