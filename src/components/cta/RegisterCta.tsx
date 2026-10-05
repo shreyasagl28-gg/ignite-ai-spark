@@ -39,11 +39,15 @@ export function StickyRegisterBar({ count }: { count: number }) {
   useEffect(() => {
     const hero = document.querySelector(".hero");
     const form = document.getElementById("register");
-    const io1 = new IntersectionObserver(([e]) => setPastHero(!!e && !e.isIntersecting && e.boundingClientRect.top < 0));
-    const io2 = new IntersectionObserver(([e]) => setFormVisible(!!e?.isIntersecting), { threshold: 0.15 });
-    if (hero) io1.observe(hero);
-    if (form) io2.observe(form);
-    return () => { io1.disconnect(); io2.disconnect(); };
+    const update = () => {
+      setPastHero((hero?.getBoundingClientRect().bottom ?? 0) <= 0);
+      const rect = form?.getBoundingClientRect();
+      setFormVisible(!!rect && rect.top < window.innerHeight && rect.bottom > 0);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => { window.removeEventListener("scroll", update); window.removeEventListener("resize", update); };
   }, []);
   const show = pastHero && !formVisible;
   return (
