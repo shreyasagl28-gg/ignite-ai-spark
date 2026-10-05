@@ -38,6 +38,7 @@
  --spark-mid: oklch(0.66 0.21 31);
  --spark-orange: oklch(0.77 0.16 52);
   --map-deep-red: #3A0A0C;
+ --primary-on-dark: #FF3B3F;
 }
 @layer base {body{background:var(--background);color:var(--foreground)}}
 

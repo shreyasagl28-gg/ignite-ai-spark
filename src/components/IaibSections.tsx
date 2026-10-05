@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
-import approvedHtml from "@/content/iaib-body.html?raw";
-import { modules, faqs, mentors, schools, recentRegistrations } from "@/content/iaib-data";
+import { faqs, mentors, schools, recentRegistrations } from "@/content/iaib-data";
 import { IndiaStateMap } from "@/components/IndiaStateMap";
-import { BentoStakes } from "@/components/motion/BentoStakes";
 import { Reveal } from "@/components/motion/Reveal";
 import { RevealGroup, RevealItem } from "@/components/motion/RevealGroup";
-import { HorizontalScroll } from "@/components/motion/HorizontalScroll";
-import { SpotlightCard } from "@/components/motion/SpotlightCard";
+import { CurriculumStory } from "@/components/CurriculumStory";
+import { JourneyLadder } from "@/components/JourneyLadder";
+import { ParentArt, SchoolArt } from "@/components/Mockups";
 import { Marquee } from "@/components/motion/Marquee";
 import { TiltCard } from "@/components/motion/TiltCard";
 import { MagneticButton } from "@/components/motion/MagneticButton";
@@ -16,12 +15,6 @@ import { Sparkbots } from "@/components/motion/Sparkbots";
 import { CloseCountdown, NavPulseDot, sparkBurst } from "@/components/cta/RegisterCta";
 import iaibLogo from "@/assets/iaib-logo-dark.png.asset.json";
 
-function approvedSection(start: string, end: string) {
-  return approvedHtml.split(`<!-- ${start} -->`)[1]?.split(`<!-- ${end} -->`)[0]?.trim() ?? "";
-}
-function Approved({ start, end }: { start: string; end: string }) {
-  return <div className="contents" dangerouslySetInnerHTML={{ __html: approvedSection(start, end) }} />;
-}
 function Action({ children, href, ghost = false }: { children: React.ReactNode; href: string; ghost?: boolean }) {
   return <Button asChild variant={ghost ? "iaibOutline" : "iaib"}><a href={href}>{children}</a></Button>;
 }
@@ -168,7 +161,7 @@ export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: numb
   return <section className="hero night" aria-labelledby="hero-h"><StaticSparks studentCount={studentsRegistered} /><Sparkbots studentCount={studentsRegistered} /><div className="wrap">
     <div className="hero-identity"><img src={iaibLogo.url} alt="IAIB · Ignite AI Buildathon" width="160" height="77" /><span className="hero-identity-line" aria-hidden="true" /></div>
     <p className="season"><span className="live-dot" aria-hidden="true" />Season 01 is live. Registrations open 8 Oct 2026.</p>
-    <Reveal><h1 id="hero-h">India's next AI builders start here.</h1></Reveal>
+    <h1 id="hero-h">India's next AI builders start here.</h1>
     <div className="hero-row"><div className="hero-copy"><p>Ignite AI Buildathon is free for students in Classes 9 to 12. Learn AI from zero, test what you know, then build a working product and pitch it to VCs.</p><div className="hero-actions"><MagneticButton href="#register" className="btn-hero">Register free</MagneticButton><CloseCountdown /><Action href="#journey" ghost>See how it works</Action></div></div>
     <div className="counter" aria-label="Registrations, demo data"><div><b className="hot">{studentsRegistered.toLocaleString("en-IN")}</b><span>students registered</span></div><div><b>214</b><span>schools</span></div><div><b>19</b><span>states and UTs</span></div></div></div>
     <p className="counter-disclaimer">Demo data</p>
@@ -185,16 +178,31 @@ export function RecentRegistrations() {
     </Marquee>
   </aside>;
 }
+const art = (name: string) => ({ src: `/art/${name}.webp`, srcSet: `/art/${name}-sm.webp 512w, /art/${name}.webp 1024w` });
 export function Stakes() {
   return (
     <section className="stakes night" id="prizes-top" aria-labelledby="stakes-h">
       <div className="wrap">
-        <Reveal>
-          <h2 id="stakes-h">What's on the table this season.</h2>
-        </Reveal>
-        <BentoStakes />
-        <p className="ratio">Thousands will learn. <em>Only 100 make the finale.</em></p>
+        <Reveal><h2 id="stakes-h">What's on the table this season.</h2></Reveal>
+        <div className="sk">
+          <div className="sk-row">
+            <div className="sk-copy"><b className="sk-num sk-red">₹2 Cr</b><p>in scholarships for standout builders</p></div>
+            <img className="sk-img" {...art("ember")} sizes="(max-width: 900px) 100vw, 55vw" alt="" width={1024} height={559} loading="lazy" decoding="async" />
+          </div>
+          <div className="sk-row sk-row-flip">
+            <img className="sk-img" {...art("trophy")} sizes="(max-width: 900px) 100vw, 55vw" alt="" width={1024} height={559} loading="lazy" decoding="async" />
+            <div className="sk-copy"><b className="sk-num">₹25L</b><p>in prizes at the grand finale</p></div>
+          </div>
+        </div>
       </div>
+      <div className="sk-band">
+        <img src="/art/finale-hall.webp" alt="" width={816} height={434} loading="lazy" decoding="async" />
+        <div className="wrap sk-band-copy">
+          <div><b className="sk-num">100</b><p>finalists build live for 36 hours</p></div>
+          <div><b className="sk-num">VCs</b><p>hear your pitch on finale day</p></div>
+        </div>
+      </div>
+      <div className="wrap"><p className="ratio">Thousands will learn. <em>Only 100 make the finale.</em></p></div>
     </section>
   );
 }
@@ -213,45 +221,49 @@ export function Journey() {
           <Reveal><h2 id="journey-h">Four steps. One spark to a fire.</h2></Reveal>
           <p>Every step earns you a rank. Start as a Spark. Finish as one of the Ignited 100.</p>
         </div>
-        <RevealGroup className="sched">{journeySteps.map((s) => <RevealItem key={s.title}><div className="sched-row"><p className="sched-when">{s.when}</p><h3 className="sched-title">{s.title}</h3><div className="sched-body"><p>{s.body}</p><span className="rank">{s.rank}</span></div></div></RevealItem>)}</RevealGroup>
+        <JourneyLadder steps={journeySteps} />
       </div>
     </section>
   );
 }
+const partners = [
+  { role: "Supported by", name: "Government of Karnataka", logo: "/government-of-karnataka.png", shape: "emblem" },
+  { role: "Organised by", name: "upGrad School of Technology", logo: "/upgrad-school-of-technology.png", shape: "wordmark" },
+  { role: "University partner", name: "Sri Siddhartha Academy of Higher Education", logo: "/ssahe.png", shape: "emblem" },
+] as const;
+const buildPartners = ["AI Partner", "Build Partner", "Voice Partner"];
 export function PartnersAndPrizes() {
-  const html = approvedSection("PARTNERS & PRIZES", "CURRICULUM");
-  const tierStart = html.indexOf('<div class="tier');
-  const prizeStart = html.indexOf('<div class="prize-row">');
-  const clean = (part: string) => part.replace(/^<section[^>]*>|<\/section>$/g, "").replace(/<div class="wrap">/, "").trim();
-  const headHtml = clean(tierStart > -1 ? html.slice(0, tierStart) : html);
-  const tiersHtml = tierStart > -1 ? clean(html.slice(tierStart, prizeStart > -1 ? prizeStart : undefined)) : "";
-  const hEnd = headHtml.indexOf("</h2>");
-  const h2Html = hEnd > -1 ? headHtml.slice(0, hEnd + 5) : "";
-  const headRest = hEnd > -1 ? headHtml.slice(hEnd + 5).trim() : "";
-  const prizeParts = prizeStart > -1
-    ? html.slice(prizeStart).split("</article>")
-      .map((part) => part.trim())
-      .filter((part) => part.startsWith("<article") || part.startsWith('<div class="prize-row"'))
-      .map((part) => part.replace(/^<div class="prize-row">/, "").trim())
-    : [];
   return (
     <section className="partners day" id="prizes" aria-labelledby="partners-h">
       <div className="wrap">
-        <Reveal><div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: h2Html }} /></Reveal>
-        {headRest && <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: headRest }} />}
-        <Marquee label="Partners">
-          <img className="marquee-logo" src="/government-of-karnataka.png" alt="Government of Karnataka" loading="lazy" />
-          <img className="marquee-logo" src="/upgrad-school-of-technology.png" alt="upGrad School of Technology" loading="lazy" />
-          <img className="marquee-logo" src="/ssahe.png" alt="Sri Siddhartha Academy of Higher Education" loading="lazy" />
-        </Marquee>
-        <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: tiersHtml }} />
-        {prizeParts.length > 0 && (
-          <RevealGroup className="prize-row">
-            {prizeParts.map((part, i) => (
-              <RevealItem key={i}><div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `${part}</article>` }} /></RevealItem>
+        <Reveal><h2 id="partners-h">Backed by people who build.</h2></Reveal>
+        <p className="lead partners-lead">Every build partner runs its own prize track, so there's more than one way to win.</p>
+        <ul className="pw">
+          {partners.map((p) => (
+            <li key={p.name} className="pw-tile">
+              <span className="pw-role">{p.role}</span>
+              <span className={`pw-logo pw-logo-${p.shape}`}><img src={p.logo} alt={p.name} loading="lazy" /></span>
+              <span className="pw-name">{p.name}</span>
+            </li>
+          ))}
+        </ul>
+        <div className="pw-build">
+          <p className="pw-role">Build partners</p>
+          <ul className="pw-slots">
+            {buildPartners.map((name) => (
+              <li key={name} className="pw-slot">
+                <span className="pw-slot-mark" aria-hidden="true" />
+                <span className="pw-slot-name">{name}</span>
+                <span className="pw-soon">soon</span>
+              </li>
             ))}
-          </RevealGroup>
-        )}
+          </ul>
+        </div>
+        <RevealGroup className="prize-row">
+          <RevealItem><article className="prize grand"><h3>Grand prize</h3><div className="amt">₹25L</div><p>Total prize pool for the finale winners. Breakdown by rank to be announced.</p></article></RevealItem>
+          <RevealItem><article className="prize"><h3>Partner prize tracks</h3><p>Best use of each build partner's tool, judged on that partner's own criteria. Tracks open as partners are announced.</p></article></RevealItem>
+          <RevealItem><article className="prize"><h3>Scholarships</h3><div className="amt amt-sm">₹2 Cr</div><p>Eligibility and amounts per student to be announced.</p></article></RevealItem>
+        </RevealGroup>
       </div>
     </section>
   );
@@ -261,36 +273,56 @@ function Accordion({ title, detail, children, initial = false, id }: { title: st
   return <div className={`mod${open ? " open" : ""}`}><Button variant="ghost" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}><span className="mod-title">{title}</span><span className="mod-tail">{detail && <span className="mod-meta">{detail}</span>}<span className="plus" aria-hidden="true">+</span></span></Button><div className="mod-body" id={id} aria-hidden={!open}><div className="mod-inner">{children}</div></div></div>;
 }
 export function Curriculum() {
-  const titleBlock = (
-    <div className="cur-head">
-      <h2 id="cur-h"><Reveal>Starts from zero. Ends with you shipping an agent.</Reveal></h2>
-      <p className="lead">Six modules, 30 live sessions on weekend mornings. No prior coding needed.</p>
-    </div>
-  );
   return (
-    <section className="curriculum day" id="curriculum" aria-labelledby="cur-h">
-      <HorizontalScroll title={titleBlock}>
-        <RevealGroup bare>
-          {modules.map((m) => (
-            <RevealItem key={m[0]}>
-              <SpotlightCard tone="light" className="mod-card">
-                <span className="mod-num">{m[1]}</span>
-                <h3>{m[0]}</h3>
-                <p className="mod-desc">{m[2]}</p>
-                <ol>{m[3].map((item: string) => <li key={item}>{item}</li>)}</ol>
-              </SpotlightCard>
-            </RevealItem>
-          ))}
-        </RevealGroup>
-      </HorizontalScroll>
+    <section className="curriculum night" id="curriculum" aria-labelledby="cur-h">
+      <div className="wrap">
+        <div className="cur-head">
+          <Reveal><h2 id="cur-h">Starts from zero. Ends with you shipping an agent.</h2></Reveal>
+          <p className="lead">Six modules, 30 live sessions on weekend mornings. No prior coding needed.</p>
+        </div>
+        <CurriculumStory />
+      </div>
     </section>
   );
 }
 export function StateBoard() { return <section className="board night" aria-labelledby="board-h"><div className="wrap"><div className="board-head"><Reveal><h2 id="board-h">Which state is lighting up first?</h2></Reveal><span className="demo-tag">Demo data, updates live in production</span></div><div className="board-grid"><IndiaStateMap /><div><h3>Top schools this week</h3><ol className="schools">{schools.map(([name, city, count], i) => <li key={name}><span className="pos">{i + 1}</span><span className="nm">{name}<small>{city}</small></span><span className="ct">{count}</span></li>)}</ol><a className="board-cta" href="#register">Register your school →</a></div></div></div></section>; }
 const mentorPhoto: Record<string, string> = { "Vishwa Mohan": "/vishwa-mohan.webp", "Rishi Saraf": "/rishi-saraf.webp", "Gaurav Kaushik": "/gaurav-kaushik.png", "Gladden Rumao": "/gladden-rumao.webp", "Jyoti Nigam": "/jyoti-nigam.webp", "Rishabh Bafna": "/rishabh-bafna.png", "Mithun S": "/mithun-s.webp", "Piyush Jain": "/piyush-jain.png" };
-const mentorBadge: Record<string, [string, string]> = { "Vishwa Mohan": ["/upgrad.webp", "upGrad"], "Jyoti Nigam": ["/upgrad.webp", "upGrad"], "Mithun S": ["/cisco.webp", "Cisco"] };
-const mentorCompanyText: Record<string, string> = { "Rishi Saraf": "DevDynamics" };
-export function Mentors() { return <section className="mentors day" id="mentors" aria-labelledby="m-h"><div className="wrap"><Reveal><h2 id="m-h">Learn from people shipping AI today.</h2></Reveal><RevealGroup className="m-grid">{mentors.map(([name, role]) => <RevealItem key={name}>{mentorPhoto[name] ? <img className="portrait" src={mentorPhoto[name]} alt={name} loading="lazy" width={400} height={500} /> : <div className="portrait" aria-hidden="true">{name.split(" ").map((word: string) => word[0]).join("").slice(0, 2)}</div>}<h3>{name}</h3><p>{role}</p>{!mentorBadge[name] && mentorCompanyText[name] && <span className="mentor-company">{mentorCompanyText[name]}</span>}{mentorBadge[name] && <img className="mentor-badge" src={mentorBadge[name][0]} alt={mentorBadge[name][1]} loading="lazy" height={20} />}</RevealItem>)}</RevealGroup></div></section>; }
+// Current and past companies, as listed on each mentor's public profile. Confirm with each mentor before launch.
+const mentorLogos: Record<string, Array<[string, string]>> = {
+  "Vishwa Mohan": [["/upgrad.webp", "upGrad"], ["/linkedin.webp", "LinkedIn"], ["/walmart.webp", "Walmart"], ["/paypal.webp", "PayPal"], ["/oracle.webp", "Oracle"], ["/pw.webp", "Physics Wallah"]],
+  "Rishi Saraf": [["/hotstar.webp", "Hotstar"], ["/vmware.webp", "VMware"], ["/walmart.webp", "Walmart"]],
+  "Gaurav Kaushik": [["/salesforce.webp", "Salesforce"], ["/microsoft.webp", "Microsoft"], ["/paypal.webp", "PayPal"]],
+  "Gladden Rumao": [["/upgrad.webp", "upGrad"], ["/barclays.webp", "Barclays"]],
+  "Jyoti Nigam": [["/upgrad.webp", "upGrad"]],
+  "Rishabh Bafna": [["/upgrad.webp", "upGrad"]],
+  "Mithun S": [["/cisco.webp", "Cisco"], ["/ineuron.webp", "iNeuron"]],
+  "Piyush Jain": [["/upgrad.webp", "upGrad"]],
+};
+export function Mentors() {
+  return (
+    <section className="mentors day" id="mentors" aria-labelledby="m-h">
+      <div className="wrap">
+        <Reveal><h2 id="m-h">Learn from people shipping AI today.</h2></Reveal>
+        <RevealGroup className="m-grid">
+          {mentors.map(([name, role]) => (
+            <RevealItem key={name}>
+              <div className="m-photo">
+                {mentorPhoto[name] ? <img className="portrait" src={mentorPhoto[name]} alt={name} loading="lazy" width={400} height={500} /> : <div className="portrait" aria-hidden="true">{name.split(" ").map((word: string) => word[0]).join("").slice(0, 2)}</div>}
+              </div>
+              <h3>{name}</h3>
+              <p>{role}</p>
+              {mentorLogos[name] && (
+                <ul className="m-logos" aria-label={`${name} has worked at`}>
+                  {mentorLogos[name]!.map(([src, company]) => <li key={company}><img src={src} alt={company} loading="lazy" height={18} /></li>)}
+                </ul>
+              )}
+            </RevealItem>
+          ))}
+        </RevealGroup>
+      </div>
+    </section>
+  );
+}
 const registrationSchema = z.object({
   first: z.string().trim().min(1, "Enter your first name.").max(40, "Use 40 characters or fewer.").regex(/^[\p{L}\p{M}][\p{L}\p{M}'’-]*$/u, "Enter a first name only, without a surname."),
   classroom: z.enum(["9", "10", "11", "12"], { errorMap: () => ({ message: "Select your class." }) }),
@@ -352,8 +384,8 @@ export function RegistrationAndSparkCard() {
    <div className={`card-stage${confirmed ? " card-ready" : ""}`}><TiltCard><div ref={cardRef} className="spark-card" aria-label="Your Spark card preview, demo data"><div className="sc-top"><span>Ignite AI Buildathon</span><span>Season 01</span></div><div className="sc-ticket"><div className="sc-rank">Spark</div><div className="sc-num">{sparkNumber}</div><span className="sc-demo">DEMO · NOT AN ISSUED REGISTRATION</span></div><div className="sc-holder"><div className="sc-name">{first.trim() || "Your name"}</div><div className="sc-school">{school.trim() || "Your school"}</div><div className="sc-city">{city.trim() || "Your city"}</div></div><div className="sc-foot"><span>{classroom ? `Class ${classroom}` : "Class"}</span><span>Demo preview</span></div></div></TiltCard></div></div></section>;
 }
 export function SchoolsAndParents() { return <section className="audiences day" aria-label="For schools and parents"><RevealGroup className="wrap aud-grid">
-  <RevealItem><article className="aud dark"><h3>Bring it to your school.</h3><p>Your students are ready to build the future. Give them free AI learning, real projects and a national stage.</p><ul><li>Free AI learning for every student</li><li>A national competition</li><li>₹25L in prizes and ₹2 Cr in scholarships</li></ul><Action href="#register">Register your school</Action></article></RevealItem>
-  <RevealItem><article className="aud"><h3>For parents.</h3><p>Your child learns online on weekend mornings, so it never clashes with school. Finalists travel to the finale with full supervision.</p><ul><li>Free to join, no hidden costs</li><li>Parental consent before any participation</li><li>Supervised travel and stay for finalists</li></ul><Action href="#faqs" ghost>Read parent FAQs</Action></article></RevealItem>
+  <RevealItem><article className="aud dark"><div className="aud-art"><SchoolArt /></div><h3>Bring it to your school.</h3><p>Your students are ready to build the future. Give them free AI learning, real projects and a national stage.</p><ul><li>Free AI learning for every student</li><li>A national competition</li><li>₹25L in prizes and ₹2 Cr in scholarships</li></ul><Action href="#register">Register your school</Action></article></RevealItem>
+  <RevealItem><article className="aud"><div className="aud-art"><ParentArt /></div><h3>For parents.</h3><p>Your child learns online on weekend mornings, so it never clashes with school. Finalists travel to the finale with full supervision.</p><ul><li>Free to join, no hidden costs</li><li>Parental consent before any participation</li><li>Supervised travel and stay for finalists</li></ul><Action href="#faqs" ghost>Read parent FAQs</Action></article></RevealItem>
   </RevealGroup></section>; }
 export function FAQ() { return <section className="faq day" id="faqs" aria-labelledby="faq-h"><div className="wrap faq-grid"><Reveal><h2 id="faq-h">Questions, answered.</h2></Reveal><div id="faqlist">{faqs.map(([question, answer], i) => <Accordion key={question} id={`fb${i}`} title={question}><p className="faq-answer">{answer}</p></Accordion>)}</div></div></section>; }
 function FooterDialog({ label }: { label: string }) {
