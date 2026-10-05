@@ -577,3 +577,9 @@ img.portrait{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:co
 .foot-base{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px 24px}
 .closing .foot{margin-top:0}
 @media (max-width:700px){.finale-crew{height:72px}.foot-credits{gap:16px 28px}.foot-credit img{height:28px}}
+
+/* Spark card brand marks */
+.register .sc-top{align-items:center}
+.sc-logo{width:clamp(96px,32%,138px);color:var(--foreground-dark)}
+.register .sc-foot{align-items:center}
+.sc-org{height:clamp(22px,2.6vw,30px);width:auto}

@@ -378,30 +378,56 @@ export function RegistrationAndSparkCard() {
     sparkBurst(submitRef.current);
     setErrors({}); setConfirmed(true); setMessage("Spark card ready. This is a demo preview — no registration or parent email was sent.");
   };
+  const [sharing, setSharing] = useState(false);
+  const fileName = () => `iaib-spark-${first.trim().toLocaleLowerCase() || "card"}.png`;
+  const renderPng = async () => {
+    await document.fonts.ready;
+    const { toBlob } = await import("html-to-image");
+    const blob = await toBlob(cardRef.current!, { canvasWidth: 1080, canvasHeight: 1350, pixelRatio: 1, cacheBust: true });
+    if (!blob) throw new Error("empty image");
+    return blob;
+  };
   const download = async () => {
     if (!confirmed || !cardRef.current || downloading) return;
     setDownloading(true);
     try {
-      await document.fonts.ready;
-      const { toPng } = await import("html-to-image");
-      const png = await toPng(cardRef.current, { canvasWidth: 1080, canvasHeight: 1350, pixelRatio: 1, cacheBust: true });
+      const url = URL.createObjectURL(await renderPng());
       const link = document.createElement("a");
-      link.download = `iaib-spark-${first.trim().toLocaleLowerCase()}.png`;
-      link.href = png;
+      link.download = fileName();
+      link.href = url;
       link.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 4000);
       setMessage("Demo Spark card downloaded. No registration or parent email was sent.");
     } catch {
       setMessage("The image couldn't be saved. Please try again.");
     } finally { setDownloading(false); }
+  };
+  const share = async () => {
+    if (!confirmed || !cardRef.current || sharing) return;
+    setSharing(true);
+    const text = `My Spark card for Ignite AI Buildathon Season 01, by upGrad School of Technology with the Government of Karnataka. Free for Classes 9–12. Registrations open 8 Oct 2026: ${window.location.origin}`;
+    try {
+      const file = new File([await renderPng()], fileName(), { type: "image/png" });
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: "My IAIB Spark card", text });
+      } else if (navigator.share) {
+        await navigator.share({ title: "My IAIB Spark card", text });
+      } else {
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+      }
+      setMessage("Shared. This is a demo preview, so no registration was submitted.");
+    } catch (error) {
+      if ((error as DOMException)?.name !== "AbortError") setMessage("Sharing didn't work here. Download the card and share the image instead.");
+    } finally { setSharing(false); }
   };
   return <section className="register night" id="register" aria-labelledby="reg-h"><div className="wrap reg-grid"><div><Reveal><p className="eyebrow">Register</p><h2 id="reg-h">Claim your Spark.</h2></Reveal><p className="lead">Registration takes under a minute and it's free. You'll get your Spark card to share.</p><form onSubmit={submit} noValidate>
     <div className="two"><div className="field"><label htmlFor="f-name">First name</label><input id="f-name" autoComplete="given-name" maxLength={40} value={first} aria-invalid={!!errors.first} aria-describedby={errors.first ? "f-name-error" : undefined} onChange={e => { setFirst(e.target.value.split(/\s/)[0] ?? ""); changed(); }} />{errors.first && <small id="f-name-error" role="alert">{errors.first}</small>}</div><div className="field"><label htmlFor="f-class">Class</label><select id="f-class" value={classroom} aria-invalid={!!errors.classroom} aria-describedby={errors.classroom ? "f-class-error" : undefined} onChange={e => { setClassroom(e.target.value); changed(); }}><option value="">Select</option><option>9</option><option>10</option><option>11</option><option>12</option></select>{errors.classroom && <small id="f-class-error" role="alert">{errors.classroom}</small>}</div></div>
     <div className="field"><label htmlFor="f-school">School</label><input id="f-school" maxLength={100} value={school} aria-invalid={!!errors.school} aria-describedby={errors.school ? "f-school-error" : undefined} onChange={e => { setSchool(e.target.value); changed(); }} />{errors.school && <small id="f-school-error" role="alert">{errors.school}</small>}</div>
     <div className="two"><div className="field"><label htmlFor="f-city">City</label><input id="f-city" maxLength={80} value={city} aria-invalid={!!errors.city} aria-describedby={errors.city ? "f-city-error" : undefined} onChange={e => { setCity(e.target.value); changed(); }} />{errors.city && <small id="f-city-error" role="alert">{errors.city}</small>}</div><div className="field"><label htmlFor="f-email">Parent's email</label><input id="f-email" type="email" autoComplete="email" maxLength={255} value={email} aria-invalid={!!errors.email} aria-describedby={errors.email ? "f-email-error" : undefined} onChange={e => { setEmail(e.target.value); changed(); }} />{errors.email && <small id="f-email-error" role="alert">{errors.email}</small>}</div></div>
     <label className="consent"><input type="checkbox" checked={consent} aria-invalid={!!errors.consent} aria-describedby={errors.consent ? "f-consent-error" : undefined} onChange={e => { setConsent(e.target.checked); changed(); }} />My parent or guardian has read the terms and agrees to my participation. We'll email them to confirm.</label>{errors.consent && <small className="consent-error" id="f-consent-error" role="alert">{errors.consent}</small>}
-    <div className="reg-actions"><Button ref={submitRef} variant="iaib" type="submit">Register free</Button>{confirmed && <Button variant="iaibOutline" type="button" onClick={download} disabled={downloading} aria-label="Download demo Spark card as PNG">{downloading ? "Preparing PNG…" : "Download Spark card ↓"}</Button>}</div><p className="form-msg" role="status">{message || "Preview only — no registration is submitted."}</p>
+    <div className="reg-actions"><Button ref={submitRef} variant="iaib" type="submit">Register free</Button>{confirmed && <><Button variant="iaibOutline" type="button" onClick={share} disabled={sharing} aria-label="Share demo Spark card">{sharing ? "Preparing…" : "Share card"}</Button><Button variant="iaibOutline" type="button" onClick={download} disabled={downloading} aria-label="Download demo Spark card as PNG">{downloading ? "Preparing PNG…" : "Download ↓"}</Button></>}</div><p className="form-msg" role="status">{message || "Preview only — no registration is submitted."}</p>
   </form></div>
-   <div className={`card-stage${confirmed ? " card-ready" : ""}`}><TiltCard><div ref={cardRef} className="spark-card" aria-label="Your Spark card preview, demo data"><div className="sc-top"><span>Ignite AI Buildathon</span><span>Season 01</span></div><div className="sc-ticket"><div className="sc-rank">Spark</div><div className="sc-num">{sparkNumber}</div><span className="sc-demo">DEMO · NOT AN ISSUED REGISTRATION</span></div><div className="sc-holder"><div className="sc-name">{first.trim() || "Your name"}</div><div className="sc-school">{school.trim() || "Your school"}</div><div className="sc-city">{city.trim() || "Your city"}</div></div><div className="sc-foot"><span>{classroom ? `Class ${classroom}` : "Class"}</span><span>Demo preview</span></div></div></TiltCard></div></div></section>;
+   <div className={`card-stage${confirmed ? " card-ready" : ""}`}><TiltCard><div ref={cardRef} className="spark-card" aria-label="Your Spark card preview, demo data"><div className="sc-top"><IaibLogo className="sc-logo" /><span>Season 01</span></div><div className="sc-ticket"><div className="sc-rank">Spark</div><div className="sc-num">{sparkNumber}</div><span className="sc-demo">DEMO · NOT AN ISSUED REGISTRATION</span></div><div className="sc-holder"><div className="sc-name">{first.trim() || "Your name"}</div><div className="sc-school">{school.trim() || "Your school"}</div><div className="sc-city">{city.trim() || "Your city"}</div></div><div className="sc-foot"><span>{classroom ? `Class ${classroom}` : "Class"}</span><img className="sc-org" src="/upgrad-sot-on-dark.webp" alt="upGrad School of Technology" width={120} height={36} /></div></div></TiltCard></div></div></section>;
 }
 export function SchoolsAndParents() { return <section className="audiences day" aria-label="For schools and parents"><RevealGroup className="wrap aud-grid">
   <RevealItem><article className="aud dark"><div className="aud-art"><img src="/art/schools.webp" srcSet="/art/schools-sm.webp 512w, /art/schools.webp 1024w" sizes="(max-width: 900px) 90vw, 45vw" alt="" width={1024} height={559} loading="lazy" decoding="async" /></div><h3>Bring it to your school.</h3><p>Your students are ready to build the future. Give them free AI learning, real projects and a national stage.</p><ul><li>Free AI learning for every student</li><li>A national competition</li><li>₹25L in prizes and ₹2 Cr in scholarships</li></ul><Action href="#register">Register your school</Action></article></RevealItem>
