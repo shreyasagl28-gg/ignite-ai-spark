@@ -192,23 +192,12 @@ export function RecentRegistrations() {
     </Marquee>
   </aside>;
 }
-const art = (name: string) => ({ src: `/art/${name}.webp`, srcSet: `/art/${name}-sm.webp 512w, /art/${name}.webp 1024w` });
 export function Stakes() {
   return (
     <section className="stakes night" id="prizes" aria-labelledby="stakes-h">
       <div className="wrap">
         <Reveal><Eyebrow>Prizes</Eyebrow><h2 id="stakes-h">What's on the table this season.</h2></Reveal>
         <MoneyRain />
-        <div className="sk">
-          <div className="sk-row">
-            <div className="sk-copy"><span className="sk-label">Scholarship pool</span><b className="sk-num sk-red"><SlotNumber value="₹2 Cr" /></b><p>in scholarships for standout builders</p></div>
-            <img className="sk-img" {...art("ember")} sizes="(max-width: 900px) 100vw, 55vw" alt="" width={1024} height={559} loading="lazy" decoding="async" />
-          </div>
-          <div className="sk-row sk-row-flip">
-            <img className="sk-img" {...art("trophy")} sizes="(max-width: 900px) 100vw, 55vw" alt="" width={1024} height={559} loading="lazy" decoding="async" />
-            <div className="sk-copy"><span className="sk-label">Prize pool</span><b className="sk-num"><SlotNumber value="₹25L" /></b><p>in prizes at the grand finale</p></div>
-          </div>
-        </div>
       </div>
       <figure className="sk-band wrap">
         <div className="sk-stage">

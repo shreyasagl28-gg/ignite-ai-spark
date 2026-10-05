@@ -112,7 +112,7 @@ h2{font-size:clamp(34px,4.6vw,64px);line-height:1.04}
 @media (max-width:900px){.stake-grid{grid-template-columns:1fr 1fr}.stake{border-right:0;border-bottom:1px solid var(--ink-line);margin-right:0}}
 
 /* STAKES: editorial number + object rows, then the finale hall band */
-.sk-band{margin-top:clamp(56px,8vw,112px)}
+.sk-band{margin-top:0}
 .sk-stage{position:relative;border-radius:24px;overflow:hidden;isolation:isolate;border:1px solid var(--ink-line)}
 .sk-stage img{display:block;width:100%;height:clamp(300px,40vw,540px);object-fit:cover;object-position:50% 45%}
 .sk-stage::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--ink) 2%,color-mix(in oklch,var(--ink) 55%,transparent) 34%,transparent 62%);pointer-events:none}
