@@ -20,7 +20,7 @@ import { ScrollBot } from "@/components/motion/ScrollBot";
 import { Perks } from "@/components/Perks";
 import { PromptDemo } from "@/components/PromptDemo";
 import { IaibLogo } from "@/components/IaibLogo";
-import finaleHallSharp from "@/assets/finale-hall-sharp.webp";
+import finaleHallSharp from "@/assets/finale-hall-sharp.png";
 
 function Action({ children, href, ghost = false }: { children: React.ReactNode; href: string; ghost?: boolean }) {
   return <Button asChild variant={ghost ? "iaibOutline" : "iaib"}><a href={href}>{children}</a></Button>;
