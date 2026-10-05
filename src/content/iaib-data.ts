@@ -8,10 +8,10 @@ export const modules: Array<[string, string, string, string[]]> = [
     ['Finale Prep','3 live sessions','The last stretch before the finale: sharpen the idea, the build plan and the pitch.',['Framing a problem worth solving','Planning a 36-hour build','Pitching to a room of VCs']]
   ];
 export const faqs: Array<[string, string]> = [
-    ['Who can participate?','Any student in Classes 9 to 12, studying at a school in India.'],
+    ['Who can participate?','Any student in Classes 9 to 12 studying at a school in India.'],
     ['Is there a registration fee?','No. Registration and participation are completely free.'],
     ['Do I need prior coding or AI experience?','No. The learning sessions start from the basics. All you need is curiosity about AI.'],
-    ['How are the learning sessions conducted?','Sessions are held live online, on weekend mornings. They won\'t clash with school, and you\'ll still have the rest of your weekend free.'],
+    ['How are the learning sessions conducted?','Sessions are held live online on weekend mornings. They won\'t clash with school, and you\'ll still have the rest of your weekend free.'],
     ['What does the screening round involve?','Two steps. First, a 40-minute test on what you learned in the sessions. Second, a small project you build from one of 50 prompts we share. Screening is done individually.'],
     ['How is the project evaluated?','Five criteria: originality, ethical use of AI, clarity, scalability and potential for real-world impact.'],
     ['Can I take part if my school hasn\'t registered?','Yes. Any student in Classes 9 to 12 can register on their own. Schools can also register to bring their students in together.']
@@ -21,7 +21,7 @@ export const mentors: Array<[string, string]> = [
     ['Rishi Saraf','Co-founder and CEO, DevDynamics'],
     ['Gaurav Kaushik','Senior Staff Software Engineer'],
     ['Gladden Rumao','Staff Software AI Engineer'],
-    ['Jyoti Nigam','Data Scientist, upGrad SOT'],
+    ['Jyoti Nigam','Data Scientist, upGrad School of Technology'],
     ['Rishabh Bafna','Senior AI Engineer and Lead Instructor'],
     ['Mithun S','SDE II, Cisco'],
     ['Piyush Jain','Senior Mathematician and Lead Instructor']

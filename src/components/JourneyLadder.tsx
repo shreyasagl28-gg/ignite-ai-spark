@@ -1,35 +1,27 @@
-import type { ComponentType } from "react";
-import { LiveClassArt, ScreeningArt } from "@/components/Mockups";
-
 /**
- * The four journey steps, each with the thing a student meets at that stage
+ * The four journey steps, each with the object a student meets at that stage
  * and the rank it earns. Copy is unchanged from the approved mock.
  */
 export type JourneyStep = { when: string; title: string; body: string; rank: string };
 
-function SparkCardPhoto() {
-  return <img className="jl-photo" src="/art/spark-card-sm.webp" srcSet="/art/spark-card-sm.webp 512w, /art/spark-card.webp 1024w" sizes="(max-width: 560px) 90vw, 25vw" alt="" width={1024} height={559} loading="lazy" decoding="async" />;
-}
-function FinaleStagePhoto() {
-  return <img className="jl-photo jl-photo-stage" src="/art/finale-hall.webp" alt="" width={816} height={434} loading="lazy" decoding="async" />;
-}
-
-const stepArt: Array<{ Art: ComponentType; photo: boolean }> = [
-  { Art: SparkCardPhoto, photo: true },
-  { Art: LiveClassArt, photo: false },
-  { Art: ScreeningArt, photo: false },
-  { Art: FinaleStagePhoto, photo: true },
+const stepArt = [
+  { name: "spark-card", className: "" },
+  { name: "journey-live", className: "" },
+  { name: "journey-screening", className: "" },
+  { name: "finale-hall", className: " jl-photo-stage" },
 ];
 
 export function JourneyLadder({ steps }: { steps: JourneyStep[] }) {
   return (
     <ol className="jl">
       {steps.map((step, index) => {
-        const { Art, photo } = stepArt[index] ?? stepArt[0]!;
+        const art = stepArt[index] ?? stepArt[0]!;
         return (
           <li key={step.title} className={`jl-step jl-step-${index}`}>
-            <div className={`jl-art${photo ? " jl-art-photo" : ""}`} aria-hidden="true">
-              <Art />
+            <div className="jl-art jl-art-photo" aria-hidden="true">
+              {art.name === "finale-hall"
+                ? <img className={`jl-photo${art.className}`} src="/art/finale-hall.webp" alt="" width={816} height={434} loading="lazy" decoding="async" />
+                : <img className="jl-photo" src={`/art/${art.name}-sm.webp`} srcSet={`/art/${art.name}-sm.webp 512w, /art/${art.name}.webp 1024w`} sizes="(max-width: 560px) 90vw, 25vw" alt="" width={1024} height={559} loading="lazy" decoding="async" />}
               <span className="jl-rank-name">{step.rank.replace(/^You (become an?|join the) /, "")}</span>
             </div>
             <p className="jl-when">{step.when}</p>
