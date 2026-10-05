@@ -171,15 +171,21 @@ export function Hero({ studentsRegistered = 12480 }: { studentsRegistered?: numb
           <li><span className="live-dot" aria-hidden="true" />Season 01 · Registrations open 8 Oct 2026</li>
           <li>Free for Classes 9–12</li>
           <li>No coding needed</li>
-          <li>₹25L in prizes</li>
           <li>Finale in Bengaluru</li>
         </ul>
         <div className="hero-row">
           <div className="hero-actions"><MagneticButton href="#register" className="btn-hero">Register free</MagneticButton><Action href="#journey" ghost>See how it works</Action></div>
-          {SHOW_LIVE_STATS && <div className="counter-wrap">
+          {SHOW_LIVE_STATS ? (
+          <div className="counter-wrap">
 <div className="counter" aria-label="Registrations, demo data"><div><b className="hot">{studentsRegistered.toLocaleString("en-IN")}</b><span>students registered</span></div><div><b>214</b><span>schools</span></div><div><b>19</b><span>states and UTs</span></div></div>
             <p className="counter-disclaimer">Demo data</p>
-          </div>}
+          </div>
+          ) : (
+            <div className="hero-prizes">
+              <div><span className="sk-label">Scholarship pool</span><b className="sk-red"><SlotNumber value="₹2 Cr" onLoad /></b></div>
+              <div><span className="sk-label">Prize pool</span><b><SlotNumber value="₹25L" onLoad /></b></div>
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -233,6 +239,7 @@ export function Journey() {
         </div>
         <JourneyLadder steps={journeySteps} />
         <p className="swipe-hint" aria-hidden="true">Swipe</p>
+        <div className="sec-cta"><MagneticButton href="#register">Register free</MagneticButton><span>Free · takes under a minute</span></div>
       </div>
     </section>
   );
@@ -297,6 +304,7 @@ export function Curriculum() {
         <CurriculumStory />
         <p className="swipe-hint" aria-hidden="true">Swipe through 6 modules</p>
         <PromptDemo />
+        <div className="sec-cta"><MagneticButton href="#register">Start with Session 01 · Register free</MagneticButton><span>No coding needed</span></div>
       </div>
     </section>
   );
