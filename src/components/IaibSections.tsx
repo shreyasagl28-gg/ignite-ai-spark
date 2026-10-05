@@ -20,7 +20,6 @@ import { ScrollBot } from "@/components/motion/ScrollBot";
 import { Perks } from "@/components/Perks";
 import { PromptDemo } from "@/components/PromptDemo";
 import { IaibLogo } from "@/components/IaibLogo";
-import finaleHallSharp from "@/assets/finale-hall-sharp.png";
 
 function Action({ children, href, ghost = false }: { children: React.ReactNode; href: string; ghost?: boolean }) {
   return <Button asChild variant={ghost ? "iaibOutline" : "iaib"}><a href={href}>{children}</a></Button>;
@@ -206,7 +205,7 @@ export function Stakes() {
       </div>
       <figure className="sk-band wrap">
         <div className="sk-stage">
-          <img src={finaleHallSharp} alt="" width={1632} height={868} loading="lazy" decoding="async" />
+          <img src="/art/finale-hall-hd.webp" srcSet="/art/finale-hall-hd-sm.webp 688w, /art/finale-hall-hd.webp 1376w" sizes="(max-width: 700px) 100vw, 1240px" alt="" width={1376} height={768} loading="lazy" decoding="async" />
           <figcaption className="sk-stage-line">Thousands will learn. <em>Only 100 make the finale.</em></figcaption>
         </div>
         <div className="sk-facts">
