@@ -12,7 +12,7 @@ const sourceNames: Record<string, string> = {
   "J&K": "JAMMU AND KASHMIR", "Arunachal": "ARUNACHAL PRADESH",
   "A&N Islands": "ANDAMAN & NICOBAR", "DNH & DD": "DADRA & NAGAR HAVELI & DAMAN & DIU",
 };
-const initialCounts = Object.fromEntries(states.map((name, index) => [name, index < 19 ? Math.round(2400 * Math.pow(.82, index) + 40) : 0])) as Record<string, number>;
+const initialCounts = Object.fromEntries(states.map((name, index) => [name, SHOW_LIVE_STATS && index < 19 ? Math.round(2400 * Math.pow(.82, index) + 40) : 0])) as Record<string, number>;
 const compactStates = new Set(["Goa", "Delhi", "Sikkim", "Tripura", "Puducherry", "Chandigarh", "Lakshadweep", "A&N Islands"]);
 
 export function IndiaStateMap() {
